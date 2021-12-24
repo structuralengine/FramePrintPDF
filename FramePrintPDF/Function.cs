@@ -55,7 +55,6 @@ namespace FramePrintPDF
                 },
                 Body = message
             };
-
         }
     }
 }
