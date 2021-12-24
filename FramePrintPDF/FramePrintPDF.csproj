@@ -11,4 +11,7 @@
     <PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PDF_Manager\PDF_Manager.csproj" />
+  </ItemGroup>
 </Project>
