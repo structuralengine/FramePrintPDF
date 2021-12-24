@@ -33,7 +33,7 @@ namespace PDF_Manager.Printing
 
             // elementを処理するクラスを呼び出す
             InputElement element = new InputElement();
-            // gfx登録
+            // gfx登録 (mc,element_tltle,element_data)
             element.elementPDF(mc ,(List<string>)dataset[2],(List<List<string[]>>)dataset[3]);
 
 

@@ -38,11 +38,11 @@ namespace PDF_Manager.Printing
             // elementを処理するクラスを呼び出す
             InputElement element_call = new InputElement();
             // memberデータの整理
-            List<List<string[]>> x;
-            List<string> y;
-            (x,y)=(element_call.element(data));
-            dataAll.Add(x);
-            dataAll.Add(y);
+            List<string> elememt_title;
+            List<List<string[]>> elememt_data;
+            (elememt_title,elememt_data)=(element_call.element(data));
+            dataAll.Add(elememt_title);
+            dataAll.Add(elememt_data);
 
             return dataAll;
         }

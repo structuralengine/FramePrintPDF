@@ -138,8 +138,8 @@ namespace PDF_Manager.Printing
             int count = 0;
             mc.gfx.DrawString("格点データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
             count += 2;
-            mc.CurrentPosHeader.Y += 15;
-            mc.CurrentPosBody.Y += 30;
+            mc.CurrentPosHeader.Y += 10;
+            mc.CurrentPosBody.Y += 20;
 
             for (int i = 0; i < nodeData.Count; i++)
             {
