@@ -15,19 +15,19 @@ namespace FramePrintPDF
     public class LambdaRequest
     {
         [JsonProperty(PropertyName = "body")]
-        public string Body { get; set; }
+        public string body { get; set; }
     }
 
     public class LambdaResponse
     {
         [JsonProperty(PropertyName = "statusCode")]
-        public HttpStatusCode StatusCode { get; set; }
+        public HttpStatusCode statusCode { get; set; }
 
         [JsonProperty(PropertyName = "headers")]
-        public Dictionary<string, string> Headers { get; set; }
+        public Dictionary<string, string> headers { get; set; }
 
         [JsonProperty(PropertyName = "body")]
-        public string Body { get; set; }
+        public string body { get; set; }
     }
 
     public class Function
@@ -41,20 +41,36 @@ namespace FramePrintPDF
         /// <returns></returns>
         public LambdaResponse FunctionHandler(LambdaRequest input, ILambdaContext context)
         {
-            // データの読み込み
-            var myPrintInput = new PrintInput(input.Body);
-            string message = myPrintInput.getPdfSource();
-
-            // 結果データを書きだす(json形式) -------------------------------------------------------
-            return new LambdaResponse
+            try
             {
-                StatusCode = HttpStatusCode.OK,
-                Headers = new Dictionary<string, string>() {
+                // データの読み込み
+                var myPrintInput = new PrintInput(input.body);
+                string base64str = myPrintInput.getPdfSource();
+
+                // 結果データを書きだす(json形式) -------------------------------------------------------
+                return new LambdaResponse
+                {
+                    statusCode = HttpStatusCode.OK,
+                    headers = new Dictionary<string, string>() {
                     { "Content-Type", "application/json" },
                     { "Access-Control-Allow-Origin", "*" }
                 },
-                Body = message
+                    body = base64str,
             };
+            }
+            catch (Exception ex)
+            {
+                return new LambdaResponse
+                {
+                    statusCode = HttpStatusCode.InternalServerError,
+                    headers = new Dictionary<string, string>(){
+                        { "Content-Type", "application/json" },
+                        { "Access-Control-Allow-Origin", "*" }
+                    },
+                    body = "{\"error\":\"" + ex.Message + "\"}"
+                };
+            }
+
         }
     }
 }
