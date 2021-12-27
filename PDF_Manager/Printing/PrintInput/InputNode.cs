@@ -134,23 +134,24 @@ namespace PDF_Manager.Printing
 
         public void NodePDF(PdfDoc mc, List<List<string[]>> nodeData)
         {
-            int bottomCell = mc.bottomCell * 2;
-            int single_Yrow = mc.single_Yrow;
-
             //タイトルの印刷
-            mc.PrintContent(0, "格点データ");　
+            mc.PrintContent("格点データ",0);　
             mc.CurrentRow(2);
             // ヘッダー
-            string[] header_content = { "格点", "格点", "id", "x", "y", "z", "id", "x", "y", "z" };
+            string[,] header_content = { 
+                { "格点", "", "", "", "格点", "", "", "", }, 
+                { "id", "x", "y", "z", "id", "x", "y", "z" } 
+            };
             // ヘッダーのx方向の余白
-            int[] header_Xspacing = { 0, 160, 0, 40, 80, 120, 160, 200, 240, 280 };
-            // ヘッダーのy方向の余白
-            int[] header_Yspacing = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };  // 行を変化させるところ：1　そうでない:0
-            
-            mc.Header(header_content, header_Xspacing, header_Yspacing);
+            int[,] header_Xspacing = { 
+                { 0, 40, 80, 120, 160, 200, 240, 280 }, 
+                { 0, 40, 80, 120, 160, 200, 240, 280 }
+            };
+                     
+            mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[] body_Xspacing = { 0, 40, 80, 120, 160, 200, 240, 280 };
+            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240, 280 } };
 
             for (int i = 0; i < nodeData.Count; i++)
             {
@@ -158,13 +159,12 @@ namespace PDF_Manager.Printing
                 {
                     for (int k = 0; k < nodeData[i][j].Length; k++)
                     {
-                        mc.CurrentColumn(body_Xspacing[k]);　//x方向移動
-                        mc.PrintContent(1, nodeData[i][j][k]);　// print
+                        mc.CurrentColumn(body_Xspacing[0,k]);　//x方向移動
+                        mc.PrintContent( nodeData[i][j][k]);　// print
                     }
                     mc.CurrentRow(1); // y方向移動
                 }
             }
-            mc.DataCountKeep(mc.CurrentPos.Y); // 最後のページの高さを登録
         }
     }
 }

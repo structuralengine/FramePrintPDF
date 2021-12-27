@@ -27,10 +27,10 @@ namespace PDF_Manager.Printing
         public int bottomCell = 69;　// 1ページに入る行数
         public double dataCount = 0; //  classをまたいで行数をカウントする
         public int single_Yrow = 10;  //　1行あたりの高さ
-        public string[] current_header;
-        public int[] currentHeader_Xspacing;
-        public int[] currentBody_Xspacing;
-        public int[] currentHeader_Yspacing;
+        public string[,] current_header;
+        public int[,] currentHeader_Xspacing;
+        public int[,] currentBody_Xspacing;
+        public int[,] currentHeader_Yspacing;
 
         public PdfDoc()
         {
@@ -111,7 +111,7 @@ namespace PDF_Manager.Printing
         }
 
         // PDFを記述する
-        public void PrintContent(int dataHandle, string data)
+        public void PrintContent(string data, int dataHandle = 1)
         {
             if (dataHandle == 0)
             {
@@ -128,11 +128,11 @@ namespace PDF_Manager.Printing
         {
             CurrentPos.Y += single_Yrow * row;
 
-            if (CurrentPos.Y > single_Yrow * bottomCell)
+            if (CurrentPos.Y > single_Yrow * bottomCell + Margine.Y)
             {
                 NewPage();
                 CurrentPos.Y += single_Yrow * 2;
-                Header(current_header, currentHeader_Xspacing, currentHeader_Yspacing);
+                Header(current_header, currentHeader_Xspacing);
             }
         }
 
@@ -143,18 +143,20 @@ namespace PDF_Manager.Printing
         }
 
         //　ヘッダー関係
-        public void Header(string[] header_content, int[] header_Xspacing, int[] header_Yspacing)
+        public void Header(string[,] header_content, int[,] header_Xspacing)
         {
             current_header = header_content;
             currentHeader_Xspacing = header_Xspacing;
-            currentHeader_Yspacing = header_Yspacing;
-            for (int i = 0; i < current_header.Length; i++)
+            for (int i = 0; i < current_header.GetLength(0); i++)
             {
-                CurrentColumn(currentHeader_Xspacing[i]);
-                CurrentRow(currentHeader_Yspacing[i]);
-                PrintContent(1, current_header[i]);
+                for (int j = 0; j < current_header.GetLength(1); j++)
+                {
+                    CurrentColumn(currentHeader_Xspacing[i,j]);
+                    PrintContent(current_header[i,j]);
+                }
+                CurrentRow(1);
             }
-            CurrentPos.Y += single_Yrow*2;
+            CurrentPos.Y += single_Yrow;
         }
 
 
@@ -162,19 +164,31 @@ namespace PDF_Manager.Printing
         // 次の項目がまたがず入りきるなら同一ページで2行空き，そうでないなら改ページ
         public void DataCountKeep(double value)
         {
-            if ((value + dataCount) > Margine.Y + bottomCell * single_Yrow)
+            if ((value + CurrentPos.Y) > Margine.Y + bottomCell * single_Yrow)
             {
-                dataCount = Margine.Y + value % (Margine.Y + bottomCell * single_Yrow);
                 NewPage();
             }
             else
             {
-                dataCount += value;
+                CurrentPos.X = x;
                 CurrentPos.Y += single_Yrow * 2;
             }
         }
 
-
+        //　タイプ別の改ページ判定
+        public void TypeCount(int index,double headerRow,double count,string title)
+        {
+            double typeCount = CurrentPos.Y + (headerRow + count)*single_Yrow;
+            if (typeCount > Margine.Y + bottomCell * single_Yrow)
+            {
+                NewPage();
+                CurrentRow(2);
+            }
+            else
+            {
+                if(index != 0) CurrentPos.Y += single_Yrow;
+            }
+        }
     }
 
     // 日本語フォントのためのフォントリゾルバー

@@ -32,9 +32,9 @@ namespace PDF_Manager.Printing
             member.MemberPDF(mc, (List<string[]>)dataset[3]);
 
             // elementを処理するクラスを呼び出す
-            //InputElement element = new InputElement();
+            InputElement element = new InputElement();
             // gfx登録 (mc,element_tltle,element_data)
-            //element.ElementPDF(mc ,(List<string>)dataset[1],(List<List<string[]>>)dataset[2]);
+            element.ElementPDF(mc ,(List<string>)dataset[1],(List<List<string[]>>)dataset[2]);
 
 
             return dataset;

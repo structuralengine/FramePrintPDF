@@ -19,7 +19,7 @@ namespace PDF_Manager.Printing
 {
     internal class PrintReady
     {
-
+        private InputElement element_call;
         public ArrayList Ready(PdfDoc mc, Dictionary<string, object> data)
         {
             // データをまとめてここに代入する．
@@ -42,7 +42,7 @@ namespace PDF_Manager.Printing
             // memberを処理するクラスを呼び出す
             InputMember member_call = new InputMember();
             // memberデータの整理
-            dataAll.Add(member_call.Member(data));
+            dataAll.Add(member_call.Member(element_call, data));
 
             return dataAll;
         }

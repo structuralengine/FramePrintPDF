@@ -20,8 +20,10 @@ namespace PDF_Manager.Printing
     internal class InputMember
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        private InputElement element;
 
-        public List<string[]> Member(Dictionary<string, object> value_)
+
+        public List<string[]> Member(InputElement element, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
@@ -46,16 +48,17 @@ namespace PDF_Manager.Printing
                 targetValue = Elem.ToObject<Dictionary<string, double>>();
 
                 double len = this.GetMemberLength(index, targetValue, value); // 部材長さ
-                                                                              //string name = this.getElementName(targetValue["e"]); // 材料名称
+                string a = targetValue["e"].ToString();
+                string name = element.GetElementName(a); // 材料名称
 
-                string[] line = new String[6];
-                line[0] = target.ElementAt(i).Key;
+                string[] line = new String[7];
+                line[0] = index;
                 line[1] = targetValue["ni"].ToString();
                 line[2] = targetValue["nj"].ToString();
                 line[3] = (Math.Round(len, 3, MidpointRounding.AwayFromZero)).ToString();
                 line[4] = targetValue["e"].ToString();
                 line[5] = targetValue["cg"].ToString() != null ? targetValue["cg"].ToString() : "";
-                //line[6] = (Math.Round(targetValue["z"], 3, MidpointRounding.AwayFromZero)).ToString();
+                line[6] = name;
                 member_data.Add(line);
             }
             return member_data;
@@ -92,102 +95,38 @@ namespace PDF_Manager.Printing
         public void MemberPDF(PdfDoc mc, List<string[]> memberData)
         {
             int bottomCell = mc.bottomCell;
-            int single_Yrow = mc.single_Yrow;
 
             // 全行数の取得
-            int count = memberData.Count + (memberData.Count / bottomCell) * 2 + 4;
-            //  改ページするかの判定
+            double count = (memberData.Count + ((memberData.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
+            //  改ページ判定
             mc.DataCountKeep(count);
+
             //  タイトルの印刷
-            mc.PrintContent(0, "部材データ");
+            mc.PrintContent("部材データ",0);
             mc.CurrentRow(2);
             //　ヘッダー
-            string[] header_content = { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "コードアングル"};
+            string[,] header_content = {
+                { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "コードアングル" , "材料名称"}
+            };
 
-            //string[] header_content = { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "コードアングル", "材料名称" };
             // ヘッダーのx方向の余白
-            int[] header_Xspacing = { 0, 40, 80, 120, 160, 200 };
+            int[,] header_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
 
-            //int[] header_Xspacing = { 0, 40, 80, 120, 160, 200, 240 };
-
-            // ヘッダーのy方向の余白
-            // 行を変化させるところ：1　そうでない:0
-            int[] header_Yspacing = new int[7];
-            for (int i = 0; i < header_Yspacing.Length; i++)
-            {
-                header_Yspacing[i] = 0;
-            }
-
-            mc.Header(header_content, header_Xspacing, header_Yspacing);
+            mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[] body_Xspacing = { 0, 40, 80, 120, 160, 200 };
-            //int[] body_Xspacing = { 0, 40, 80, 120, 160, 200,240 };
+           int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
 
             for (int i = 0; i < memberData.Count; i++)
             {
                 for (int j = 0; j < memberData[i].Length; j++)
                 {
-                    mc.CurrentColumn(body_Xspacing[j]); //x方向移動
-                    mc.PrintContent(1, memberData[i][j]);　// print
+                    mc.CurrentColumn(body_Xspacing[0,j]); //x方向移動
+                    mc.PrintContent(memberData[i][j]);　// print
                 }
                 mc.CurrentRow(1);
             }
 
-            // mc.gfx.DrawString("部材データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-
-            // // 初期位置の設定
-            // mc.CurrentPosHeader.Y += single_Yrow * 2;
-            // mc.CurrentPosBody.Y += single_Yrow * 4;
-
-            // for (int i = 0; i < memberData.Count; i++)
-            // {
-            //     if (i != 0 && i % bottomCell == 0)
-            //     {
-            //         mc.NewPage();
-            //         mc.CurrentPosHeader.Y += single_Yrow * 2;
-            //         mc.CurrentPosBody.Y += single_Yrow * 4;
-            //     }
-
-            //     if (i == 0 || (i != 0 && i % bottomCell == 0))
-            //     {
-            //         mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-            //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-            //         mc.gfx.DrawString("I-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-            //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-            //         mc.gfx.DrawString("J-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-            //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-            //         mc.gfx.DrawString("L(m)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-            //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-            //         mc.gfx.DrawString("材料番号", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-            //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-            //         mc.gfx.DrawString("コードアングル", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-            //         //mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
-            //         //mc.gfx.DrawString("材料名称", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-
-            //         mc.CurrentPosHeader.X = mc.x;
-            //     }
-
-            //     mc.gfx.DrawString(memberData[i][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-            //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
-            //     mc.gfx.DrawString(memberData[i][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-            //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
-            //     mc.gfx.DrawString(memberData[i][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-            //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
-            //     mc.gfx.DrawString(memberData[i][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-            //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
-            //     mc.gfx.DrawString(memberData[i][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-            //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
-            //     mc.gfx.DrawString(memberData[i][5] == "0" ? "" : memberData[i][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-            //     //mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
-            //     //mc.gfx.DrawString(memberData[i][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-
-            //     mc.CurrentPosBody.X = mc.x;
-            //     mc.CurrentPosBody.Y += single_Yrow;
-            // }
-            //mc.CurrentPosHeader.Y = mc.CurrentPosBody.Y + single_Yrow*2;
-            //mc.CurrentPosBody.Y = mc.CurrentPosHeader.Y + single_Yrow * 2;
-            //mc.DataCountKeep(mc.CurrentPosHeader.Y);
         }
     }
 }
