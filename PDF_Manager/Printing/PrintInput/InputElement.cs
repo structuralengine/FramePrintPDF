@@ -86,14 +86,14 @@ namespace PDF_Manager.Printing
             int count = 2;
             for (int i = 0; i < elementTitle.Count; i++)
             {
-               count += elementData[i].Count*2+ 6; 
+                count += elementData[i].Count * 2 + 6;
             }
 
-            bool judge = mc.DataCountKeep(count);
-            if (judge == true)
-            {
-                mc.NewPage();
-            }
+            mc.DataCountKeep(count);
+            //if (judge == true)
+            //{
+            //    mc.NewPage();
+            //}
 
             //mc.gfx.DrawString("材料データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
             //mc.CurrentPosHeader.Y += single_Yrow*2;
@@ -200,7 +200,7 @@ namespace PDF_Manager.Printing
             //        mc.gfx.DrawString(elementData[i][j][8], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
             //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
             //        mc.gfx.DrawString(elementData[i][j][9], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    
+
             //        mc.CurrentPosBody.X = mc.x;
             //        mc.CurrentPosBody.Y += single_Yrow;
             //    }

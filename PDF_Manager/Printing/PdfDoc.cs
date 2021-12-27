@@ -31,8 +31,6 @@ namespace PDF_Manager.Printing
         public int[] currentHeader_Xspacing;
         public int[] currentBody_Xspacing;
         public int[] currentHeader_Yspacing;
-        public int currentXposition_values = 0;
-
 
         public PdfDoc()
         {
@@ -154,30 +152,26 @@ namespace PDF_Manager.Printing
             {
                 CurrentColumn(currentHeader_Xspacing[i]);
                 CurrentRow(currentHeader_Yspacing[i]);
-                //CurrentPos.Y += single_Yrow * currentHeader_Yspacing[i];
                 PrintContent(1, current_header[i]);
-                //gfx.DrawString(, font_mic, XBrushes.Black, CurrentPos);
             }
-            //CurrentPos.X = x;
             CurrentPos.Y += single_Yrow*2;
         }
 
 
         //　classをまたいで，改ページするかの判定
-        // 次の項目がまたがず入りきるなら同一ページ，そうでないなら改ページ
-        public bool DataCountKeep(double value)
+        // 次の項目がまたがず入りきるなら同一ページで2行空き，そうでないなら改ページ
+        public void DataCountKeep(double value)
         {
             if ((value + dataCount) > Margine.Y + bottomCell * single_Yrow)
             {
-                judge = true;
                 dataCount = Margine.Y + value % (Margine.Y + bottomCell * single_Yrow);
+                NewPage();
             }
             else
             {
-                judge = false;
                 dataCount += value;
+                CurrentPos.Y += single_Yrow * 2;
             }
-            return judge;
         }
 
 

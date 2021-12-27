@@ -136,9 +136,9 @@ namespace PDF_Manager.Printing
         {
             int bottomCell = mc.bottomCell * 2;
             int single_Yrow = mc.single_Yrow;
-            mc.currentXposition_values = 40;
-            //int count = 2;
-            mc.PrintContent(0, "格点データ");　//タイトルの印刷
+
+            //タイトルの印刷
+            mc.PrintContent(0, "格点データ");　
             mc.CurrentRow(2);
             // ヘッダー
             string[] header_content = { "格点", "格点", "id", "x", "y", "z", "id", "x", "y", "z" };
