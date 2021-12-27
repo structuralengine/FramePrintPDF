@@ -24,9 +24,10 @@ namespace PDF_Manager.Printing
         public XFont font_got;
         public int x;
         public int y;
-        public bool judge = false;
-        public int Threshold = 73;
-        public int dataCount = 0;
+        public bool judge = false;　// 項目別・改ページするかの判定
+        public int bottomCell = 69;　// 1ページに入る行数
+        public double dataCount = 0;   //  classをまたいで行数をカウントする
+        public int single_Yrow = 10;  //　1行あたりの高さ
 
         public PdfDoc()
         {
@@ -39,8 +40,8 @@ namespace PDF_Manager.Printing
                 GlobalFontSettings.FontResolver = new JapaneseFontResolver();
 
             /// マージンを設定する
-            x = 50;
-            y = 50;
+            x = 80;
+            y = 80;
 
             Margine = new XPoint(x, y);
 
@@ -80,7 +81,7 @@ namespace PDF_Manager.Printing
         /// PDF を Byte型に変換したものを返す
         /// </summary>
         /// <returns></returns>
-        public byte[] getPDFBytes()
+        public byte[] GetPDFBytes()
         {
             // Creates a new Memory stream
             MemoryStream stream = new MemoryStream();
@@ -99,7 +100,7 @@ namespace PDF_Manager.Printing
         /// PDF を保存する
         /// </summary>
         /// <param name="filename"></param>
-        public void savePDF(string filename = "HelloWorld.pdf")
+        public void SavePDF(string filename = "HelloWorld.pdf")
         {
             // PDF保存（カレントディレクトリ）
             //document.Save(filename);
@@ -108,15 +109,18 @@ namespace PDF_Manager.Printing
         }
         
 
-        public bool dataCountKeep(int value)
+        //　classをまたいで，改ページするかの判定
+        // 次の項目がまたがず入りきるなら同一ページ，そうでないなら改ページ
+        public bool DataCountKeep(double value)
         {
-            if (value > dataCount)
+            if ((value + dataCount) > Margine.Y + bottomCell*single_Yrow)
             {
                 judge = true;
-                dataCount = value % Threshold;
+                dataCount = value % bottomCell;
             }
             else
             {
+                judge = false;
                 dataCount += value;
             }
             return judge;

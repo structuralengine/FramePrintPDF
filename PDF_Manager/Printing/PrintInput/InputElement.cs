@@ -20,11 +20,9 @@ namespace PDF_Manager.Printing
 {
     internal class InputElement
     {
-        private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
-        private int bottomCell = 73;
 
-        public (List<string>, List<List<string[]>>) element(Dictionary<string, object> value_)
+        public (List<string>, List<List<string[]>>) Element(Dictionary<string, object> value_)
         {
             value = value_;
             // elementデータを取得する．
@@ -74,39 +72,40 @@ namespace PDF_Manager.Printing
                 elememt_data.Add(table);
             }
             return (
-                title: elememt_title,
-                data: elememt_data
+                elememt_title,
+                elememt_data
             );
         }
 
-        public void elementPDF(PdfDoc mc, List<string> elementTitle, List<List<string[]>> elementData)
+        public void ElementPDF(PdfDoc mc, List<string> elementTitle, List<List<string[]>> elementData)
         {
+            double bottomCell = mc.bottomCell;
+            int single_Yrow = mc.single_Yrow;
             int currentXposition_values = 60;
-            int currentYposition_values = 10;
+
             int count = 2;
             for (int i = 0; i < elementTitle.Count; i++)
             {
-                for (int j = 0; j < elementData[i].Count; j++)
-                {
-                   count += elementData[i][j].Length + 2;
-                }
+               count += elementData[i].Count*2+ 6; 
             }
 
-            bool judge = mc.dataCountKeep(count);
-            if (judge == true) mc.NewPage();
+            bool judge = mc.DataCountKeep(count);
+            if (judge == true)
+            {
+                mc.NewPage();
+            }
 
             mc.gfx.DrawString("材料データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-            mc.CurrentPosHeader.Y += 10;
-            mc.CurrentPosBody.Y += 40;
-
+            mc.CurrentPosHeader.Y += single_Yrow*2;
+            mc.CurrentPosBody.Y += single_Yrow*7;
             count = 2;
 
             for (int i = 0; i < elementTitle.Count; i++)
             {
                 mc.gfx.DrawString(elementTitle[i], mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.Y += 10;
+                mc.CurrentPosHeader.Y += single_Yrow*2;
                 mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 0.5);
+                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
                 mc.gfx.DrawString("A", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                 mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
                 mc.gfx.DrawString("E", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
@@ -119,8 +118,7 @@ namespace PDF_Manager.Printing
                 mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
                 mc.gfx.DrawString("ねじり合成", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                 mc.CurrentPosHeader.X = mc.x;
-                mc.CurrentPosHeader.Y += 10;
-                count++;
+                mc.CurrentPosHeader.Y += single_Yrow;
                 mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                 mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
                 mc.gfx.DrawString("(m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
@@ -137,17 +135,18 @@ namespace PDF_Manager.Printing
                 mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
                 mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                 mc.CurrentPosHeader.X = mc.x;
-                count++;
+                count+=5;
+
                 for (int j = 0; j < elementData[i].Count; j++)
                 {
-                    if (count > bottomCell || elementData[i].Count > (bottomCell - count))
+                    if (mc.CurrentPosBody.Y> bottomCell* mc.single_Yrow || (elementData[i].Count+3) * mc.single_Yrow > (bottomCell * mc.single_Yrow - mc.CurrentPosBody.Y))
                     {
                         count = 0;
                         mc.NewPage();
-                        mc.CurrentPosHeader.Y += 10;
-                        mc.CurrentPosBody.Y += 30;
+                        mc.CurrentPosHeader.Y += single_Yrow*2;
+                        mc.CurrentPosBody.Y += single_Yrow*7;
                         mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 0.5);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
                         mc.gfx.DrawString("A", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
                         mc.gfx.DrawString("E", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
@@ -160,10 +159,9 @@ namespace PDF_Manager.Printing
                         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
                         mc.gfx.DrawString("ねじり合成", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                         mc.CurrentPosHeader.X = mc.x;
-                        mc.CurrentPosHeader.Y += 10;
-                        count++;
+                        mc.CurrentPosHeader.Y += single_Yrow;
                         mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 0.5);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
                         mc.gfx.DrawString("(m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
                         mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
@@ -178,17 +176,17 @@ namespace PDF_Manager.Printing
                         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
                         mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                         mc.CurrentPosHeader.X = mc.x;
-                        count++;
+                        count+=5;
                     }
 
                     mc.gfx.DrawString(elementData[i][j][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 0.5);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
                     mc.gfx.DrawString(elementData[i][j][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
                     mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += currentYposition_values;
-                    count++;
+                    mc.CurrentPosBody.Y += single_Yrow;
+
                     mc.gfx.DrawString(elementData[i][j][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 0.5);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
                     mc.gfx.DrawString(elementData[i][j][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
                     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
                     mc.gfx.DrawString(elementData[i][j][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
@@ -202,12 +200,12 @@ namespace PDF_Manager.Printing
                     mc.gfx.DrawString(elementData[i][j][8], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
                     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
                     mc.gfx.DrawString(elementData[i][j][9], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    count++;    
+                    
                     mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += currentYposition_values;
+                    mc.CurrentPosBody.Y += single_Yrow;
                 }
             }
-            mc.dataCountKeep(count);
+            mc.DataCountKeep(count);
         }
 
 

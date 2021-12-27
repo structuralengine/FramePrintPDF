@@ -21,11 +21,11 @@ namespace PDF_Manager.Printing
     {
         private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
-        private int bottomCell = 140;
 
-
-        public List<List<string[]>> node(Dictionary<string, object> value_)
+        public List<List<string[]>> Node(PdfDoc mc,Dictionary<string, object> value_)
         {
+            int bottomCell = mc.bottomCell * 2;
+
             value = value_;
             //nodeデータを取得する
             var target = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
@@ -108,7 +108,7 @@ namespace PDF_Manager.Printing
             return node_data;
         }
 
-        public double[] getNodePos(string nodeNo,Dictionary<string, object> value)
+        public double[] GetNodePos(string nodeNo,Dictionary<string, object> value)
         {
             var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
 
@@ -131,15 +131,16 @@ namespace PDF_Manager.Printing
             return node;
         }
 
-        public void nodePDF(PdfDoc mc, List<List<string[]>> nodeData)
+        public void NodePDF(PdfDoc mc, List<List<string[]>> nodeData)
         {
+            int bottomCell = mc.bottomCell*2;
+            int single_Yrow = mc.single_Yrow;
             int currentXposition_values = 40;
-            int currentYposition_values = 10;
-            int count = 0;
+            //int count = 2;
             mc.gfx.DrawString("格点データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-            count += 2;
-            mc.CurrentPosHeader.Y += 10;
-            mc.CurrentPosBody.Y += 20;
+            // 格点データ内部の初期位置の設定
+            mc.CurrentPosHeader.Y += single_Yrow*2;
+            mc.CurrentPosBody.Y += single_Yrow*5;
 
             for (int i = 0; i < nodeData.Count; i++)
             {
@@ -147,14 +148,20 @@ namespace PDF_Manager.Printing
                 {
                     if (j != 0 && j % ((bottomCell / 2)-1)  == 0)
                     {
+                        // 2段でもページをまたぐときに改ページする
                         mc.NewPage();
-                        mc.CurrentPosHeader.Y += 15;
-                        mc.CurrentPosBody.Y += 30;
-                        count = 0;
+                        mc.CurrentPosHeader.Y += single_Yrow * 2;
+                        mc.CurrentPosBody.Y += single_Yrow*5;
+                        //count = 0;
                     }
 
                     if (j == 0 || (j != 0 && j % ((bottomCell / 2) - 1) == 0))
                     {
+                        mc.gfx.DrawString("格点", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+                        mc.gfx.DrawString("格点", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x;
+                        mc.CurrentPosHeader.Y += single_Yrow;
                         mc.gfx.DrawString("id", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
                         mc.gfx.DrawString("x", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
@@ -171,7 +178,7 @@ namespace PDF_Manager.Printing
                         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
                         mc.gfx.DrawString("z", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                         mc.CurrentPosHeader.X = mc.x;
-                        count+=2;
+                        //count+=3;
                     }
 
                     mc.gfx.DrawString(nodeData[i][j][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
@@ -190,11 +197,11 @@ namespace PDF_Manager.Printing
                     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
                     mc.gfx.DrawString(nodeData[i][j][7], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
                     mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += currentYposition_values;
-                    count++;
+                    mc.CurrentPosBody.Y += single_Yrow;
+                    //count++;
                 }
             }
-            mc.dataCountKeep(count);
+            mc.DataCountKeep(mc.CurrentPosBody.Y);
         }
     }
 }

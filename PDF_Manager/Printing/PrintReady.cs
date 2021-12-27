@@ -20,7 +20,7 @@ namespace PDF_Manager.Printing
     internal class PrintReady
     {
 
-        public ArrayList ready(PdfDoc mc, Dictionary<string, object> data)
+        public ArrayList Ready(PdfDoc mc, Dictionary<string, object> data)
         {
             // データをまとめてここに代入する．
             ArrayList dataAll = new ArrayList();
@@ -28,21 +28,21 @@ namespace PDF_Manager.Printing
             // nodeを処理するクラスを呼び出す
             InputNode node_call = new InputNode();
             //nodeデータの整理
-            dataAll.Add(node_call.node(data));
+            dataAll.Add(node_call.Node(mc,data));
+
+            // elementを処理するクラスを呼び出す
+            InputElement element_call = new InputElement();
+            // elementデータの整理
+            List<string> elememt_title;
+            List<List<string[]>> elememt_data;
+            (elememt_title,elememt_data)=(element_call.Element(data));
+            dataAll.Add(elememt_title);
+            dataAll.Add(elememt_data);
 
             // memberを処理するクラスを呼び出す
             InputMember member_call = new InputMember();
             // memberデータの整理
-            dataAll.Add(member_call.member(data));
-
-            // elementを処理するクラスを呼び出す
-            InputElement element_call = new InputElement();
-            // memberデータの整理
-            List<string> elememt_title;
-            List<List<string[]>> elememt_data;
-            (elememt_title,elememt_data)=(element_call.element(data));
-            dataAll.Add(elememt_title);
-            dataAll.Add(elememt_data);
+            dataAll.Add(member_call.Member(data));
 
             return dataAll;
         }

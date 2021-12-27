@@ -19,22 +19,22 @@ namespace PDF_Manager.Printing
 {
     internal class PrintExport
     {
-        public ArrayList export(PdfDoc mc,ArrayList dataset)
+        public ArrayList Export(PdfDoc mc,ArrayList dataset)
         {
             // nodeを処理するクラスを呼び出す
             InputNode node = new InputNode();
             // gfx登録
-            node.nodePDF(mc, (List<List<string[]>>)dataset[0]);
+            node.NodePDF(mc, (List<List<string[]>>)dataset[0]);
 
             // memberを処理するクラスを呼び出す
             InputMember member = new InputMember();
             // gfx登録
-            member.memberPDF(mc, (List<string[]>)dataset[1]);
+            member.MemberPDF(mc, (List<string[]>)dataset[3]);
 
             // elementを処理するクラスを呼び出す
             InputElement element = new InputElement();
             // gfx登録 (mc,element_tltle,element_data)
-            element.elementPDF(mc ,(List<string>)dataset[2],(List<List<string[]>>)dataset[3]);
+            element.ElementPDF(mc ,(List<string>)dataset[1],(List<List<string[]>>)dataset[2]);
 
 
             return dataset;

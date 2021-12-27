@@ -19,12 +19,9 @@ namespace PDF_Manager.Printing
 {
     internal class InputMember
     {
-        private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
-        private int bottomCell = 73;
 
-
-        public List<string[]> member(Dictionary<string, object> value_)
+        public List<string[]> Member(Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
@@ -35,8 +32,6 @@ namespace PDF_Manager.Printing
 
             // 全部の行数
             var row = target.Count;
-
-            var page = 0;
 
             for (int i = 0; i < row; i++)
             {
@@ -50,7 +45,7 @@ namespace PDF_Manager.Printing
                 // jobjectに変換
                 targetValue = Elem.ToObject<Dictionary<string, double>>();
 
-                double len = this.getMemberLength(index, targetValue, value); // 部材長さ
+                double len = this.GetMemberLength(index, targetValue, value); // 部材長さ
                                                                               //string name = this.getElementName(targetValue["e"]); // 材料名称
 
                 string[] line = new String[7];
@@ -66,7 +61,7 @@ namespace PDF_Manager.Printing
             return member_data;
         }
 
-        public double getMemberLength(string memberNo, Dictionary<string, double> target, Dictionary<string, object> value)
+        public double GetMemberLength(string memberNo, Dictionary<string, double> target, Dictionary<string, object> value)
         {
             string ni = target["ni"].ToString();
             string nj = target["nj"].ToString();
@@ -76,8 +71,8 @@ namespace PDF_Manager.Printing
             }
 
             InputNode node = new InputNode();
-            double[] iPos = node.getNodePos(ni, value);
-            double[] jPos = node.getNodePos(nj, value);
+            double[] iPos = node.GetNodePos(ni, value);
+            double[] jPos = node.GetNodePos(nj, value);
             if (iPos == null || jPos == null)
             {
                 return 0;
@@ -94,27 +89,42 @@ namespace PDF_Manager.Printing
             return result;
         }
 
-        public void memberPDF(PdfDoc mc, List<string[]> memberData)
+        public void MemberPDF(PdfDoc mc, List<string[]> memberData)
         {
+            int bottomCell = mc.bottomCell;
+            int single_Yrow = mc.single_Yrow;
             int currentXposition_values = 40;
-            int currentYposition_values = 10;
-            int count = memberData.Count + (memberData.Count / bottomCell) * 2 + 2;
-            bool judge = mc.dataCountKeep(count);
-            if (judge == true) mc.NewPage();
+
+            // 全行数の取得
+            int count = memberData.Count + (memberData.Count / bottomCell) * 2 + 4;
+            // 改ページするかの判定
+            bool judge = mc.DataCountKeep(count);
+            // trueなら改ページ，そうでないなら2行空きで挿入
+            if (judge == true)
+            {
+                mc.NewPage();
+            }else
+            {
+                mc.CurrentPosHeader.Y += single_Yrow * 2;
+                mc.CurrentPosBody.Y += single_Yrow * 2;
+            };
+
             mc.gfx.DrawString("部材データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-            mc.CurrentPosHeader.Y += 10;
-            mc.CurrentPosBody.Y += 20;
+
+            // 初期位置の設定
+            mc.CurrentPosHeader.Y += single_Yrow * 2;
+            mc.CurrentPosBody.Y += single_Yrow * 4;
 
             for (int i = 0; i < memberData.Count; i++)
             {
-                if (i != 0 && i % (bottomCell - 1) == 0)
+                if (i != 0 && i % bottomCell == 0)
                 {
                     mc.NewPage();
-                    mc.CurrentPosHeader.Y += 15;
-                    mc.CurrentPosBody.Y += 30;
+                    mc.CurrentPosHeader.Y += single_Yrow * 2;
+                    mc.CurrentPosBody.Y += single_Yrow * 4;
                 }
 
-                if (i == 0 || (i != 0 && i % (bottomCell - 1) == 0))
+                if (i == 0 || (i != 0 && i % bottomCell == 0))
                 {
                     mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
                     mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
@@ -148,9 +158,11 @@ namespace PDF_Manager.Printing
                 //mc.gfx.DrawString(memberData[i][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
 
                 mc.CurrentPosBody.X = mc.x;
-                mc.CurrentPosBody.Y += currentYposition_values;
-
+                mc.CurrentPosBody.Y += single_Yrow;
             }
+           mc.CurrentPosHeader.Y = mc.CurrentPosBody.Y + single_Yrow*2;
+           mc.CurrentPosBody.Y = mc.CurrentPosHeader.Y + single_Yrow * 2;
+           mc.DataCountKeep(mc.CurrentPosHeader.Y);
         }
     }
 }
