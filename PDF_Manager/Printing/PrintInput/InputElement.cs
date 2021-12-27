@@ -95,117 +95,117 @@ namespace PDF_Manager.Printing
                 mc.NewPage();
             }
 
-            mc.gfx.DrawString("材料データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-            mc.CurrentPosHeader.Y += single_Yrow*2;
-            mc.CurrentPosBody.Y += single_Yrow*7;
-            count = 2;
+            //mc.gfx.DrawString("材料データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
+            //mc.CurrentPosHeader.Y += single_Yrow*2;
+            //mc.CurrentPosBody.Y += single_Yrow*7;
+            //count = 2;
 
-            for (int i = 0; i < elementTitle.Count; i++)
-            {
-                mc.gfx.DrawString(elementTitle[i], mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.Y += single_Yrow*2;
-                mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                mc.gfx.DrawString("A", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                mc.gfx.DrawString("E", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                mc.gfx.DrawString("G", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                mc.gfx.DrawString("ESP", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                mc.gfx.DrawString("断面二次モーメント", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
-                mc.gfx.DrawString("ねじり合成", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x;
-                mc.CurrentPosHeader.Y += single_Yrow;
-                mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                mc.gfx.DrawString("(m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                mc.gfx.DrawString("y軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
-                mc.gfx.DrawString("z軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
-                mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                mc.CurrentPosHeader.X = mc.x;
-                count+=5;
+            //for (int i = 0; i < elementTitle.Count; i++)
+            //{
+            //    mc.gfx.DrawString(elementTitle[i], mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.Y += single_Yrow*2;
+            //    mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
+            //    mc.gfx.DrawString("A", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
+            //    mc.gfx.DrawString("E", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
+            //    mc.gfx.DrawString("G", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+            //    mc.gfx.DrawString("ESP", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
+            //    mc.gfx.DrawString("断面二次モーメント", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
+            //    mc.gfx.DrawString("ねじり合成", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x;
+            //    mc.CurrentPosHeader.Y += single_Yrow;
+            //    mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
+            //    mc.gfx.DrawString("(m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
+            //    mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
+            //    mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+            //    mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
+            //    mc.gfx.DrawString("y軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
+            //    mc.gfx.DrawString("z軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
+            //    mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //    mc.CurrentPosHeader.X = mc.x;
+            //    count+=5;
 
-                for (int j = 0; j < elementData[i].Count; j++)
-                {
-                    if (mc.CurrentPosBody.Y> bottomCell* mc.single_Yrow || (elementData[i].Count+3) * mc.single_Yrow > (bottomCell * mc.single_Yrow - mc.CurrentPosBody.Y))
-                    {
-                        count = 0;
-                        mc.NewPage();
-                        mc.CurrentPosHeader.Y += single_Yrow*2;
-                        mc.CurrentPosBody.Y += single_Yrow*7;
-                        mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                        mc.gfx.DrawString("A", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                        mc.gfx.DrawString("E", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                        mc.gfx.DrawString("G", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                        mc.gfx.DrawString("ESP", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                        mc.gfx.DrawString("断面二次モーメント", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
-                        mc.gfx.DrawString("ねじり合成", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x;
-                        mc.CurrentPosHeader.Y += single_Yrow;
-                        mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                        mc.gfx.DrawString("(m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                        mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                        mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                        mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                        mc.gfx.DrawString("y軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
-                        mc.gfx.DrawString("z軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
-                        mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x;
-                        count+=5;
-                    }
+            //    for (int j = 0; j < elementData[i].Count; j++)
+            //    {
+            //        if (mc.CurrentPosBody.Y> bottomCell* mc.single_Yrow || (elementData[i].Count+3) * mc.single_Yrow > (bottomCell * mc.single_Yrow - mc.CurrentPosBody.Y))
+            //        {
+            //            count = 0;
+            //            mc.NewPage();
+            //            mc.CurrentPosHeader.Y += single_Yrow*2;
+            //            mc.CurrentPosBody.Y += single_Yrow*7;
+            //            mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
+            //            mc.gfx.DrawString("A", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
+            //            mc.gfx.DrawString("E", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
+            //            mc.gfx.DrawString("G", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+            //            mc.gfx.DrawString("ESP", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
+            //            mc.gfx.DrawString("断面二次モーメント", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
+            //            mc.gfx.DrawString("ねじり合成", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x;
+            //            mc.CurrentPosHeader.Y += single_Yrow;
+            //            mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
+            //            mc.gfx.DrawString("(m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
+            //            mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
+            //            mc.gfx.DrawString("(kN/m2)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+            //            mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
+            //            mc.gfx.DrawString("y軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
+            //            mc.gfx.DrawString("z軸周り", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
+            //            mc.gfx.DrawString("", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+            //            mc.CurrentPosHeader.X = mc.x;
+            //            count+=5;
+            //        }
 
-                    mc.gfx.DrawString(elementData[i][j][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
-                    mc.gfx.DrawString(elementData[i][j][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += single_Yrow;
+            //        mc.gfx.DrawString(elementData[i][j][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
+            //        mc.gfx.DrawString(elementData[i][j][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x;
+            //        mc.CurrentPosBody.Y += single_Yrow;
 
-                    mc.gfx.DrawString(elementData[i][j][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
-                    mc.gfx.DrawString(elementData[i][j][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
-                    mc.gfx.DrawString(elementData[i][j][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
-                    mc.gfx.DrawString(elementData[i][j][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
-                    mc.gfx.DrawString(elementData[i][j][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
-                    mc.gfx.DrawString(elementData[i][j][7], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
-                    mc.gfx.DrawString(elementData[i][j][8], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
-                    mc.gfx.DrawString(elementData[i][j][9], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.gfx.DrawString(elementData[i][j][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
+            //        mc.gfx.DrawString(elementData[i][j][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
+            //        mc.gfx.DrawString(elementData[i][j][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
+            //        mc.gfx.DrawString(elementData[i][j][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
+            //        mc.gfx.DrawString(elementData[i][j][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
+            //        mc.gfx.DrawString(elementData[i][j][7], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
+            //        mc.gfx.DrawString(elementData[i][j][8], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            //        mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
+            //        mc.gfx.DrawString(elementData[i][j][9], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
                     
-                    mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += single_Yrow;
-                }
-            }
-            mc.DataCountKeep(count);
+            //        mc.CurrentPosBody.X = mc.x;
+            //        mc.CurrentPosBody.Y += single_Yrow;
+            //    }
+            //}
+            //mc.DataCountKeep(count);
         }
 
 

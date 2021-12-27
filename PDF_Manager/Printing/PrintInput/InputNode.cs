@@ -22,7 +22,7 @@ namespace PDF_Manager.Printing
         private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
 
-        public List<List<string[]>> Node(PdfDoc mc,Dictionary<string, object> value_)
+        public List<List<string[]>> Node(PdfDoc mc, Dictionary<string, object> value_)
         {
             int bottomCell = mc.bottomCell * 2;
 
@@ -108,7 +108,7 @@ namespace PDF_Manager.Printing
             return node_data;
         }
 
-        public double[] GetNodePos(string nodeNo,Dictionary<string, object> value)
+        public double[] GetNodePos(string nodeNo, Dictionary<string, object> value)
         {
             var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
 
@@ -117,12 +117,13 @@ namespace PDF_Manager.Printing
                 return null;
             }
 
-            if (nodeList.ContainsValue(nodeNo)) {
+            if (nodeList.ContainsValue(nodeNo))
+            {
                 return null;
             }
 
             var targetValue = JObject.FromObject(nodeList.ElementAt(Int32.Parse(nodeNo)).Value).ToObject<Dictionary<string, double>>();
-            
+
             double[] node = new double[3];
             node[0] = targetValue["x"];
             node[1] = targetValue["y"];
@@ -133,75 +134,37 @@ namespace PDF_Manager.Printing
 
         public void NodePDF(PdfDoc mc, List<List<string[]>> nodeData)
         {
-            int bottomCell = mc.bottomCell*2;
+            int bottomCell = mc.bottomCell * 2;
             int single_Yrow = mc.single_Yrow;
-            int currentXposition_values = 40;
+            mc.currentXposition_values = 40;
             //int count = 2;
-            mc.gfx.DrawString("格点データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-            // 格点データ内部の初期位置の設定
-            mc.CurrentPosHeader.Y += single_Yrow*2;
-            mc.CurrentPosBody.Y += single_Yrow*5;
+            mc.PrintContent(0, "格点データ");　//タイトルの印刷
+            mc.CurrentRow(2);
+            // ヘッダー
+            string[] header_content = { "格点", "格点", "id", "x", "y", "z", "id", "x", "y", "z" };
+            // ヘッダーのx方向の余白
+            int[] header_Xspacing = { 0, 160, 0, 40, 80, 120, 160, 200, 240, 280 };
+            // ヘッダーのy方向の余白
+            int[] header_Yspacing = { 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };  // 行を変化させるところ：1　そうでない:0
+            
+            mc.Header(header_content, header_Xspacing, header_Yspacing);
+
+            // ボディーのx方向の余白
+            int[] body_Xspacing = { 0, 40, 80, 120, 160, 200, 240, 280 };
 
             for (int i = 0; i < nodeData.Count; i++)
             {
                 for (int j = 0; j < nodeData[i].Count; j++)
                 {
-                    if (j != 0 && j % ((bottomCell / 2)-1)  == 0)
+                    for (int k = 0; k < nodeData[i][j].Length; k++)
                     {
-                        // 2段でもページをまたぐときに改ページする
-                        mc.NewPage();
-                        mc.CurrentPosHeader.Y += single_Yrow * 2;
-                        mc.CurrentPosBody.Y += single_Yrow*5;
-                        //count = 0;
+                        mc.CurrentColumn(body_Xspacing[k]);　//x方向移動
+                        mc.PrintContent(1, nodeData[i][j][k]);　// print
                     }
-
-                    if (j == 0 || (j != 0 && j % ((bottomCell / 2) - 1) == 0))
-                    {
-                        mc.gfx.DrawString("格点", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                        mc.gfx.DrawString("格点", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x;
-                        mc.CurrentPosHeader.Y += single_Yrow;
-                        mc.gfx.DrawString("id", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                        mc.gfx.DrawString("x", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                        mc.gfx.DrawString("y", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                        mc.gfx.DrawString("z", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                        mc.gfx.DrawString("id", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                        mc.gfx.DrawString("x", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
-                        mc.gfx.DrawString("y", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
-                        mc.gfx.DrawString("z", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x;
-                        //count+=3;
-                    }
-
-                    mc.gfx.DrawString(nodeData[i][j][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
-                    mc.gfx.DrawString(nodeData[i][j][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
-                    mc.gfx.DrawString(nodeData[i][j][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
-                    mc.gfx.DrawString(nodeData[i][j][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
-                    mc.gfx.DrawString(nodeData[i][j][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
-                    mc.gfx.DrawString(nodeData[i][j][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
-                    mc.gfx.DrawString(nodeData[i][j][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
-                    mc.gfx.DrawString(nodeData[i][j][7], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += single_Yrow;
-                    //count++;
+                    mc.CurrentRow(1); // y方向移動
                 }
             }
-            mc.DataCountKeep(mc.CurrentPosBody.Y);
+            mc.DataCountKeep(mc.CurrentPos.Y); // 最後のページの高さを登録
         }
     }
 }

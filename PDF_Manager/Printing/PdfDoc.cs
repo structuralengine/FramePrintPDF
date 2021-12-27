@@ -17,8 +17,7 @@ namespace PDF_Manager.Printing
     {
         public PdfDocument document;
         public XGraphics gfx;
-        public XPoint CurrentPosHeader; // 現在の座標
-        public XPoint CurrentPosBody; // 現在の座標
+        public XPoint CurrentPos; // 現在の座標
         public XPoint Margine; // マージン
         public XFont font_mic;
         public XFont font_got;
@@ -26,8 +25,14 @@ namespace PDF_Manager.Printing
         public int y;
         public bool judge = false;　// 項目別・改ページするかの判定
         public int bottomCell = 69;　// 1ページに入る行数
-        public double dataCount = 0;   //  classをまたいで行数をカウントする
+        public double dataCount = 0; //  classをまたいで行数をカウントする
         public int single_Yrow = 10;  //　1行あたりの高さ
+        public string[] current_header;
+        public int[] currentHeader_Xspacing;
+        public int[] currentBody_Xspacing;
+        public int[] currentHeader_Yspacing;
+        public int currentXposition_values = 0;
+
 
         public PdfDoc()
         {
@@ -36,7 +41,7 @@ namespace PDF_Manager.Printing
 
             // フォントリゾルバーのグローバル登録
             var FontResolver = GlobalFontSettings.FontResolver.GetType();
-            if(FontResolver.Name != "JapaneseFontResolver")
+            if (FontResolver.Name != "JapaneseFontResolver")
                 GlobalFontSettings.FontResolver = new JapaneseFontResolver();
 
             /// マージンを設定する
@@ -55,6 +60,8 @@ namespace PDF_Manager.Printing
             // フォントの設定
             font_mic = new XFont("MS Mincho", 10, XFontStyle.Regular);
             font_got = new XFont("MS Gothic", 10, XFontStyle.Regular);
+
+            dataCount = Margine.Y;
         }
 
         /// <summary>
@@ -71,10 +78,7 @@ namespace PDF_Manager.Printing
             gfx = XGraphics.FromPdfPage(page);
 
             // 初期位置を設定する
-            CurrentPosHeader = new XPoint(Margine.X, Margine.Y);
-
-            CurrentPosBody = new XPoint(Margine.X, Margine.Y);
-
+            CurrentPos = new XPoint(Margine.X, Margine.Y);
         }
 
         /// <summary>
@@ -107,16 +111,66 @@ namespace PDF_Manager.Printing
             document.Save("D:\\work\\sasaco\\PDF_generate\\bin\\Debug\\netcoreapp3.1\\work\\Test.pdf");
 
         }
-        
+
+        // PDFを記述する
+        public void PrintContent(int dataHandle, string data)
+        {
+            if (dataHandle == 0)
+            {
+                gfx.DrawString(data, font_got, XBrushes.Black, CurrentPos);
+            }
+            else if(dataHandle == 1)
+            {
+                gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos);
+            }
+        }
+
+        // 行数の管理
+        public void CurrentRow(int row)
+        {
+            CurrentPos.Y += single_Yrow * row;
+
+            if (CurrentPos.Y > single_Yrow * bottomCell)
+            {
+                NewPage();
+                CurrentPos.Y += single_Yrow * 2;
+                Header(current_header, currentHeader_Xspacing, currentHeader_Yspacing);
+            }
+        }
+
+        //　列数の管理
+        public void CurrentColumn(int column)
+        {
+            CurrentPos.X = x + column;
+        }
+
+        //　ヘッダー関係
+        public void Header(string[] header_content, int[] header_Xspacing, int[] header_Yspacing)
+        {
+            current_header = header_content;
+            currentHeader_Xspacing = header_Xspacing;
+            currentHeader_Yspacing = header_Yspacing;
+            for (int i = 0; i < current_header.Length; i++)
+            {
+                CurrentColumn(currentHeader_Xspacing[i]);
+                CurrentRow(currentHeader_Yspacing[i]);
+                //CurrentPos.Y += single_Yrow * currentHeader_Yspacing[i];
+                PrintContent(1, current_header[i]);
+                //gfx.DrawString(, font_mic, XBrushes.Black, CurrentPos);
+            }
+            //CurrentPos.X = x;
+            CurrentPos.Y += single_Yrow*2;
+        }
+
 
         //　classをまたいで，改ページするかの判定
         // 次の項目がまたがず入りきるなら同一ページ，そうでないなら改ページ
         public bool DataCountKeep(double value)
         {
-            if ((value + dataCount) > Margine.Y + bottomCell*single_Yrow)
+            if ((value + dataCount) > Margine.Y + bottomCell * single_Yrow)
             {
                 judge = true;
-                dataCount = value % bottomCell;
+                dataCount = Margine.Y + value % (Margine.Y + bottomCell * single_Yrow);
             }
             else
             {
@@ -124,8 +178,9 @@ namespace PDF_Manager.Printing
                 dataCount += value;
             }
             return judge;
-
         }
+
+
     }
 
     // 日本語フォントのためのフォントリゾルバー

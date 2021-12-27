@@ -100,69 +100,69 @@ namespace PDF_Manager.Printing
             // 改ページするかの判定
             bool judge = mc.DataCountKeep(count);
             // trueなら改ページ，そうでないなら2行空きで挿入
-            if (judge == true)
-            {
-                mc.NewPage();
-            }else
-            {
-                mc.CurrentPosHeader.Y += single_Yrow * 2;
-                mc.CurrentPosBody.Y += single_Yrow * 2;
-            };
+           // if (judge == true)
+           // {
+           //     mc.NewPage();
+           // }else
+           // {
+           //     mc.CurrentPosHeader.Y += single_Yrow * 2;
+           //     mc.CurrentPosBody.Y += single_Yrow * 2;
+           // };
 
-            mc.gfx.DrawString("部材データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
+           // mc.gfx.DrawString("部材データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
 
-            // 初期位置の設定
-            mc.CurrentPosHeader.Y += single_Yrow * 2;
-            mc.CurrentPosBody.Y += single_Yrow * 4;
+           // // 初期位置の設定
+           // mc.CurrentPosHeader.Y += single_Yrow * 2;
+           // mc.CurrentPosBody.Y += single_Yrow * 4;
 
-            for (int i = 0; i < memberData.Count; i++)
-            {
-                if (i != 0 && i % bottomCell == 0)
-                {
-                    mc.NewPage();
-                    mc.CurrentPosHeader.Y += single_Yrow * 2;
-                    mc.CurrentPosBody.Y += single_Yrow * 4;
-                }
+           // for (int i = 0; i < memberData.Count; i++)
+           // {
+           //     if (i != 0 && i % bottomCell == 0)
+           //     {
+           //         mc.NewPage();
+           //         mc.CurrentPosHeader.Y += single_Yrow * 2;
+           //         mc.CurrentPosBody.Y += single_Yrow * 4;
+           //     }
 
-                if (i == 0 || (i != 0 && i % bottomCell == 0))
-                {
-                    mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                    mc.gfx.DrawString("I-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                    mc.gfx.DrawString("J-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                    mc.gfx.DrawString("L(m)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                    mc.gfx.DrawString("材料番号", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                    mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                    mc.gfx.DrawString("コードアングル", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                    //mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
-                    //mc.gfx.DrawString("材料名称", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //     if (i == 0 || (i != 0 && i % bottomCell == 0))
+           //     {
+           //         mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
+           //         mc.gfx.DrawString("I-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
+           //         mc.gfx.DrawString("J-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
+           //         mc.gfx.DrawString("L(m)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+           //         mc.gfx.DrawString("材料番号", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //         mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
+           //         mc.gfx.DrawString("コードアングル", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+           //         //mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
+           //         //mc.gfx.DrawString("材料名称", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
 
-                    mc.CurrentPosHeader.X = mc.x;
-                }
+           //         mc.CurrentPosHeader.X = mc.x;
+           //     }
 
-                mc.gfx.DrawString(memberData[i][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
-                mc.gfx.DrawString(memberData[i][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
-                mc.gfx.DrawString(memberData[i][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
-                mc.gfx.DrawString(memberData[i][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
-                mc.gfx.DrawString(memberData[i][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
-                mc.gfx.DrawString(memberData[i][5] == "0" ? "" : memberData[i][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                //mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
-                //mc.gfx.DrawString(memberData[i][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     mc.gfx.DrawString(memberData[i][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
+           //     mc.gfx.DrawString(memberData[i][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
+           //     mc.gfx.DrawString(memberData[i][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
+           //     mc.gfx.DrawString(memberData[i][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
+           //     mc.gfx.DrawString(memberData[i][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
+           //     mc.gfx.DrawString(memberData[i][5] == "0" ? "" : memberData[i][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+           //     //mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
+           //     //mc.gfx.DrawString(memberData[i][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
 
-                mc.CurrentPosBody.X = mc.x;
-                mc.CurrentPosBody.Y += single_Yrow;
-            }
-           mc.CurrentPosHeader.Y = mc.CurrentPosBody.Y + single_Yrow*2;
-           mc.CurrentPosBody.Y = mc.CurrentPosHeader.Y + single_Yrow * 2;
-           mc.DataCountKeep(mc.CurrentPosHeader.Y);
+           //     mc.CurrentPosBody.X = mc.x;
+           //     mc.CurrentPosBody.Y += single_Yrow;
+           // }
+           //mc.CurrentPosHeader.Y = mc.CurrentPosBody.Y + single_Yrow*2;
+           //mc.CurrentPosBody.Y = mc.CurrentPosHeader.Y + single_Yrow * 2;
+           //mc.DataCountKeep(mc.CurrentPosHeader.Y);
         }
     }
 }
