@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Globalization;
 using System.Threading.Tasks;
 
 namespace PDF_Manager.Printing
@@ -32,6 +33,8 @@ namespace PDF_Manager.Printing
         public int[,] currentHeader_Xspacing;
         public int[,] currentBody_Xspacing;
         public int[,] currentHeader_Yspacing;
+        CultureInfo ci = new CultureInfo("en-us");
+
 
         public PdfDoc()
         {
@@ -59,7 +62,7 @@ namespace PDF_Manager.Printing
             // フォントの設定
             font_mic = new XFont("MS Mincho", 10, XFontStyle.Regular);
             font_got = new XFont("MS Gothic", 10, XFontStyle.Regular);
-
+            
             dataCount = Margine.Y;
         }
 
@@ -112,15 +115,27 @@ namespace PDF_Manager.Printing
         }
 
         // PDFを記述する
-        public void PrintContent(string data, int dataHandle = 1)
+        // dataHandle フォントの種類変更と位置変更
+        // 0:左詰め　ゴシック
+        // 1:左詰め　明朝
+        // 2:真ん中　明朝
+        // 3:右詰め　明朝
+        public void PrintContent(string data, int dataHandle = 3)
         {
             if (dataHandle == 0)
             {
-                gfx.DrawString(data, font_got, XBrushes.Black, CurrentPos);
+                gfx.DrawString(data, font_got, XBrushes.Black, CurrentPos, XStringFormats.BottomLeft);
             }
             else if (dataHandle == 1)
             {
-                gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos);
+                gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos, XStringFormats.BottomLeft);
+            }
+            else if (dataHandle == 2)
+            {
+                gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos, XStringFormats.BottomCenter);
+            }else if(dataHandle == 3)
+            {
+                gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos, XStringFormats.BottomRight);
             }
         }
 
@@ -153,7 +168,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < current_header.GetLength(1); j++)
                 {
                     CurrentColumn(currentHeader_Xspacing[i, j]);
-                    PrintContent(current_header[i, j]);
+                    PrintContent(current_header[i, j],2);
                 }
                 CurrentRow(1);
             }
@@ -212,11 +227,12 @@ namespace PDF_Manager.Printing
                 double newDataDouble = double.Parse(data.ToString());
                 if (style == "none")
                 {
-                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString();
+                    var digit = "F" + round.ToString();
+                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(digit);
                 }
                 else
                 {
-                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(style);
+                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString("E02",CultureInfo.CreateSpecificCulture("en-US"));
                 }
             }
             return newDataString;

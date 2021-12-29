@@ -122,7 +122,7 @@ namespace PDF_Manager.Printing
                 return null;
             }
 
-            var targetValue = JObject.FromObject(nodeList.ElementAt(Int32.Parse(nodeNo)).Value).ToObject<Dictionary<string, double>>();
+            var targetValue = JObject.FromObject(nodeList[nodeNo]).ToObject<Dictionary<string, double>>();
 
             double[] node = new double[3];
             node[0] = targetValue["x"];
@@ -140,18 +140,18 @@ namespace PDF_Manager.Printing
             // ヘッダー
             string[,] header_content = {
                 { "格点", "", "", "", "格点", "", "", "", },
-                { "id", "x", "y", "z", "id", "x", "y", "z" }
+                { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
             };
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                { 0, 40, 80, 120, 160, 200, 240, 280 },
-                { 0, 40, 80, 120, 160, 200, 240, 280 }
+                { 10, 60, 120, 180, 250, 300, 360, 420 },
+                { 10, 60, 120, 180, 250, 300, 360, 420 },
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240, 280 } };
+            int[,] body_Xspacing = { { 17, 77, 137, 197, 257, 317, 377, 437 } };
 
             for (int i = 0; i < nodeData.Count; i++)
             {
@@ -160,7 +160,7 @@ namespace PDF_Manager.Printing
                     for (int k = 0; k < nodeData[i][j].Length; k++)
                     {
                         mc.CurrentColumn(body_Xspacing[0, k]);　//x方向移動
-                        mc.PrintContent(nodeData[i][j][k]);　// print
+                        mc.PrintContent(nodeData[i][j][k], 3);　// print
                     }
                     mc.CurrentRow(1); // y方向移動
                 }
