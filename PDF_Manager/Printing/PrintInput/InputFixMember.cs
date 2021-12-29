@@ -49,7 +49,7 @@ namespace PDF_Manager.Printing
                    
                     string[] line = new String[5];
 
-                    line[0] = mc.TypeChange(item["m"],true);
+                    line[0] = mc.TypeChange(item["m"]);
                     line[1] = mc.TypeChange(item["tx"]);
                     line[2] = mc.TypeChange(item["ty"]);
                     line[3] = mc.TypeChange(item["tz"]);

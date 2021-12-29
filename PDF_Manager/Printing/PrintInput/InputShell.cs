@@ -37,14 +37,14 @@ namespace PDF_Manager.Printing
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
                 string[] line = new String[5];
-                line[0] = mc.TypeChange(item["e"], true);
+                line[0] = mc.TypeChange(item["e"]);
                 
                 int count = 0;
                 var itemPoints = item["nodes"];
 
                 for (int j = 0; j < itemPoints.Count(); j++)
                 {
-                    line[count + 1] = mc.TypeChange(itemPoints[count], true);
+                    line[count + 1] = mc.TypeChange(itemPoints[count]);
                     count++;
                     if (count == 4)
                     {

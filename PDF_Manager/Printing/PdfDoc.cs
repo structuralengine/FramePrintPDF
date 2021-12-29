@@ -191,14 +191,22 @@ namespace PDF_Manager.Printing
             }
         }
 
-        // データの精査
-        // (data,stringのままか(true)，四捨五入等の処理を行いたいか(false),四捨五入する時の桁数,指数形式の表示など)
-        public string TypeChange(JToken data, bool jud = false, int round = 0, string style = "none")
+        // データの精査と変換
+        // (data,四捨五入する時の桁数,指数形式の表示など)
+        public string TypeChange(JToken data,int round = 0, string style = "none")
         {
             string newDataString = "";
 
+            // すぐにstringにする
+            if (data.Type == JTokenType.String)
+            {
+                if (data.Type == JTokenType.Null) data = "";
+                newDataString = data.ToString();
+
+            }
+
             // 四捨五入等の処理を行う
-            if (jud == false)
+            else
             {
                 if (data.Type == JTokenType.Null) data = double.NaN;
                 double newDataDouble = double.Parse(data.ToString());
@@ -210,13 +218,6 @@ namespace PDF_Manager.Printing
                 {
                     newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(style);
                 }
-            }
-
-            // すぐにstringにする
-            else if (jud == true)
-            {
-                if (data.Type == JTokenType.Null) data = "";
-                newDataString = data.ToString();
             }
             return newDataString;
         }

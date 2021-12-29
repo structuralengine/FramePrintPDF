@@ -56,15 +56,15 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = mc.TypeChange(targetValue_l["x"],false,3);
-                        line[2] = mc.TypeChange(targetValue_l["y"], false, 3);
-                        line[3] = mc.TypeChange(targetValue_l["z"], false, 3);
+                        line[1] = mc.TypeChange(targetValue_l["x"], 3);
+                        line[2] = mc.TypeChange(targetValue_l["y"], 3);
+                        line[3] = mc.TypeChange(targetValue_l["z"], 3);
 
                         var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
                         line[4] = target.ElementAt(k).Key;
-                        line[5] = mc.TypeChange(targetValue_r["x"], false, 3);
-                        line[6] = mc.TypeChange(targetValue_r["y"], false, 3);
-                        line[7] = mc.TypeChange(targetValue_r["z"], false, 3);
+                        line[5] = mc.TypeChange(targetValue_r["x"], 3);
+                        line[6] = mc.TypeChange(targetValue_r["y"], 3);
+                        line[7] = mc.TypeChange(targetValue_r["z"], 3);
                         body.Add(line);
                     }
                     node_data.Add(body);
@@ -86,18 +86,18 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = mc.TypeChange(targetValue_l["x"], false, 3);
-                        line[2] = mc.TypeChange(targetValue_l["y"], false, 3);
-                        line[3] = mc.TypeChange(targetValue_l["z"], false, 3);
+                        line[1] = mc.TypeChange(targetValue_l["x"], 3);
+                        line[2] = mc.TypeChange(targetValue_l["y"], 3);
+                        line[3] = mc.TypeChange(targetValue_l["z"], 3);
 
                         if (target.ElementAt(k).Key != null)
                         {
                             //　各行のデータを取得する（右段)
                             var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
                             line[4] = target.ElementAt(k).Key;
-                            line[5] = mc.TypeChange(targetValue_r["x"], false, 3);
-                            line[6] = mc.TypeChange(targetValue_r["y"], false, 3);
-                            line[7] = mc.TypeChange(targetValue_r["z"], false, 3);
+                            line[5] = mc.TypeChange(targetValue_r["x"], 3);
+                            line[6] = mc.TypeChange(targetValue_r["y"], 3);
+                            line[7] = mc.TypeChange(targetValue_r["z"], 3);
                             body.Add(line);
                         }
                     }
@@ -135,19 +135,19 @@ namespace PDF_Manager.Printing
         public void NodePDF(PdfDoc mc, List<List<string[]>> nodeData)
         {
             //タイトルの印刷
-            mc.PrintContent("格点データ",0);　
+            mc.PrintContent("格点データ", 0);
             mc.CurrentRow(2);
             // ヘッダー
-            string[,] header_content = { 
-                { "格点", "", "", "", "格点", "", "", "", }, 
-                { "id", "x", "y", "z", "id", "x", "y", "z" } 
+            string[,] header_content = {
+                { "格点", "", "", "", "格点", "", "", "", },
+                { "id", "x", "y", "z", "id", "x", "y", "z" }
             };
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = { 
-                { 0, 40, 80, 120, 160, 200, 240, 280 }, 
+            int[,] header_Xspacing = {
+                { 0, 40, 80, 120, 160, 200, 240, 280 },
                 { 0, 40, 80, 120, 160, 200, 240, 280 }
             };
-                     
+
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
@@ -159,8 +159,8 @@ namespace PDF_Manager.Printing
                 {
                     for (int k = 0; k < nodeData[i][j].Length; k++)
                     {
-                        mc.CurrentColumn(body_Xspacing[0,k]);　//x方向移動
-                        mc.PrintContent( nodeData[i][j][k]);　// print
+                        mc.CurrentColumn(body_Xspacing[0, k]);　//x方向移動
+                        mc.PrintContent(nodeData[i][j][k]);　// print
                     }
                     mc.CurrentRow(1); // y方向移動
                 }

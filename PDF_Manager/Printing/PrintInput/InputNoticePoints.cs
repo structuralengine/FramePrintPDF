@@ -36,7 +36,7 @@ namespace PDF_Manager.Printing
             {
                 JToken item = target[i];
 
-                string m = mc.TypeChange(item["m"], true);
+                string m = mc.TypeChange(item["m"]);
 
                 double len = member.GetMemberLength(m, value); // 部材長さ
 
@@ -50,7 +50,7 @@ namespace PDF_Manager.Printing
 
                 for (int j = 0; j < item["Points"].Count(); j++)
                 {
-                    line[count + 2] = mc.TypeChange(itemPoints[count],true);
+                    line[count + 2] = mc.TypeChange(itemPoints[count]);
                     count++;
                     if (count == 10)
                     {

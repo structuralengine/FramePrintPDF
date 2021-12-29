@@ -56,7 +56,7 @@ namespace PDF_Manager.Printing
                 line[1] = mc.TypeChange(item["ni"]);
                 line[2] = mc.TypeChange(item["nj"]);
                 line[3] = (Math.Round(len, 3, MidpointRounding.AwayFromZero)).ToString();
-                line[4] = mc.TypeChange(item["e"], true);
+                line[4] = mc.TypeChange(item["e"]);
                 line[5] = mc.TypeChange(item["cg"]);
                 line[6] = name;
                 member_data.Add(line);

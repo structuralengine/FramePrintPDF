@@ -53,11 +53,11 @@ namespace PDF_Manager.Printing
                     string[] line2 = new String[8];
 
                     line[0] = Elem.ElementAt(j).Key.ToString();
-                    line[1] = mc.TypeChange(item["n"], true);
+                    line[1] = mc.TypeChange(item["n"]);
                     table1.Add(line);
 
                     line1[0] = Elem.ElementAt(j).Key.ToString();
-                    line1[1] = mc.TypeChange(item["n"], true);
+                    line1[1] = mc.TypeChange(item["n"]);
                     line1[2] = "";
                     line1[3] = "";
                     line1[4] = "";
@@ -67,13 +67,13 @@ namespace PDF_Manager.Printing
                     table2.Add(line1);
 
                     line2[0] = "";
-                    line2[1] = mc.TypeChange(item["A"], false, 4, "E");
-                    line2[2] = mc.TypeChange(item["E"], false, 2, "E");
-                    line2[3] = mc.TypeChange(item["G"], false, 2, "E"); ;
-                    line2[4] = mc.TypeChange(item["Xp"], false, 2, "E"); ;
-                    line2[5] = mc.TypeChange(item["Iy"], false, 6);
-                    line2[6] = mc.TypeChange(item["Iz"], false, 6);
-                    line2[7] = mc.TypeChange(item["J"], false, 6);
+                    line2[1] = mc.TypeChange(item["A"], 4, "E");
+                    line2[2] = mc.TypeChange(item["E"], 2, "E");
+                    line2[3] = mc.TypeChange(item["G"], 2, "E"); ;
+                    line2[4] = mc.TypeChange(item["Xp"], 2, "E"); ;
+                    line2[5] = mc.TypeChange(item["Iy"], 6);
+                    line2[6] = mc.TypeChange(item["Iz"], 6);
+                    line2[7] = mc.TypeChange(item["J"], 6);
                     table2.Add(line2);
                 }
                 element_data.Add(table1);
