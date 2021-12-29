@@ -19,47 +19,22 @@ namespace PDF_Manager.Printing
 {
     internal class PrintExport
     {
-        public ArrayList Export(PdfDoc mc,ArrayList dataset)
+        public ArrayList export(PdfDoc mc,ArrayList dataset)
         {
-            // node
+            // nodeを処理するクラスを呼び出す
             InputNode node = new InputNode();
             // gfx登録
-            node.NodePDF(mc, (List<List<string[]>>)dataset[0]);
+            node.nodePDF(mc, (List<List<string[]>>)dataset[0]);
 
-            // member
+            // memberを処理するクラスを呼び出す
             InputMember member = new InputMember();
             // gfx登録
-            member.MemberPDF(mc, (List<string[]>)dataset[3]);
+            member.memberPDF(mc, (List<string[]>)dataset[1]);
 
-            // element
+            // elementを処理するクラスを呼び出す
             InputElement element = new InputElement();
-            // gfx登録 (mc,tltle,data)
-            element.ElementPDF(mc ,(List<string>)dataset[1],(List<List<string[]>>)dataset[2]);
-
-            // fixnode
-            InputFixNode fixnode = new InputFixNode();
-            // gfx登録 (mc,tltle,data)
-            fixnode.FixNodePDF(mc, (List<string>)dataset[4], (List<List<string[]>>)dataset[5]);
-
-            // joint
-            InputJoint joint = new InputJoint();
-            // gfx登録 (mc,tltle,data)
-            joint.JointPDF(mc, (List<string>)dataset[6], (List<List<string[]>>)dataset[7]);
-
-            // noticepoints
-            InputNoticePoints noticepoints = new InputNoticePoints();
-            // gfx登録 (mc,tltle,data)
-            noticepoints.NoticePointsPDF(mc, (List<List<string[]>>)dataset[8]);
-
-            // fixmember
-            InputFixMember fixmember = new InputFixMember();
-            // gfx登録 (mc,tltle,data)
-            fixmember.FixMemberPDF(mc, (List<string>)dataset[9], (List<List<string[]>>)dataset[10]);
-
-            // shell
-            InputShell shell = new InputShell();
-            // gfx登録 (mc,tltle,data)
-            shell.ShellPDF(mc, (List<List<string[]>>)dataset[11]);
+            // gfx登録
+            element.elementPDF(mc ,(List<string>)dataset[2],(List<List<string[]>>)dataset[3]);
 
 
             return dataset;

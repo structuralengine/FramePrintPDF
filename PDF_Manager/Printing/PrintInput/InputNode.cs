@@ -21,11 +21,11 @@ namespace PDF_Manager.Printing
     {
         private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        private int bottomCell = 140;
 
-        public List<List<string[]>> Node(PdfDoc mc, Dictionary<string, object> value_)
+
+        public List<List<string[]>> node(Dictionary<string, object> value_)
         {
-            int bottomCell = mc.bottomCell * 2;
-
             value = value_;
             //nodeデータを取得する
             var target = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
@@ -56,15 +56,15 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = mc.TypeChange(targetValue_l["x"], 3);
-                        line[2] = mc.TypeChange(targetValue_l["y"], 3);
-                        line[3] = mc.TypeChange(targetValue_l["z"], 3);
+                        line[1] = (Math.Round(targetValue_l["x"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[2] = (Math.Round(targetValue_l["y"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[3] = (Math.Round(targetValue_l["z"], 3, MidpointRounding.AwayFromZero)).ToString();
 
                         var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
                         line[4] = target.ElementAt(k).Key;
-                        line[5] = mc.TypeChange(targetValue_r["x"], 3);
-                        line[6] = mc.TypeChange(targetValue_r["y"], 3);
-                        line[7] = mc.TypeChange(targetValue_r["z"], 3);
+                        line[5] = (Math.Round(targetValue_r["x"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[6] = (Math.Round(targetValue_r["y"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[7] = (Math.Round(targetValue_r["z"], 3, MidpointRounding.AwayFromZero)).ToString();
                         body.Add(line);
                     }
                     node_data.Add(body);
@@ -86,18 +86,18 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = mc.TypeChange(targetValue_l["x"], 3);
-                        line[2] = mc.TypeChange(targetValue_l["y"], 3);
-                        line[3] = mc.TypeChange(targetValue_l["z"], 3);
+                        line[1] = (Math.Round(targetValue_l["x"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[2] = (Math.Round(targetValue_l["y"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[3] = (Math.Round(targetValue_l["z"], 3, MidpointRounding.AwayFromZero)).ToString();
 
                         if (target.ElementAt(k).Key != null)
                         {
                             //　各行のデータを取得する（右段)
                             var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
                             line[4] = target.ElementAt(k).Key;
-                            line[5] = mc.TypeChange(targetValue_r["x"], 3);
-                            line[6] = mc.TypeChange(targetValue_r["y"], 3);
-                            line[7] = mc.TypeChange(targetValue_r["z"], 3);
+                            line[5] = (Math.Round(targetValue_r["x"], 3, MidpointRounding.AwayFromZero)).ToString();
+                            line[6] = (Math.Round(targetValue_r["y"], 3, MidpointRounding.AwayFromZero)).ToString();
+                            line[7] = (Math.Round(targetValue_r["z"], 3, MidpointRounding.AwayFromZero)).ToString();
                             body.Add(line);
                         }
                     }
@@ -108,7 +108,7 @@ namespace PDF_Manager.Printing
             return node_data;
         }
 
-        public double[] GetNodePos(string nodeNo, Dictionary<string, object> value)
+        public double[] getNodePos(string nodeNo,Dictionary<string, object> value)
         {
             var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
 
@@ -117,13 +117,12 @@ namespace PDF_Manager.Printing
                 return null;
             }
 
-            if (nodeList.ContainsValue(nodeNo))
-            {
+            if (nodeList.ContainsValue(nodeNo)) {
                 return null;
             }
 
             var targetValue = JObject.FromObject(nodeList.ElementAt(Int32.Parse(nodeNo)).Value).ToObject<Dictionary<string, double>>();
-
+            
             double[] node = new double[3];
             node[0] = targetValue["x"];
             node[1] = targetValue["y"];
@@ -132,39 +131,70 @@ namespace PDF_Manager.Printing
             return node;
         }
 
-        public void NodePDF(PdfDoc mc, List<List<string[]>> nodeData)
+        public void nodePDF(PdfDoc mc, List<List<string[]>> nodeData)
         {
-            //タイトルの印刷
-            mc.PrintContent("格点データ", 0);
-            mc.CurrentRow(2);
-            // ヘッダー
-            string[,] header_content = {
-                { "格点", "", "", "", "格点", "", "", "", },
-                { "id", "x", "y", "z", "id", "x", "y", "z" }
-            };
-            // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
-                { 0, 40, 80, 120, 160, 200, 240, 280 },
-                { 0, 40, 80, 120, 160, 200, 240, 280 }
-            };
-
-            mc.Header(header_content, header_Xspacing);
-
-            // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240, 280 } };
+            int currentXposition_values = 40;
+            int currentYposition_values = 10;
+            int count = 0;
+            mc.gfx.DrawString("格点データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
+            count += 2;
+            mc.CurrentPosHeader.Y += 15;
+            mc.CurrentPosBody.Y += 30;
 
             for (int i = 0; i < nodeData.Count; i++)
             {
                 for (int j = 0; j < nodeData[i].Count; j++)
                 {
-                    for (int k = 0; k < nodeData[i][j].Length; k++)
+                    if (j != 0 && j % ((bottomCell / 2)-1)  == 0)
                     {
-                        mc.CurrentColumn(body_Xspacing[0, k]);　//x方向移動
-                        mc.PrintContent(nodeData[i][j][k]);　// print
+                        mc.NewPage();
+                        mc.CurrentPosHeader.Y += 15;
+                        mc.CurrentPosBody.Y += 30;
+                        count = 0;
                     }
-                    mc.CurrentRow(1); // y方向移動
+
+                    if (j == 0 || (j != 0 && j % ((bottomCell / 2) - 1) == 0))
+                    {
+                        mc.gfx.DrawString("id", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
+                        mc.gfx.DrawString("x", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
+                        mc.gfx.DrawString("y", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
+                        mc.gfx.DrawString("z", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
+                        mc.gfx.DrawString("id", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
+                        mc.gfx.DrawString("x", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
+                        mc.gfx.DrawString("y", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 7);
+                        mc.gfx.DrawString("z", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
+                        mc.CurrentPosHeader.X = mc.x;
+                        count+=2;
+                    }
+
+                    mc.gfx.DrawString(nodeData[i][j][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
+                    mc.gfx.DrawString(nodeData[i][j][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
+                    mc.gfx.DrawString(nodeData[i][j][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
+                    mc.gfx.DrawString(nodeData[i][j][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
+                    mc.gfx.DrawString(nodeData[i][j][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
+                    mc.gfx.DrawString(nodeData[i][j][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
+                    mc.gfx.DrawString(nodeData[i][j][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 7);
+                    mc.gfx.DrawString(nodeData[i][j][7], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+                    mc.CurrentPosBody.X = mc.x;
+                    mc.CurrentPosBody.Y += currentYposition_values;
+                    count++;
                 }
             }
+            mc.dataCountKeep(count);
         }
     }
 }

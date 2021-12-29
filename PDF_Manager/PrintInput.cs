@@ -38,17 +38,17 @@ public class PrintInput
     /// <summary>
     /// インプットデータの印刷PDFを生成する
     /// </summary>
-    public void CreatePDF()
+    public void createPDF()
     {
         //　準備のためのclassの呼び出し
         var pri_ready = new PrintReady();
         //　jsonから取り出した生データを送る
-        ArrayList dataset = pri_ready.Ready(mc,value);
+        ArrayList dataset = pri_ready.ready(mc,value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, dataset);
+        exp.export(mc, dataset);
 
 
 
@@ -63,23 +63,23 @@ public class PrintInput
 
 
         // PDFファイルを生成する
-        mc.SavePDF();
+        mc.savePDF();
     }
 
-    public string GetPdfSource()
+    public string getPdfSource()
     {
         //　準備のためのclassの呼び出し
         var red = new PrintReady();
         //　jsonから取り出した生データを送る
-        ArrayList dataset = red.Ready(mc, value);
+        ArrayList dataset = red.ready(mc, value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, dataset);
+        exp.export(mc, dataset);
 
         // PDF を Byte型に変換
-        var b = mc.GetPDFBytes();
+        var b = mc.getPDFBytes();
 
         // Byte型配列をBase64文字列に変換
         string str = Convert.ToBase64String(b);
@@ -89,7 +89,7 @@ public class PrintInput
     }
 
     // nodeの印刷
-    public List<List<string[]>> Node()
+    public List<List<string[]>> node()
     {
         // nodeデータを取得する
         var target = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
@@ -174,7 +174,7 @@ public class PrintInput
         return node_data;
     }
 
-    public void Member()
+    public void member()
     {
         var d = (JObject)data["member"];
         var body = new List<List<string>>();
@@ -197,9 +197,9 @@ public class PrintInput
     }
 }
 
-public class Main
+public class main
 {
-    public Main(string jsonString)
+    public main(string jsonString)
     {
 
         System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
@@ -241,6 +241,7 @@ public class Main
         gfx = XGraphics.FromPdfPage(page);
         currentYposition_values = 53;
 
+        bool firstpage = true;
 
         for (int i = 0; i < users.Count; i++)
         {

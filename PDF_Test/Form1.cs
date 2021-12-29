@@ -31,15 +31,10 @@ namespace PDF_Test
                 // データの読み込み
                 var p = new PrintInput(line);
 
-                p.CreatePDF();
+                p.createPDF();
 
                 //var o = new main(line);
             }
-        }
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
         }
     }
 }

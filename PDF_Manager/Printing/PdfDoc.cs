@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-using PdfSharpCore;
+﻿using PdfSharpCore;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Fonts;
 using PdfSharpCore.Pdf;
@@ -18,20 +17,16 @@ namespace PDF_Manager.Printing
     {
         public PdfDocument document;
         public XGraphics gfx;
-        public XPoint CurrentPos; // 現在の座標
+        public XPoint CurrentPosHeader; // 現在の座標
+        public XPoint CurrentPosBody; // 現在の座標
         public XPoint Margine; // マージン
         public XFont font_mic;
         public XFont font_got;
         public int x;
         public int y;
-        public bool judge = false;　// 項目別・改ページするかの判定
-        public int bottomCell = 69;　// 1ページに入る行数
-        public double dataCount = 0; //  classをまたいで行数をカウントする
-        public int single_Yrow = 10;  //　1行あたりの高さ
-        public string[,] current_header;
-        public int[,] currentHeader_Xspacing;
-        public int[,] currentBody_Xspacing;
-        public int[,] currentHeader_Yspacing;
+        public bool judge = false;
+        public int Threshold = 73;
+        public int dataCount = 0;
 
         public PdfDoc()
         {
@@ -40,12 +35,12 @@ namespace PDF_Manager.Printing
 
             // フォントリゾルバーのグローバル登録
             var FontResolver = GlobalFontSettings.FontResolver.GetType();
-            if (FontResolver.Name != "JapaneseFontResolver")
+            if(FontResolver.Name != "JapaneseFontResolver")
                 GlobalFontSettings.FontResolver = new JapaneseFontResolver();
 
             /// マージンを設定する
-            x = 80;
-            y = 80;
+            x = 50;
+            y = 50;
 
             Margine = new XPoint(x, y);
 
@@ -59,8 +54,6 @@ namespace PDF_Manager.Printing
             // フォントの設定
             font_mic = new XFont("MS Mincho", 10, XFontStyle.Regular);
             font_got = new XFont("MS Gothic", 10, XFontStyle.Regular);
-
-            dataCount = Margine.Y;
         }
 
         /// <summary>
@@ -77,14 +70,17 @@ namespace PDF_Manager.Printing
             gfx = XGraphics.FromPdfPage(page);
 
             // 初期位置を設定する
-            CurrentPos = new XPoint(Margine.X, Margine.Y);
+            CurrentPosHeader = new XPoint(Margine.X, Margine.Y);
+
+            CurrentPosBody = new XPoint(Margine.X, Margine.Y);
+
         }
 
         /// <summary>
         /// PDF を Byte型に変換したものを返す
         /// </summary>
         /// <returns></returns>
-        public byte[] GetPDFBytes()
+        public byte[] getPDFBytes()
         {
             // Creates a new Memory stream
             MemoryStream stream = new MemoryStream();
@@ -103,123 +99,28 @@ namespace PDF_Manager.Printing
         /// PDF を保存する
         /// </summary>
         /// <param name="filename"></param>
-        public void SavePDF(string filename = "HelloWorld.pdf")
+        public void savePDF(string filename = "HelloWorld.pdf")
         {
             // PDF保存（カレントディレクトリ）
             //document.Save(filename);
             document.Save("D:\\work\\sasaco\\PDF_generate\\bin\\Debug\\netcoreapp3.1\\work\\Test.pdf");
 
         }
+        
 
-        // PDFを記述する
-        public void PrintContent(string data, int dataHandle = 1)
+        public bool dataCountKeep(int value)
         {
-            if (dataHandle == 0)
+            if (value > dataCount)
             {
-                gfx.DrawString(data, font_got, XBrushes.Black, CurrentPos);
-            }
-            else if (dataHandle == 1)
-            {
-                gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos);
-            }
-        }
-
-        // 行数の管理
-        public void CurrentRow(int row)
-        {
-            CurrentPos.Y += single_Yrow * row;
-
-            if (CurrentPos.Y > single_Yrow * bottomCell + Margine.Y)
-            {
-                NewPage();
-                CurrentPos.Y += single_Yrow * 2;
-                Header(current_header, currentHeader_Xspacing);
-            }
-        }
-
-        //　列数の管理
-        public void CurrentColumn(int column)
-        {
-            CurrentPos.X = x + column;
-        }
-
-        //　ヘッダー関係
-        public void Header(string[,] header_content, int[,] header_Xspacing)
-        {
-            current_header = header_content;
-            currentHeader_Xspacing = header_Xspacing;
-            for (int i = 0; i < current_header.GetLength(0); i++)
-            {
-                for (int j = 0; j < current_header.GetLength(1); j++)
-                {
-                    CurrentColumn(currentHeader_Xspacing[i, j]);
-                    PrintContent(current_header[i, j]);
-                }
-                CurrentRow(1);
-            }
-            CurrentPos.Y += single_Yrow;
-        }
-
-
-        //　classをまたいで，改ページするかの判定
-        // 次の項目がまたがず入りきるなら同一ページで2行空き，そうでないなら改ページ
-        public void DataCountKeep(double value)
-        {
-            if ((value + CurrentPos.Y) > Margine.Y + bottomCell * single_Yrow)
-            {
-                NewPage();
+                judge = true;
+                dataCount = value % Threshold;
             }
             else
             {
-                CurrentPos.X = x;
-                CurrentPos.Y += single_Yrow * 2;
+                dataCount += value;
             }
-        }
+            return judge;
 
-        //　タイプ別の改ページ判定
-        public void TypeCount(int index, double headerRow, double count, string title)
-        {
-            double typeCount = CurrentPos.Y + (headerRow + count) * single_Yrow;
-            if (typeCount > Margine.Y + bottomCell * single_Yrow)
-            {
-                NewPage();
-                CurrentRow(2);
-            }
-            else
-            {
-                if (index != 0) CurrentPos.Y += single_Yrow;
-            }
-        }
-
-        // データの精査と変換
-        // (data,四捨五入する時の桁数,指数形式の表示など)
-        public string TypeChange(JToken data,int round = 0, string style = "none")
-        {
-            string newDataString = "";
-
-            // すぐにstringにする
-            if (data.Type == JTokenType.String)
-            {
-                if (data.Type == JTokenType.Null) data = "";
-                newDataString = data.ToString();
-
-            }
-
-            // 四捨五入等の処理を行う
-            else
-            {
-                if (data.Type == JTokenType.Null) data = double.NaN;
-                double newDataDouble = double.Parse(data.ToString());
-                if (style == "none")
-                {
-                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString();
-                }
-                else
-                {
-                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(style);
-                }
-            }
-            return newDataString;
         }
     }
 
