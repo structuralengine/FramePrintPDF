@@ -43,12 +43,12 @@ public class PrintInput
         //　準備のためのclassの呼び出し
         var pri_ready = new PrintReady();
         //　jsonから取り出した生データを送る
-        ArrayList dataset = pri_ready.ready(mc,value);
+        ArrayList dataset = pri_ready.Ready(mc,value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.export(mc, dataset);
+        exp.Export(mc, dataset);
 
 
 
@@ -63,7 +63,7 @@ public class PrintInput
 
 
         // PDFファイルを生成する
-        mc.savePDF();
+        mc.SavePDF();
     }
 
     public string getPdfSource()
@@ -71,15 +71,15 @@ public class PrintInput
         //　準備のためのclassの呼び出し
         var red = new PrintReady();
         //　jsonから取り出した生データを送る
-        ArrayList dataset = red.ready(mc, value);
+        ArrayList dataset = red.Ready(mc, value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.export(mc, dataset);
+        exp.Export(mc, dataset);
 
         // PDF を Byte型に変換
-        var b = mc.getPDFBytes();
+        var b = mc.GetPDFBytes();
 
         // Byte型配列をBase64文字列に変換
         string str = Convert.ToBase64String(b);
