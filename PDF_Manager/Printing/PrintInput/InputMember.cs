@@ -19,16 +19,21 @@ namespace PDF_Manager.Printing
 {
     internal class InputMember
     {
-        private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
-        private int bottomCell = 73;
+        private JObject targetLen;
+        private JToken mem;
+        private InputElement element;
 
 
-        public List<string[]> member(Dictionary<string, object> value_)
+        public List<string[]> Member(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
+            //var target_ = JObject.FromObject(value["member"]).ToObject<List<string[]>>();
+            //targetLen = target_;
+
             var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
+            targetLen = JObject.FromObject(value["member"]);
 
             // 集まったデータはここに格納する
             List<string[]> member_data = new List<string[]>();
@@ -36,48 +41,43 @@ namespace PDF_Manager.Printing
             // 全部の行数
             var row = target.Count;
 
-            var page = 0;
-
             for (int i = 0; i < row; i++)
             {
                 string index = target.ElementAt(i).Key;
-                var targetValue = new Dictionary<string, double>();
 
-                // nullの判定
-                var Elem = JObject.FromObject(target.ElementAt(i).Value);
-                if (Elem["cg"].Type == JTokenType.Null) Elem["cg"] = 0;
+                var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                // jobjectに変換
-                targetValue = Elem.ToObject<Dictionary<string, double>>();
+                double len = this.GetMemberLength(index, value); // 部材長さ
 
-                double len = this.getMemberLength(index, targetValue, value); // 部材長さ
-                //string name = this.getElementName(targetValue["e"]); // 材料名称
-                   
+                string name = item["e"].Type == JTokenType.Null ? "" : element.GetElementName(item["e"].ToString());
+
                 string[] line = new String[7];
-                line[0] = target.ElementAt(i).Key;
-                line[1] = targetValue["ni"].ToString();
-                line[2] = targetValue["nj"].ToString();
+                line[0] = index;
+                line[1] = mc.TypeChange(item["ni"]);
+                line[2] = mc.TypeChange(item["nj"]);
                 line[3] = (Math.Round(len, 3, MidpointRounding.AwayFromZero)).ToString();
-                line[4] = targetValue["e"].ToString();
-                line[5] = targetValue["cg"].ToString() != null ? targetValue["cg"].ToString():"";
-                //line[6] = (Math.Round(targetValue["z"], 3, MidpointRounding.AwayFromZero)).ToString();
+                line[4] = mc.TypeChange(item["e"]);
+                line[5] = mc.TypeChange(item["cg"]);
+                line[6] = name;
                 member_data.Add(line);
             }
             return member_data;
         }
 
-        public double getMemberLength(string memberNo, Dictionary<string, double> target,Dictionary<string, object> value)
+        public double GetMemberLength(string memberNo, Dictionary<string, object> value)
         {
-            string ni = target["ni"].ToString();
-            string nj = target["nj"].ToString();
+            JToken memb = this.GetMember(memberNo);
+
+            string ni = memb["ni"].ToString();
+            string nj = memb["nj"].ToString();
             if (ni == null || nj == null)
             {
                 return 0;
             }
 
             InputNode node = new InputNode();
-            double[] iPos = node.getNodePos(ni,value);
-            double[] jPos = node.getNodePos(nj,value);
+            double[] iPos = node.GetNodePos(ni, value);
+            double[] jPos = node.GetNodePos(nj, value);
             if (iPos == null || jPos == null)
             {
                 return 0;
@@ -94,65 +94,48 @@ namespace PDF_Manager.Printing
             return result;
         }
 
-
-
-        public void memberPDF(PdfDoc mc, List<string[]> memberData)
+        public JToken GetMember(string memberNo)
         {
-            int currentXposition_values = 40;
-            int currentYposition_values = 10;
-            int count = memberData.Count + (memberData.Count / bottomCell) * 2 + 2;
-            bool judge = mc.dataCountKeep(count);
-            if (judge == true) mc.NewPage();
-            mc.gfx.DrawString("部材データ", mc.font_got, XBrushes.Black, mc.CurrentPosHeader);
-            mc.CurrentPosHeader.Y += 15;
-            mc.CurrentPosBody.Y += 30;
+            JToken member = targetLen[memberNo];
+
+            return member;
+        }
+
+        public void MemberPDF(PdfDoc mc, List<string[]> memberData)
+        {
+            int bottomCell = mc.bottomCell;
+
+            // 全行数の取得
+            double count = (memberData.Count + ((memberData.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
+            //  改ページ判定
+            mc.DataCountKeep(count);
+
+            //  タイトルの印刷
+            mc.PrintContent("部材データ", 0);
+            mc.CurrentRow(2);
+            //　ヘッダー
+            string[,] header_content = {
+                { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "コードアングル" , "材料名称"}
+            };
+
+            // ヘッダーのx方向の余白
+            int[,] header_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
+
+            mc.Header(header_content, header_Xspacing);
+
+            // ボディーのx方向の余白
+            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
 
             for (int i = 0; i < memberData.Count; i++)
             {
-                    if (i != 0 && i % (bottomCell  - 1) == 0)
-                    {
-                        mc.NewPage();
-                        mc.CurrentPosHeader.Y += 15;
-                        mc.CurrentPosBody.Y += 30;
-                    }
-
-                    if (i == 0 || (i != 0 && i % (bottomCell-1) == 0))
-                    {
-                        mc.gfx.DrawString("No", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 1);
-                        mc.gfx.DrawString("I-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 2);
-                        mc.gfx.DrawString("J-TAN", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 3);
-                        mc.gfx.DrawString("L(m)", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 4);
-                        mc.gfx.DrawString("材料番号", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 5);
-                        mc.gfx.DrawString("コードアングル", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                        //mc.CurrentPosHeader.X = mc.x + (currentXposition_values * 6);
-                        //mc.gfx.DrawString("材料名称", mc.font_mic, XBrushes.Black, mc.CurrentPosHeader);
-                
-                        mc.CurrentPosHeader.X = mc.x;
-                    }
-
-                    mc.gfx.DrawString(memberData[i][0], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 1);
-                    mc.gfx.DrawString(memberData[i][1], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 2);
-                    mc.gfx.DrawString(memberData[i][2], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 3);
-                    mc.gfx.DrawString(memberData[i][3], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 4);
-                    mc.gfx.DrawString(memberData[i][4], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    mc.CurrentPosBody.X = mc.x + (currentXposition_values * 5);
-                    mc.gfx.DrawString(memberData[i][5] == "0"?"": memberData[i][5], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-                    //mc.CurrentPosBody.X = mc.x + (currentXposition_values * 6);
-                    //mc.gfx.DrawString(memberData[i][6], mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
-              
-                    mc.CurrentPosBody.X = mc.x;
-                    mc.CurrentPosBody.Y += currentYposition_values;
-                
+                for (int j = 0; j < memberData[i].Length; j++)
+                {
+                    mc.CurrentColumn(body_Xspacing[0, j]); //x方向移動
+                    mc.PrintContent(memberData[i][j]);　// print
+                }
+                mc.CurrentRow(1);
             }
+
         }
     }
 }
