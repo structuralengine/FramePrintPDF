@@ -28,10 +28,10 @@ namespace PDF_Manager.Printing
                 return;
 
             // 文字列描画
-            mc.gfx.DrawString(str, mc.font_mic, XBrushes.Black, mc.CurrentPosBody);
+            mc.gfx.DrawString(str, mc.font_mic, XBrushes.Black, mc.CurrentPos);
 
-            mc.CurrentPosBody.X += str.Length * 10;
-            mc.CurrentPosBody.Y += 10; ;
+            mc.CurrentPos.X += str.Length * 10;
+            mc.CurrentPos.Y += 10; ;
 
         }
 
