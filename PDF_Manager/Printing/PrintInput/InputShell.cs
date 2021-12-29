@@ -96,14 +96,14 @@ namespace PDF_Manager.Printing
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 0, 40, 90, 120, 160 },
-                 { 0, 40, 80, 120, 160 } 
+                 { 10, 70, 175, 210, 280 },
+                 { 10, 70, 140, 210, 280 } 
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 0, 40, 80, 120, 160 } };
+            int[,] body_Xspacing = { { 17, 78, 148, 218,288 } };
 
             for (int i = 0; i < shellData.Count; i++)
             {

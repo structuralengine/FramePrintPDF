@@ -43,7 +43,7 @@ public class PrintInput
         //　準備のためのclassの呼び出し
         var pri_ready = new PrintReady();
         //　jsonから取り出した生データを送る
-        ArrayList dataset = pri_ready.Ready(mc,value);
+        object[] dataset = pri_ready.Ready(mc,value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
@@ -71,7 +71,7 @@ public class PrintInput
         //　準備のためのclassの呼び出し
         var red = new PrintReady();
         //　jsonから取り出した生データを送る
-        ArrayList dataset = red.Ready(mc, value);
+        object[] dataset = red.Ready(mc, value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();

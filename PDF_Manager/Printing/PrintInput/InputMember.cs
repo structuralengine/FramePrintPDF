@@ -55,7 +55,7 @@ namespace PDF_Manager.Printing
                 line[0] = index;
                 line[1] = mc.TypeChange(item["ni"]);
                 line[2] = mc.TypeChange(item["nj"]);
-                line[3] = (Math.Round(len, 3, MidpointRounding.AwayFromZero)).ToString();
+                line[3] = mc.TypeChange(len, 3);
                 line[4] = mc.TypeChange(item["e"]);
                 line[5] = mc.TypeChange(item["cg"]);
                 line[6] = name;
@@ -119,19 +119,26 @@ namespace PDF_Manager.Printing
             };
 
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
+            int[,] header_Xspacing = { { 10, 50, 100, 145, 203, 280, 360 } };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
+            int[,] body_Xspacing = { { 17, 60, 110, 157, 208, 284, 341 } };
 
             for (int i = 0; i < memberData.Count; i++)
             {
                 for (int j = 0; j < memberData[i].Length; j++)
                 {
                     mc.CurrentColumn(body_Xspacing[0, j]); //x方向移動
-                    mc.PrintContent(memberData[i][j]);　// print
+                    if (j == 6) // 材料名称のみ左詰め
+                    {
+                        mc.PrintContent(memberData[i][j], 1);　// print
+                    }
+                    else
+                    {
+                        mc.PrintContent(memberData[i][j]);　// print
+                    }
                 }
                 mc.CurrentRow(1);
             }

@@ -67,10 +67,10 @@ namespace PDF_Manager.Printing
                     table2.Add(line1);
 
                     line2[0] = "";
-                    line2[1] = mc.TypeChange(item["A"], 4, "E");
-                    line2[2] = mc.TypeChange(item["E"], 2, "E");
-                    line2[3] = mc.TypeChange(item["G"], 2, "E"); ;
-                    line2[4] = mc.TypeChange(item["Xp"], 2, "E"); ;
+                    line2[1] = mc.TypeChange(item["A"], 4);
+                    line2[2] = mc.TypeChange(item["E"], 0, "E");
+                    line2[3] = mc.TypeChange(item["G"], 0, "E"); ;
+                    line2[4] = mc.TypeChange(item["Xp"], 0, "E"); ;
                     line2[5] = mc.TypeChange(item["Iy"], 6);
                     line2[6] = mc.TypeChange(item["Iz"], 6);
                     line2[7] = mc.TypeChange(item["J"], 6);
@@ -98,19 +98,19 @@ namespace PDF_Manager.Printing
 
             //　ヘッダー
             string[,] header_content = {
-            {"No","A","E","G","ESP","断面二次モーメント","","ねじり合成" },
+            {"No","A","E","G","ESP","断面二次モーメント","","ねじり剛性" },
             {"","(m2)","(kN/m2)","(kN/m2)","","y軸周り","z軸周り","" }
             };
             // ヘッダーのx方向の余白
             int[,] header_Xspacing ={
-                { 0, 40, 80, 120, 160, 200,   0, 280 },
-                { 0, 40, 80, 120,   0, 200, 240,0}
+                { 10, 60, 120, 180, 240, 330, 330, 420 },
+                { 10, 60, 120, 180, 240, 300, 360, 420 }
             };
 
-            // ボディーのx方向の余白　-1
+            // ボディーのx方向の余白　
             int[,] body_Xspacing = {
-                { 0, 30, 0, 0, 0, 0, 0, 0 },
-                { 0, 40, 80, 120, 160, 200, 240, 280 }
+                { 17, 40, 0, 0, 0, 0, 0, 0 },
+                { 17, 75, 143, 203, 263, 320, 380, 440 }
             };
 
             // タイトルの印刷
@@ -139,7 +139,14 @@ namespace PDF_Manager.Printing
                     for (int l = 0; l < elementData[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
-                        mc.PrintContent(elementData[i][j][l]); // print
+                        if (l == 1 && k == 0) // 材料名称のみ左詰め
+                        {
+                            mc.PrintContent(elementData[i][j][l], 1); // print
+                        }
+                        else
+                        {
+                            mc.PrintContent(elementData[i][j][l]); // print
+                        }
                     }
                     mc.CurrentRow(1); // y方向移動
                     k = (j + 1) % 2 == 0 ? 0 : 1; //　x方向余白の切り替え

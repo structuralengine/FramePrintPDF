@@ -43,14 +43,14 @@ namespace PDF_Manager.Printing
 
                 string[] line = new String[12];
                 line[0] = m;
-                line[1] = len == 0 ? "" : (Math.Round(len, 3, MidpointRounding.AwayFromZero)).ToString();
+                line[1] = len == 0 ? "" : mc.TypeChange(len,3);
 
                 int count = 0;
                 var itemPoints = item["Points"];
 
                 for (int j = 0; j < item["Points"].Count(); j++)
                 {
-                    line[count + 2] = mc.TypeChange(itemPoints[count]);
+                    line[count + 2] = mc.TypeChange(itemPoints[count],3);
                     count++;
                     if (count == 10)
                     {
@@ -103,14 +103,14 @@ namespace PDF_Manager.Printing
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440 },
-                 { 0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440 } 
+                 { 10, 45, 80, 115, 150, 185, 220, 255, 290, 325, 360, 395 },
+                 { 10, 45, 80, 115, 150, 185, 220, 255, 290, 325, 360, 395 },
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240, 280, 320, 360, 400, 440 } };
+            int[,] body_Xspacing = { { 17, 58, 88, 122, 157, 192, 227, 262, 297, 232, 367, 402 } };
 
             for (int i = 0; i < noticepointsData.Count; i++)
             {
