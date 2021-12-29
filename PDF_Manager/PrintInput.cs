@@ -66,7 +66,7 @@ public class PrintInput
         mc.SavePDF();
     }
 
-    public string GetPdfSource()
+    public string getPdfSource()
     {
         //　準備のためのclassの呼び出し
         var red = new PrintReady();
