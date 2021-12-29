@@ -21,20 +21,45 @@ namespace PDF_Manager.Printing
     {
         public ArrayList Export(PdfDoc mc,ArrayList dataset)
         {
-            // nodeを処理するクラスを呼び出す
+            // node
             InputNode node = new InputNode();
             // gfx登録
             node.NodePDF(mc, (List<List<string[]>>)dataset[0]);
 
-            // memberを処理するクラスを呼び出す
+            // member
             InputMember member = new InputMember();
             // gfx登録
             member.MemberPDF(mc, (List<string[]>)dataset[3]);
 
-            // elementを処理するクラスを呼び出す
+            // element
             InputElement element = new InputElement();
-            // gfx登録 (mc,element_tltle,element_data)
+            // gfx登録 (mc,tltle,data)
             element.ElementPDF(mc ,(List<string>)dataset[1],(List<List<string[]>>)dataset[2]);
+
+            // fixnode
+            InputFixNode fixnode = new InputFixNode();
+            // gfx登録 (mc,tltle,data)
+            fixnode.FixNodePDF(mc, (List<string>)dataset[4], (List<List<string[]>>)dataset[5]);
+
+            // joint
+            InputJoint joint = new InputJoint();
+            // gfx登録 (mc,tltle,data)
+            joint.JointPDF(mc, (List<string>)dataset[6], (List<List<string[]>>)dataset[7]);
+
+            // noticepoints
+            InputNoticePoints noticepoints = new InputNoticePoints();
+            // gfx登録 (mc,tltle,data)
+            noticepoints.NoticePointsPDF(mc, (List<List<string[]>>)dataset[8]);
+
+            // fixmember
+            InputFixMember fixmember = new InputFixMember();
+            // gfx登録 (mc,tltle,data)
+            fixmember.FixMemberPDF(mc, (List<string>)dataset[9], (List<List<string[]>>)dataset[10]);
+
+            // shell
+            InputShell shell = new InputShell();
+            // gfx登録 (mc,tltle,data)
+            shell.ShellPDF(mc, (List<List<string[]>>)dataset[11]);
 
 
             return dataset;

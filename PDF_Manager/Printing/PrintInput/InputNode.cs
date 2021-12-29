@@ -56,15 +56,15 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = (Math.Round(targetValue_l["x"], 3, MidpointRounding.AwayFromZero)).ToString();
-                        line[2] = (Math.Round(targetValue_l["y"], 3, MidpointRounding.AwayFromZero)).ToString();
-                        line[3] = (Math.Round(targetValue_l["z"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[1] = mc.TypeChange(targetValue_l["x"],false,3);
+                        line[2] = mc.TypeChange(targetValue_l["y"], false, 3);
+                        line[3] = mc.TypeChange(targetValue_l["z"], false, 3);
 
                         var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
                         line[4] = target.ElementAt(k).Key;
-                        line[5] = (Math.Round(targetValue_r["x"], 3, MidpointRounding.AwayFromZero)).ToString();
-                        line[6] = (Math.Round(targetValue_r["y"], 3, MidpointRounding.AwayFromZero)).ToString();
-                        line[7] = (Math.Round(targetValue_r["z"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[5] = mc.TypeChange(targetValue_r["x"], false, 3);
+                        line[6] = mc.TypeChange(targetValue_r["y"], false, 3);
+                        line[7] = mc.TypeChange(targetValue_r["z"], false, 3);
                         body.Add(line);
                     }
                     node_data.Add(body);
@@ -86,18 +86,18 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = (Math.Round(targetValue_l["x"], 3, MidpointRounding.AwayFromZero)).ToString();
-                        line[2] = (Math.Round(targetValue_l["y"], 3, MidpointRounding.AwayFromZero)).ToString();
-                        line[3] = (Math.Round(targetValue_l["z"], 3, MidpointRounding.AwayFromZero)).ToString();
+                        line[1] = mc.TypeChange(targetValue_l["x"], false, 3);
+                        line[2] = mc.TypeChange(targetValue_l["y"], false, 3);
+                        line[3] = mc.TypeChange(targetValue_l["z"], false, 3);
 
                         if (target.ElementAt(k).Key != null)
                         {
                             //　各行のデータを取得する（右段)
                             var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
                             line[4] = target.ElementAt(k).Key;
-                            line[5] = (Math.Round(targetValue_r["x"], 3, MidpointRounding.AwayFromZero)).ToString();
-                            line[6] = (Math.Round(targetValue_r["y"], 3, MidpointRounding.AwayFromZero)).ToString();
-                            line[7] = (Math.Round(targetValue_r["z"], 3, MidpointRounding.AwayFromZero)).ToString();
+                            line[5] = mc.TypeChange(targetValue_r["x"], false, 3);
+                            line[6] = mc.TypeChange(targetValue_r["y"], false, 3);
+                            line[7] = mc.TypeChange(targetValue_r["z"], false, 3);
                             body.Add(line);
                         }
                     }

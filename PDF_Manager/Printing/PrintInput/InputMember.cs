@@ -20,14 +20,20 @@ namespace PDF_Manager.Printing
     internal class InputMember
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        private JObject targetLen;
+        private JToken mem;
         private InputElement element;
 
 
-        public List<string[]> Member(InputElement element, Dictionary<string, object> value_)
+        public List<string[]> Member(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
+            //var target_ = JObject.FromObject(value["member"]).ToObject<List<string[]>>();
+            //targetLen = target_;
+
             var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
+            targetLen = JObject.FromObject(value["member"]);
 
             // 集まったデータはここに格納する
             List<string[]> member_data = new List<string[]>();
@@ -38,36 +44,32 @@ namespace PDF_Manager.Printing
             for (int i = 0; i < row; i++)
             {
                 string index = target.ElementAt(i).Key;
-                var targetValue = new Dictionary<string, double>();
 
-                // nullの判定
-                var Elem = JObject.FromObject(target.ElementAt(i).Value);
-                if (Elem["cg"].Type == JTokenType.Null) Elem["cg"] = 0;
+                var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                // jobjectに変換
-                targetValue = Elem.ToObject<Dictionary<string, double>>();
+                double len = this.GetMemberLength(index, value); // 部材長さ
 
-                double len = this.GetMemberLength(index, targetValue, value); // 部材長さ
-                string a = targetValue["e"].ToString();
-                string name = element.GetElementName(a); // 材料名称
+                string name = item["e"].Type == JTokenType.Null ? "" : element.GetElementName(item["e"].ToString());
 
                 string[] line = new String[7];
                 line[0] = index;
-                line[1] = targetValue["ni"].ToString();
-                line[2] = targetValue["nj"].ToString();
+                line[1] = mc.TypeChange(item["ni"]);
+                line[2] = mc.TypeChange(item["nj"]);
                 line[3] = (Math.Round(len, 3, MidpointRounding.AwayFromZero)).ToString();
-                line[4] = targetValue["e"].ToString();
-                line[5] = targetValue["cg"].ToString() != null ? targetValue["cg"].ToString() : "";
+                line[4] = mc.TypeChange(item["e"], true);
+                line[5] = mc.TypeChange(item["cg"]);
                 line[6] = name;
                 member_data.Add(line);
             }
             return member_data;
         }
 
-        public double GetMemberLength(string memberNo, Dictionary<string, double> target, Dictionary<string, object> value)
+        public double GetMemberLength(string memberNo, Dictionary<string, object> value)
         {
-            string ni = target["ni"].ToString();
-            string nj = target["nj"].ToString();
+            JToken memb = this.GetMember(memberNo);
+
+            string ni = memb["ni"].ToString();
+            string nj = memb["nj"].ToString();
             if (ni == null || nj == null)
             {
                 return 0;
@@ -92,6 +94,13 @@ namespace PDF_Manager.Printing
             return result;
         }
 
+        public JToken GetMember(string memberNo)
+        {
+            JToken member = targetLen[memberNo];
+
+            return member;
+        }
+
         public void MemberPDF(PdfDoc mc, List<string[]> memberData)
         {
             int bottomCell = mc.bottomCell;
@@ -102,7 +111,7 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //  タイトルの印刷
-            mc.PrintContent("部材データ",0);
+            mc.PrintContent("部材データ", 0);
             mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
@@ -115,13 +124,13 @@ namespace PDF_Manager.Printing
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-           int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
+            int[,] body_Xspacing = { { 0, 40, 80, 120, 160, 200, 240 } };
 
             for (int i = 0; i < memberData.Count; i++)
             {
                 for (int j = 0; j < memberData[i].Length; j++)
                 {
-                    mc.CurrentColumn(body_Xspacing[0,j]); //x方向移動
+                    mc.CurrentColumn(body_Xspacing[0, j]); //x方向移動
                     mc.PrintContent(memberData[i][j]);　// print
                 }
                 mc.CurrentRow(1);

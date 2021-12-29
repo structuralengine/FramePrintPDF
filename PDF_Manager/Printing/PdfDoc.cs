@@ -1,4 +1,5 @@
-﻿using PdfSharpCore;
+﻿using Newtonsoft.Json.Linq;
+using PdfSharpCore;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Fonts;
 using PdfSharpCore.Pdf;
@@ -117,7 +118,7 @@ namespace PDF_Manager.Printing
             {
                 gfx.DrawString(data, font_got, XBrushes.Black, CurrentPos);
             }
-            else if(dataHandle == 1)
+            else if (dataHandle == 1)
             {
                 gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos);
             }
@@ -151,8 +152,8 @@ namespace PDF_Manager.Printing
             {
                 for (int j = 0; j < current_header.GetLength(1); j++)
                 {
-                    CurrentColumn(currentHeader_Xspacing[i,j]);
-                    PrintContent(current_header[i,j]);
+                    CurrentColumn(currentHeader_Xspacing[i, j]);
+                    PrintContent(current_header[i, j]);
                 }
                 CurrentRow(1);
             }
@@ -176,9 +177,9 @@ namespace PDF_Manager.Printing
         }
 
         //　タイプ別の改ページ判定
-        public void TypeCount(int index,double headerRow,double count,string title)
+        public void TypeCount(int index, double headerRow, double count, string title)
         {
-            double typeCount = CurrentPos.Y + (headerRow + count)*single_Yrow;
+            double typeCount = CurrentPos.Y + (headerRow + count) * single_Yrow;
             if (typeCount > Margine.Y + bottomCell * single_Yrow)
             {
                 NewPage();
@@ -186,8 +187,38 @@ namespace PDF_Manager.Printing
             }
             else
             {
-                if(index != 0) CurrentPos.Y += single_Yrow;
+                if (index != 0) CurrentPos.Y += single_Yrow;
             }
+        }
+
+        // データの精査
+        // (data,stringのままか(true)，四捨五入等の処理を行いたいか(false),四捨五入する時の桁数,指数形式の表示など)
+        public string TypeChange(JToken data, bool jud = false, int round = 0, string style = "none")
+        {
+            string newDataString = "";
+
+            // 四捨五入等の処理を行う
+            if (jud == false)
+            {
+                if (data.Type == JTokenType.Null) data = double.NaN;
+                double newDataDouble = double.Parse(data.ToString());
+                if (style == "none")
+                {
+                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString();
+                }
+                else
+                {
+                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(style);
+                }
+            }
+
+            // すぐにstringにする
+            else if (jud == true)
+            {
+                if (data.Type == JTokenType.Null) data = "";
+                newDataString = data.ToString();
+            }
+            return newDataString;
         }
     }
 

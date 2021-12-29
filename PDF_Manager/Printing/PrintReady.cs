@@ -25,24 +25,53 @@ namespace PDF_Manager.Printing
             // データをまとめてここに代入する．
             ArrayList dataAll = new ArrayList();
 
-            // nodeを処理するクラスを呼び出す
+            // node
             InputNode node_call = new InputNode();
-            //nodeデータの整理
-            dataAll.Add(node_call.Node(mc,data));
+            dataAll.Add(node_call.Node(mc, data));
 
-            // elementを処理するクラスを呼び出す
+            // element
             InputElement element_call = new InputElement();
-            // elementデータの整理
             List<string> elememt_title;
             List<List<string[]>> elememt_data;
-            (elememt_title,elememt_data)=(element_call.Element(data));
+            (elememt_title, elememt_data) = (element_call.Element(mc, data));
             dataAll.Add(elememt_title);
             dataAll.Add(elememt_data);
 
-            // memberを処理するクラスを呼び出す
+            // member
             InputMember member_call = new InputMember();
-            // memberデータの整理
-            dataAll.Add(member_call.Member(element_call, data));
+            dataAll.Add(member_call.Member(mc,element_call, data));
+
+            // fixnode
+            InputFixNode fixnode_call = new InputFixNode();
+            List<string> fixnode_title;
+            List<List<string[]>> fixnode_data;
+            (fixnode_title, fixnode_data) = (fixnode_call.FixNode(mc, data));
+            dataAll.Add(fixnode_title);
+            dataAll.Add(fixnode_data);
+
+            // joint
+            InputJoint joint_call = new InputJoint();
+            List<string> joint_title;
+            List<List<string[]>> joint_data;
+            (joint_title, joint_data) = (joint_call.Joint(mc,data));
+            dataAll.Add(joint_title);
+            dataAll.Add(joint_data);
+
+            // notice_points
+            InputNoticePoints noticepoints_call = new InputNoticePoints();
+            dataAll.Add(noticepoints_call.NoticePoints(mc,member_call, data));
+
+            // fixmember
+            InputFixMember fixmember_call = new InputFixMember();
+            List<string> fixmember_title;
+            List<List<string[]>> fixmember_data;
+            (fixmember_title, fixmember_data) = (fixmember_call.FixMember(mc, data));
+            dataAll.Add(fixmember_title);
+            dataAll.Add(fixmember_data);
+
+            // shell
+            InputShell shell_call = new InputShell();
+            dataAll.Add(shell_call.Shell(mc,data));
 
             return dataAll;
         }
