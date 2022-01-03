@@ -237,6 +237,19 @@ namespace PDF_Manager.Printing
             }
             return newDataString;
         }
+
+        //　countの値を超える文字数ならば，先頭から指定の文字数を取ったものを返す．
+        public string GetText(string text,int count)
+        {
+            if (text.Length > count)
+            {
+                return text.Substring(0, count - 1);
+            }
+            else
+            {
+                return text;
+            }
+        }
     }
 
     // 日本語フォントのためのフォントリゾルバー

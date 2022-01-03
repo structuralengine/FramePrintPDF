@@ -23,7 +23,7 @@ namespace PDF_Manager.Printing
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
         {
             // データをまとめてここに代入する．
-            object[] dataAll = new object[12];
+            object[] dataAll = new object[20];
 
             // node
             InputNode node_call = new InputNode();
@@ -95,6 +95,13 @@ namespace PDF_Manager.Printing
             {
                 InputShell shell_call = new InputShell();
                 dataAll[11] = (shell_call.Shell(mc, data));
+            }
+
+            // shell
+            if (data.ContainsKey("load"))
+            {
+                InputLoadName loadname_call = new InputLoadName();
+                dataAll[12] = (loadname_call.LoadName(mc, data));
             }
 
             return dataAll;
