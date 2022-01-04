@@ -92,6 +92,14 @@ namespace PDF_Manager.Printing
                 // gfx登録 (mc,tltle,data)
                 loadname.LoadNamePDF(mc, (List<string[]>)dataset[12]);
             }
+
+            // load
+            if (dataset[13] != null && dataset[14] !=null)
+            {
+                InputLoad load = new InputLoad();
+                // gfx登録 (mc,tltle,data)
+                load.LoadPDF(mc, (List<string>)dataset[13],(List<List<List<string[]>>>)dataset[14]);
+            }
         }
     }
 }

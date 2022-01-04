@@ -195,14 +195,14 @@ namespace PDF_Manager.Printing
         public void TypeCount(int index, double headerRow, double count, string title)
         {
             double typeCount = CurrentPos.Y + (headerRow + count) * single_Yrow;
-            if (typeCount > Margine.Y + bottomCell * single_Yrow)
+            if (index!=0&&typeCount > Margine.Y + bottomCell * single_Yrow)
             {
                 NewPage();
                 CurrentRow(2);
             }
             else
             {
-                if (index != 0) CurrentPos.Y += single_Yrow;
+                if(index != 0)CurrentPos.Y += single_Yrow;
             }
         }
 
@@ -212,14 +212,17 @@ namespace PDF_Manager.Printing
         {
             string newDataString = "";
 
+            if(data.Type ==JTokenType.Null)
+            {
+                newDataString = "";
+            }
             // すぐにstringにする
-            if (data.Type == JTokenType.String)
+            else if (data.Type == JTokenType.String)
             {
                 if (data.Type == JTokenType.Null) data = "";
                 newDataString = data.ToString();
 
             }
-
             // 四捨五入等の処理を行う
             else
             {

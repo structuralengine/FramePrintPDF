@@ -102,6 +102,12 @@ namespace PDF_Manager.Printing
             {
                 InputLoadName loadname_call = new InputLoadName();
                 dataAll[12] = (loadname_call.LoadName(mc, data));
+                InputLoad load_call = new InputLoad();
+                List<string> load_title;
+                List<List<List<string[]>>> load_data;
+                (load_title,load_data)= (load_call.Load(mc, data));
+                dataAll[13] = load_title;
+                dataAll[14] = load_data;
             }
 
             return dataAll;

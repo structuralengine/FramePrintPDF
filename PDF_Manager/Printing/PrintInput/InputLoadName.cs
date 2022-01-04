@@ -58,7 +58,7 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);// 全行の取得
 
             //  タイトルの印刷
-            mc.PrintContent("荷重名称データ", 0);
+            mc.PrintContent("基本荷重データ", 0);
             mc.CurrentRow(2);
 
             //　ヘッダー
@@ -69,15 +69,15 @@ namespace PDF_Manager.Printing
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 10, 50, 100, 205, 300,370,380,420 },
-                 { 10, 50, 100, 205, 310,350,390,430 },
+                 { 10, 50, 100, 205, 300,397,380,420 },
+                 { 10, 50, 100, 215, 355,380,405,430 },
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
             int[,] body_Xspacing = {
-               { 17, 57, 85, 140, 317,357,397,437 },
+               { 17, 57, 85, 140, 362,387,412,437 },
             };
 
             for (int i = 0; i < loadnameData.Count; i++)
@@ -85,15 +85,9 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < loadnameData[i].Length; j++)
                 {
                     mc.CurrentColumn(body_Xspacing[0, j]); //x方向移動
-                    if (j == 2) // 記号，名称のみ左詰め
+                    if (j == 2 || j == 3) // 記号，名称のみ左詰め
                     {
-                        var text = mc.GetText(loadnameData[i][j], 10);  // 10文字を超えたら削除
-                        mc.PrintContent(text, 1);  // print
-                    }
-                    else if (j == 3) // 荷重名称，名称のみ左詰め
-                    {
-                        var text = mc.GetText(loadnameData[i][j], 18);　//　18文字を超えたら削除
-                        mc.PrintContent(text, 1);  // print
+                        mc.PrintContent(loadnameData[i][j], 1);  // print
                     }
                     else
                     {

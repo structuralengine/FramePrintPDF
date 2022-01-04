@@ -74,7 +74,7 @@ namespace PDF_Manager.Printing
                 else
                 {
                     List<string[]> body = new List<string[]>();
-                    row = decimal.ToInt32(decimal.Ceiling(row / 2));
+                    row = row % 2 == 0 ? row / 2 : row / 2 + 1;
 
                     for (var i = 0; i < row; i++)
                     {
@@ -90,14 +90,22 @@ namespace PDF_Manager.Printing
                         line[2] = mc.TypeChange(targetValue_l["y"], 3);
                         line[3] = mc.TypeChange(targetValue_l["z"], 3);
 
-                        if (target.ElementAt(k).Key != null)
+                        try
                         {
                             //　各行のデータを取得する（右段)
-                            var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
-                            line[4] = target.ElementAt(k).Key;
+                            var targetValue_r = JObject.FromObject(target.ElementAtOrDefault(k).Value).ToObject<Dictionary<string, double>>();
+                            line[4] = target.ElementAtOrDefault(k).Key;
                             line[5] = mc.TypeChange(targetValue_r["x"], 3);
                             line[6] = mc.TypeChange(targetValue_r["y"], 3);
                             line[7] = mc.TypeChange(targetValue_r["z"], 3);
+                            body.Add(line);
+                        }
+                        catch
+                        {
+                            line[4] = "";
+                            line[5] = "";
+                            line[6] = "";
+                            line[7] = "";
                             body.Add(line);
                         }
                     }
