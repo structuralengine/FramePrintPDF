@@ -19,7 +19,7 @@ namespace PDF_Manager.Printing
 {
     internal class PrintExport
     {
-        public void Export(PdfDoc mc,object[] dataset)
+        public void Export(PdfDoc mc, object[] dataset)
         {
             // node
             if (dataset[0] != null)
@@ -54,7 +54,7 @@ namespace PDF_Manager.Printing
             }
 
             // joint
-            if (dataset[6] != null && dataset[7]!=null)
+            if (dataset[6] != null && dataset[7] != null)
             {
                 InputJoint joint = new InputJoint();
                 // gfx登録 (mc,tltle,data)
@@ -62,11 +62,11 @@ namespace PDF_Manager.Printing
             }
 
             // noticepoints
-            if(dataset[8] != null)
+            if (dataset[8] != null)
             {
-            InputNoticePoints noticepoints = new InputNoticePoints();
-            // gfx登録 (mc,tltle,data)
-            noticepoints.NoticePointsPDF(mc, (List<List<string[]>>)dataset[8]);
+                InputNoticePoints noticepoints = new InputNoticePoints();
+                // gfx登録 (mc,tltle,data)
+                noticepoints.NoticePointsPDF(mc, (List<List<string[]>>)dataset[8]);
             }
 
             // fixmember
@@ -94,11 +94,35 @@ namespace PDF_Manager.Printing
             }
 
             // load
-            if (dataset[13] != null && dataset[14] !=null)
+            if (dataset[13] != null && dataset[14] != null)
             {
                 InputLoad load = new InputLoad();
                 // gfx登録 (mc,tltle,data)
-                load.LoadPDF(mc, (List<string>)dataset[13],(List<List<List<string[]>>>)dataset[14]);
+                load.LoadPDF(mc, (List<string>)dataset[13], (List<List<List<string[]>>>)dataset[14]);
+            }
+
+            // define
+            if (dataset[15] != null)
+            {
+                InputDefine define = new InputDefine();
+                // gfx登録 (mc,tltle,data)
+                define.DefinePDF(mc, (List<List<string[]>>) dataset[15]);
+            }
+
+            // combine
+            if (dataset[16] != null)
+            {
+                InputCombine combine = new InputCombine();
+                // gfx登録 (mc,tltle,data)
+                combine.CombinePDF(mc, (List<List<string[]>>)dataset[16]);
+            }
+
+            // pickup
+            if (dataset[17] != null)
+            {
+                InputPickup pickup = new InputPickup();
+                // gfx登録 (mc,tltle,data)
+                pickup.PickupPDF(mc, (List<List<string[]>>)dataset[17]);
             }
         }
     }

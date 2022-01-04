@@ -97,7 +97,7 @@ namespace PDF_Manager.Printing
                 dataAll[11] = (shell_call.Shell(mc, data));
             }
 
-            // shell
+            // load
             if (data.ContainsKey("load"))
             {
                 InputLoadName loadname_call = new InputLoadName();
@@ -105,9 +105,30 @@ namespace PDF_Manager.Printing
                 InputLoad load_call = new InputLoad();
                 List<string> load_title;
                 List<List<List<string[]>>> load_data;
-                (load_title,load_data)= (load_call.Load(mc, data));
+                (load_title, load_data) = (load_call.Load(mc, data));
                 dataAll[13] = load_title;
                 dataAll[14] = load_data;
+            }
+
+            // define
+            if (data.ContainsKey("define"))
+            {
+                InputDefine define_call = new InputDefine();
+                dataAll[15] = (define_call.Define(mc, data));
+            }
+
+            // combine 
+            if (data.ContainsKey("combine"))
+            {
+                InputCombine combine_call = new InputCombine();
+                dataAll[16] = (combine_call.Combine(mc, data));
+            }
+
+            // pickup
+            if (data.ContainsKey("pickup"))
+            {
+                InputPickup pickup_call = new InputPickup();
+                dataAll[17] = (pickup_call.Pickup(mc, data));
             }
 
             return dataAll;

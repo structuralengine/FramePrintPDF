@@ -17,108 +17,135 @@ using System.Collections.Generic;
 
 namespace PDF_Manager.Printing
 {
-    internal class InputNoticePoints
+    internal class InputCombine
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
 
-        public List<List<string[]>> NoticePoints(PdfDoc mc, InputMember member, Dictionary<string, object> value_)
+        public List<List<string[]>> Combine(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
-            JArray target = JArray.FromObject(value["notice_points"]);
+            var target = JObject.FromObject(value["combine"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
-            List<List<string[]>> noticepoints_data = new List<List<string[]>>();
+            List<List<string[]>> combine_data = new List<List<string[]>>();
             List<string[]> body = new List<string[]>();
 
 
             for (int i = 0; i < target.Count; i++)
             {
-                JToken item = target[i];
+                string[] line1 = new String[10];
+                string[] line2 = new String[10];
+                line1[0] = target.ElementAt(i).Key;
+                line2[0] = "";
 
-                string m = mc.TypeChange(item["m"]);
+                var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                double len = member.GetMemberLength(m, value); // 部材長さ
+                // 荷重名称
+                if (item.ContainsKey("name"))
+                {
+                    line1[1] = mc.TypeChange(item["name"]);
+                }
+                else
+                {
+                    line1[1] = "";
+                }
+                line2[1] = "";
 
-
-                string[] line = new String[12];
-                line[0] = m;
-                line[1] = len == 0 ? "" : mc.TypeChange(len, 3);
+                //Keyをsortするため
+                var itemDic = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                string[] kk = itemDic.Keys.ToArray();
+                Array.Sort(kk);
 
                 int count = 0;
-                var itemPoints = item["Points"];
 
-                for (int j = 0; j < item["Points"].Count(); j++)
+                for (int j = 0; j < kk.Length - 2; j++)
                 {
-                    line[count + 2] = mc.TypeChange(itemPoints[count], 3);
+                    line1[count + 2] = kk[j].Replace("C", "");
+                    line2[count + 2] = mc.TypeChange(item[kk[j]], 2);
                     count++;
-                    if (count == 10)
+
+                    if (count == 8)
                     {
-                        body.Add(line);
+                        body.Add(line1);
+                        body.Add(line2);
                         count = 0;
-                        line = new string[12];
-                        line[0] = "";
-                        line[1] = "";
+                        line1 = new String[10];
+                        line2 = new String[10];
+                        line1[0] = "";
+                        line1[1] = "";
+                        line2[0] = "";
+                        line2[1] = "";
                     }
                 }
                 if (count > 0)
                 {
-                    for (int k = 2; k < 12; k++)
+                    for (int k = 2; k < 10; k++)
                     {
-                        line[k] = line[k] == null ? "" : line[k];
+                        line1[k] = line1[k] == null ? "" : line1[k];
+                        line2[k] = line2[k] == null ? "" : line2[k];
                     }
 
-                    body.Add(line);
+                    body.Add(line1);
+                    body.Add(line2);
                 }
             }
             if (body.Count > 0)
             {
-                noticepoints_data.Add(body);
+                combine_data.Add(body);
             }
-            return noticepoints_data;
+            return combine_data;
+
         }
 
-        public void NoticePointsPDF(PdfDoc mc, List<List<string[]>> noticepointsData)
+        public void CombinePDF(PdfDoc mc, List<List<string[]>> combineData)
         {
             int bottomCell = mc.bottomCell;
 
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < noticepointsData.Count; i++)
+            for (int i = 0; i < combineData.Count; i++)
             {
-                count += (noticepointsData[i].Count + 2) * mc.single_Yrow;
+                count += (combineData[i].Count + 2) * mc.single_Yrow;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
 
             //  タイトルの印刷
-            mc.PrintContent("着目点データ", 0);
+            mc.PrintContent("Combineデータ", 0);
             mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
-                { "部材", "", "", "", "", "" , "", "", "", "", "",""},
-                { "No", "部材長", "L1", "L2", "L3", "L4" , "L5", "L6", "L7", "L8", "L9", "L10"}
+                { "CombNo","荷重名称", "C1", "C2", "C3", "C4" , "C5", "C6", "C7", "C8"}
             };
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 10, 45, 85, 120, 155, 190, 225, 260, 295, 330, 365, 400 },
-                 { 10, 45, 85, 120, 155, 190, 225, 260, 295, 330, 365, 400 },
+                 { 17, 100,203, 233, 263, 293, 323, 353, 383, 413},
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 17, 58, 96, 131, 166, 201, 236, 271, 306, 341, 376, 411 } };
+            int[,] body_Xspacing = {
+                 { 24, 42,210, 240, 270, 300, 330, 360, 390, 420},
+            };
 
-            for (int i = 0; i < noticepointsData.Count; i++)
+            for (int i = 0; i < combineData.Count; i++)
             {
-                for (int j = 0; j < noticepointsData[i].Count; j++)
+                for (int j = 0; j < combineData[i].Count; j++)
                 {
-                    for (int l = 0; l < noticepointsData[i][j].Length; l++)
+                    for (int l = 0; l < combineData[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        mc.PrintContent(noticepointsData[i][j][l]);  // print
+                        if (l == 1)
+                        {
+                            mc.PrintContent(combineData[i][j][l], 1);  // print
+                        }
+                        else
+                        {
+                            mc.PrintContent(combineData[i][j][l]);  // print
+                        }
                     }
                     mc.CurrentRow(1);
                 }
