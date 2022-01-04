@@ -20,15 +20,16 @@ namespace PDF_Manager.Printing
     internal class InputShell
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<List<string[]>> data = new List<List<string[]>>();
 
-        public List<List<string[]>> Shell(PdfDoc mc, Dictionary<string, object> value_)
+        public void Shell(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
 
             var target = JObject.FromObject(value["shell"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
-            List<List<string[]>> shell_data = new List<List<string[]>>();
+            data = new List<List<string[]>>();
             List<string[]> body = new List<string[]>();
 
 
@@ -65,22 +66,21 @@ namespace PDF_Manager.Printing
                 }
                 if (body.Count > 0)
                 {
-                    shell_data.Add(body);
+                    data.Add(body);
                 }
             }
-            shell_data.Add(body);
-            return shell_data;
+            data.Add(body);
         }
 
-        public void ShellPDF(PdfDoc mc, List<List<string[]>> shellData)
+        public void ShellPDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < shellData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                count += (shellData[i].Count + 2) * mc.single_Yrow;
+                count += (data[i].Count + 2) * mc.single_Yrow;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
@@ -105,14 +105,14 @@ namespace PDF_Manager.Printing
             // ボディーのx方向の余白
             int[,] body_Xspacing = { { 17, 78, 148, 218,288 } };
 
-            for (int i = 0; i < shellData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < shellData[i].Count; j++)
+                for (int j = 0; j < data[i].Count; j++)
                 {
-                    for (int l = 0; l < shellData[i][j].Length; l++)
+                    for (int l = 0; l < data[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        mc.PrintContent(shellData[i][j][l]);  // print
+                        mc.PrintContent(data[i][j][l]);  // print
                     }
                     mc.CurrentRow(1);
                 }

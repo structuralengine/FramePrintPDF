@@ -19,110 +19,97 @@ namespace PDF_Manager.Printing
 {
     internal class PrintExport
     {
-        public void Export(PdfDoc mc, object[] dataset)
+        public void Export(PdfDoc mc, object[] class_set)
         {
             // node
-            if (dataset[0] != null)
+            if ((InputNode)class_set[(int)PrintReady.class_name.node] != null)
             {
-                InputNode node = new InputNode();
-                // gfx登録
-                node.NodePDF(mc, (List<List<string[]>>)dataset[0]);
+                InputNode cls_node = (InputNode)class_set[(int)PrintReady.class_name.node];
+                cls_node.NodePDF(mc);
             }
 
             // member
-            if (dataset[3] != null)
+            if ((InputMember)class_set[(int)PrintReady.class_name.member] != null)
             {
-                InputMember member = new InputMember();
-                // gfx登録
-                member.MemberPDF(mc, (List<string[]>)dataset[3]);
+                InputMember cls_member = (InputMember)class_set[(int)PrintReady.class_name.member];
+                cls_member.MemberPDF(mc);
             }
 
             // element
-            if (dataset[1] != null && dataset[2] != null)
+            if ((InputElement)class_set[(int)PrintReady.class_name.elememt] != null)
             {
-                InputElement element = new InputElement();
-                // gfx登録 (mc,tltle,data)
-                element.ElementPDF(mc, (List<string>)dataset[1], (List<List<string[]>>)dataset[2]);
+                InputElement cls_element = (InputElement)class_set[(int)PrintReady.class_name.elememt];
+                cls_element.ElementPDF(mc);
             }
 
             // fixnode
-            if (dataset[4] != null && dataset[5] != null)
+            if ((InputFixNode)class_set[(int)PrintReady.class_name.fix_node] != null)
             {
-                InputFixNode fixnode = new InputFixNode();
-                // gfx登録 (mc,tltle,data)
-                fixnode.FixNodePDF(mc, (List<string>)dataset[4], (List<List<string[]>>)dataset[5]);
+                InputFixNode cls_fixnode = (InputFixNode)class_set[(int)PrintReady.class_name.fix_node];
+                cls_fixnode.FixNodePDF(mc);
             }
 
             // joint
-            if (dataset[6] != null && dataset[7] != null)
+            if ((InputJoint)class_set[(int)PrintReady.class_name.joint] != null)
             {
-                InputJoint joint = new InputJoint();
-                // gfx登録 (mc,tltle,data)
-                joint.JointPDF(mc, (List<string>)dataset[6], (List<List<string[]>>)dataset[7]);
+                InputJoint cls_joint = (InputJoint)class_set[(int)PrintReady.class_name.joint];
+                cls_joint.JointPDF(mc);
             }
 
             // noticepoints
-            if (dataset[8] != null)
+            if ((InputNoticePoints)class_set[(int)PrintReady.class_name.notice_points] != null)
             {
-                InputNoticePoints noticepoints = new InputNoticePoints();
-                // gfx登録 (mc,tltle,data)
-                noticepoints.NoticePointsPDF(mc, (List<List<string[]>>)dataset[8]);
+                InputNoticePoints cls_noticepoints = (InputNoticePoints)class_set[(int)PrintReady.class_name.notice_points];
+                cls_noticepoints.NoticePointsPDF(mc);
             }
 
             // fixmember
-            if (dataset[9] != null && dataset[10] != null)
+            if ((InputFixMember)class_set[(int)PrintReady.class_name.fix_member] != null)
             {
-                InputFixMember fixmember = new InputFixMember();
-                // gfx登録 (mc,tltle,data)
-                fixmember.FixMemberPDF(mc, (List<string>)dataset[9], (List<List<string[]>>)dataset[10]);
+                InputFixMember cls_fixmember = (InputFixMember)class_set[(int)PrintReady.class_name.fix_member];
+                cls_fixmember.FixMemberPDF(mc);
             }
 
             // shell
-            if (dataset[11] != null)
+            if ((InputShell)class_set[(int)PrintReady.class_name.shell] != null)
             {
-                InputShell shell = new InputShell();
-                // gfx登録 (mc,tltle,data)
-                shell.ShellPDF(mc, (List<List<string[]>>)dataset[11]);
+                InputShell cls_shell = (InputShell)class_set[(int)PrintReady.class_name.shell];
+                cls_shell.ShellPDF(mc);
             }
 
-            // loadname
-            if (dataset[12] != null)
+            //loadname
+            if ((InputLoadName)class_set[(int)PrintReady.class_name.loadname] != null)
             {
-                InputLoadName loadname = new InputLoadName();
-                // gfx登録 (mc,tltle,data)
-                loadname.LoadNamePDF(mc, (List<string[]>)dataset[12]);
+                InputLoadName cls_loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
+                cls_loadname.LoadNamePDF(mc);
             }
 
-            // load
-            if (dataset[13] != null && dataset[14] != null)
+            //load
+            if ((InputLoad)class_set[(int)PrintReady.class_name.load] != null)
             {
-                InputLoad load = new InputLoad();
-                // gfx登録 (mc,tltle,data)
-                load.LoadPDF(mc, (List<string>)dataset[13], (List<List<List<string[]>>>)dataset[14]);
+                InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
+                cls_load.LoadPDF(mc);
             }
 
-            // define
-            if (dataset[15] != null)
+            //define
+            if ((InputDefine)class_set[(int)PrintReady.class_name.define] != null)
             {
-                InputDefine define = new InputDefine();
-                // gfx登録 (mc,tltle,data)
-                define.DefinePDF(mc, (List<List<string[]>>) dataset[15]);
+                InputDefine cls_define = (InputDefine)class_set[(int)PrintReady.class_name.define];
+                cls_define.DefinePDF(mc);
             }
 
-            // combine
-            if (dataset[16] != null)
+            //combine
+            if ((InputCombine)class_set[(int)PrintReady.class_name.combine] != null)
             {
-                InputCombine combine = new InputCombine();
-                // gfx登録 (mc,tltle,data)
-                combine.CombinePDF(mc, (List<List<string[]>>)dataset[16]);
+                InputCombine cls_combine = (InputCombine)class_set[(int)PrintReady.class_name.combine];
+                cls_combine.CombinePDF(mc);
             }
 
-            // pickup
-            if (dataset[17] != null)
+            //pickup
+            if ((InputPickup)class_set[(int)PrintReady.class_name.pickup] != null)
             {
-                InputPickup pickup = new InputPickup();
-                // gfx登録 (mc,tltle,data)
-                pickup.PickupPDF(mc, (List<List<string[]>>)dataset[17]);
+                InputPickup cls_pickup = (InputPickup)class_set[(int)PrintReady.class_name.pickup];
+                cls_pickup.PickupPDF(mc);
             }
         }
     }

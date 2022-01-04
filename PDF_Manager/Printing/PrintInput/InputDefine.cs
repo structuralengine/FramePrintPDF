@@ -20,15 +20,16 @@ namespace PDF_Manager.Printing
     internal class InputDefine
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<List<string[]>> data = new List<List<string[]>>();
 
-        public List<List<string[]>> Define(PdfDoc mc, Dictionary<string, object> value_)
+        public void Define(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
             var target = JObject.FromObject(value["define"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
-            List<List<string[]>> define_data = new List<List<string[]>>();
+            data = new List<List<string[]>>();
             List<string[]> body = new List<string[]>();
 
 
@@ -70,21 +71,20 @@ namespace PDF_Manager.Printing
             }
             if (body.Count > 0)
             {
-                define_data.Add(body);
+                data.Add(body);
             }
-            return define_data;
 
         }
 
-        public void DefinePDF(PdfDoc mc, List<List<string[]>> defineData)
+        public void DefinePDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < defineData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                count += (defineData[i].Count + 2) * mc.single_Yrow;
+                count += (data[i].Count + 2) * mc.single_Yrow;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
@@ -107,14 +107,14 @@ namespace PDF_Manager.Printing
             // ボディーのx方向の余白
             int[,] body_Xspacing = { { 27, 67, 107, 147, 187, 227, 267, 307, 347, 387, 427 } };
 
-            for (int i = 0; i < defineData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < defineData[i].Count; j++)
+                for (int j = 0; j < data[i].Count; j++)
                 {
-                    for (int l = 0; l < defineData[i][j].Length; l++)
+                    for (int l = 0; l < data[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        mc.PrintContent(defineData[i][j][l]);  // print
+                        mc.PrintContent(data[i][j][l]);  // print
                     }
                     mc.CurrentRow(1);
                 }

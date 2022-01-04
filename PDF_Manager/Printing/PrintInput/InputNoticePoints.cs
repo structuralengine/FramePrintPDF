@@ -20,15 +20,16 @@ namespace PDF_Manager.Printing
     internal class InputNoticePoints
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<List<string[]>> data = new List<List<string[]>>();
 
-        public List<List<string[]>> NoticePoints(PdfDoc mc, InputMember member, Dictionary<string, object> value_)
+        public void NoticePoints(PdfDoc mc, InputMember member, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
             JArray target = JArray.FromObject(value["notice_points"]);
 
             // 集まったデータはここに格納する
-            List<List<string[]>> noticepoints_data = new List<List<string[]>>();
+            data = new List<List<string[]>>();
             List<string[]> body = new List<string[]>();
 
 
@@ -73,20 +74,19 @@ namespace PDF_Manager.Printing
             }
             if (body.Count > 0)
             {
-                noticepoints_data.Add(body);
+                data.Add(body);
             }
-            return noticepoints_data;
         }
 
-        public void NoticePointsPDF(PdfDoc mc, List<List<string[]>> noticepointsData)
+        public void NoticePointsPDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < noticepointsData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                count += (noticepointsData[i].Count + 2) * mc.single_Yrow;
+                count += (data[i].Count + 2) * mc.single_Yrow;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
@@ -111,14 +111,14 @@ namespace PDF_Manager.Printing
             // ボディーのx方向の余白
             int[,] body_Xspacing = { { 17, 58, 96, 131, 166, 201, 236, 271, 306, 341, 376, 411 } };
 
-            for (int i = 0; i < noticepointsData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < noticepointsData[i].Count; j++)
+                for (int j = 0; j < data[i].Count; j++)
                 {
-                    for (int l = 0; l < noticepointsData[i][j].Length; l++)
+                    for (int l = 0; l < data[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        mc.PrintContent(noticepointsData[i][j][l]);  // print
+                        mc.PrintContent(data[i][j][l]);  // print
                     }
                     mc.CurrentRow(1);
                 }

@@ -21,16 +21,18 @@ namespace PDF_Manager.Printing
     internal class InputFixNode
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<string> title = new List<string>();
+        List<List<string[]>> data = new List<List<string[]>>();
 
-        public (List<string>, List<List<string[]>>) FixNode(PdfDoc mc,Dictionary<string, object> value_)
+        public void FixNode(PdfDoc mc,Dictionary<string, object> value_)
         {
             value = value_;
-            // elementデータを取得する．
+            // データを取得する．
             var target = JObject.FromObject(value["fix_node"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはすべてここに格納する
-            List<string> fixnode_title = new List<string>();
-            List<List<string[]>> fixnode_data = new List<List<string[]>>();
+            title = new List<string>();
+            data = new List<List<string[]>>();
 
 
             for (int i = 0; i < target.Count; i++)
@@ -38,7 +40,7 @@ namespace PDF_Manager.Printing
                 JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
 
                 // タイトルを入れる．
-                fixnode_title.Add("タイプ" + target.ElementAt(i).Key);
+                title.Add("タイプ" + target.ElementAt(i).Key);
 
                 List<string[]> table = new List<string[]>();
 
@@ -58,21 +60,17 @@ namespace PDF_Manager.Printing
                     
                     table.Add(line);
                 }
-                fixnode_data.Add(table);
+                data.Add(table);
             }
-            return (
-                fixnode_title,
-                fixnode_data
-            );
         }
 
-        public void FixNodePDF(PdfDoc mc, List<string> fixnodeTitle, List<List<string[]>> fixnodeData)
+        public void FixNodePDF(PdfDoc mc)
         {
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < fixnodeTitle.Count; i++)
+            for (int i = 0; i < title.Count; i++)
             {
-                count += (fixnodeData[i].Count + 5) * mc.single_Yrow + 1;
+                count += (data[i].Count + 5) * mc.single_Yrow + 1;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
@@ -102,31 +100,30 @@ namespace PDF_Manager.Printing
 
             int k = 0;
 
-            for (int i = 0; i < fixnodeData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
                 //  1タイプ内でページをまたぐかどうか
-                mc.TypeCount(i, 6, fixnodeData[i].Count, fixnodeTitle[i]);
+                mc.TypeCount(i, 6, data[i].Count, title[i]);
 
                 // タイプの印刷
                 mc.CurrentColumn(0);
-                mc.PrintContent(fixnodeTitle[i], 0);
+                mc.PrintContent(title[i], 0);
                 mc.CurrentRow(2);
 
 
                 // ヘッダーの印刷
                 mc.Header(header_content, header_Xspacing);
 
-                for (int j = 0; j < fixnodeData[i].Count; j++)
+                for (int j = 0; j < data[i].Count; j++)
                 {
-                    for (int l = 0; l < fixnodeData[i][j].Length; l++)
+                    for (int l = 0; l < data[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
-                        mc.PrintContent(fixnodeData[i][j][l]); // print
+                        mc.PrintContent(data[i][j][l]); // print
                     }
                     mc.CurrentRow(1); // y方向移動
                 }
             }
-
         }
     }
 

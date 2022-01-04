@@ -20,15 +20,16 @@ namespace PDF_Manager.Printing
     internal class InputLoadName
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<string[]> data = new List<string[]>();
 
-        public List<string[]> LoadName(PdfDoc mc, Dictionary<string, object> value_)
+        public void LoadName(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
 
             var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
-            List<string[]> loadname_data = new List<string[]>();
+            data = new List<string[]>();
 
             for (int i = 0; i < target.Count; i++)
             {
@@ -43,17 +44,16 @@ namespace PDF_Manager.Printing
                 line[5] = mc.TypeChange(item["element"]);
                 line[6] = mc.TypeChange(item["fix_member"]);
                 line[7] = mc.TypeChange(item["joint"]);
-                loadname_data.Add(line);
+                data.Add(line);
             }
-            return loadname_data;
         }
 
-        public void LoadNamePDF(PdfDoc mc, List<string[]> loadnameData)
+        public void LoadNamePDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
             // 全行数の取得
-            double count = (loadnameData.Count + ((loadnameData.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
+            double count = (data.Count + ((data.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
             //  改ページ判定
             mc.DataCountKeep(count);// 全行の取得
 
@@ -80,18 +80,18 @@ namespace PDF_Manager.Printing
                { 17, 57, 85, 140, 362,387,412,437 },
             };
 
-            for (int i = 0; i < loadnameData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < loadnameData[i].Length; j++)
+                for (int j = 0; j < data[i].Length; j++)
                 {
                     mc.CurrentColumn(body_Xspacing[0, j]); //x方向移動
                     if (j == 2 || j == 3) // 記号，名称のみ左詰め
                     {
-                        mc.PrintContent(loadnameData[i][j], 1);  // print
+                        mc.PrintContent(data[i][j], 1);  // print
                     }
                     else
                     {
-                        mc.PrintContent(loadnameData[i][j]);  // print
+                        mc.PrintContent(data[i][j]);  // print
                     }
                 }
                 mc.CurrentRow(1);

@@ -20,14 +20,16 @@ namespace PDF_Manager.Printing
     internal class InputLoad
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<string> title = new List<string>();
+        List<List<List<string[]>>> data = new List<List<List<string[]>>>();
 
-        public (List<string>, List<List<List<string[]>>>) Load(PdfDoc mc, Dictionary<string, object> value_)
+        public void Load(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
             // 集まったデータはここに格納する
-            List<string> load_title = new List<string>();
-            List<List<List<string[]>>> load_data = new List<List<List<string[]>>>();
+            title = new List<string>();
+            data = new List<List<List<string[]>>>();
 
             for (int i = 0; i < target.Count; i++)
             {
@@ -37,15 +39,10 @@ namespace PDF_Manager.Printing
                 // タイトルの表示
                 if (item.ContainsKey("load_member") || item.ContainsKey("load_node"))
                 {
-                    load_title.Add("case" + target.ElementAt(i).Key + ":" + item["name"]);
+                    title.Add("case" + target.ElementAt(i).Key + ":" + item["name"]);
                 }
 
                 List<List<string[]>> compile = new List<List<string[]>>();
-
-                //if (i == 5)
-                //{
-                //    Console.WriteLine("hek");
-                //}
 
                 List<string[]> table1 = new List<string[]>();
                 if (item.ContainsKey("load_member"))
@@ -60,8 +57,8 @@ namespace PDF_Manager.Printing
                             line[1] = mc.TypeChange(member["m2"]);
                             line[2] = mc.TypeChange(member["direction"]);
                             line[3] = mc.TypeChange(member["mark"]);
-                            line[4] = mc.TypeChange(member["L1"]);
-                            line[5] = mc.TypeChange(member["L2"]);
+                            line[4] = mc.TypeChange(member["L1"],3);
+                            line[5] = mc.TypeChange(member["L2"],3);
                             line[6] = mc.TypeChange(member["P1"], 2);
                             line[7] = mc.TypeChange(member["P2"], 2);
                             table1.Add(line);
@@ -98,22 +95,18 @@ namespace PDF_Manager.Printing
                     compile.Add(null);
                 }
 
-                load_data.Add(compile);
+                data.Add(compile);
             }
-            return (
-               load_title,
-               load_data
-           );
         }
 
-        public void LoadPDF(PdfDoc mc, List<string> loadTitle, List<List<List<string[]>>> loadData)
+        public void LoadPDF(PdfDoc mc)
         {
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < loadTitle.Count; i++)
+            for (int i = 0; i < title.Count; i++)
             {
-                int mCount = loadData[i][0] != null ? loadData[i][0].Count : 0;
-                int pCount = loadData[i][1] != null ? loadData[i][1].Count : 0;
+                int mCount = data[i][0] != null ? data[i][0].Count : 0;
+                int pCount = data[i][1] != null ? data[i][1].Count : 0;
 
                 count += ((mCount + 5) + (pCount + 5)) * mc.single_Yrow + 1;
             }
@@ -159,30 +152,30 @@ namespace PDF_Manager.Printing
             mc.CurrentRow(2);
             mc.CurrentColumn(0);
 
-            for (int i = 0; i < loadTitle.Count; i++)
+            for (int i = 0; i < title.Count; i++)
             {
                 // 部材荷重の印刷
-                if (loadData[i][0] != null)
+                if (data[i][0] != null)
                 {
-                    if (loadData[i][0].Count != 0)
+                    if (data[i][0].Count != 0)
                     {
                         // 1タイプ内でページをまたぐかどうか
-                        mc.TypeCount(i, 5, loadData[i][0].Count, loadTitle[i]);
+                        mc.TypeCount(i, 5, data[i][0].Count, title[i]);
 
                         // タイプの印刷
                         mc.CurrentColumn(0);
-                        mc.PrintContent(loadTitle[i], 0);
+                        mc.PrintContent(title[i], 0);
                         mc.CurrentRow(2);
 
                         // ヘッダーの印刷
                         mc.Header(headerM_content, headerM_Xspacing);
 
-                        for (int k = 0; k < loadData[i][0].Count; k++)
+                        for (int k = 0; k < data[i][0].Count; k++)
                         {
-                            for (int l = 0; l < loadData[i][0][k].Length; l++)
+                            for (int l = 0; l < data[i][0][k].Length; l++)
                             {
                                 mc.CurrentColumn(bodyM_Xspacing[0, l]); //x方向移動
-                                mc.PrintContent(loadData[i][0][k][l]); // print
+                                mc.PrintContent(data[i][0][k][l]); // print
                             }
                             mc.CurrentRow(1);
                         }
@@ -190,33 +183,33 @@ namespace PDF_Manager.Printing
                 }
 
                 // 節点荷重の印刷
-                if (loadData[i][1] != null)
+                if (data[i][1] != null)
                 {
                     if (i == 0)
                     {
                         mc.CurrentPos.Y += mc.single_Yrow;
                     }
                     // 1タイプ内でページをまたぐかどうか
-                    mc.TypeCount(i, 5, loadData[i][1].Count, loadTitle[i]);
+                    mc.TypeCount(i, 5, data[i][1].Count, title[i]);
 
                     // 節点荷重のみの時に，タイプ番号を表示する
-                    if (loadData[i][0] == null)
+                    if (data[i][0] == null)
                     {
                         // タイプの印刷
                         mc.CurrentColumn(0);
-                        mc.PrintContent(loadTitle[i], 0);
+                        mc.PrintContent(title[i], 0);
                         mc.CurrentRow(2);
                     }
 
                     // ヘッダーの印刷
                     mc.Header(headerP_content, headerP_Xspacing);
 
-                    for (int k = 0; k < loadData[i][1].Count; k++)
+                    for (int k = 0; k < data[i][1].Count; k++)
                     {
-                        for (int l = 0; l < loadData[i][1][k].Length; l++)
+                        for (int l = 0; l < data[i][1][k].Length; l++)
                         {
                             mc.CurrentColumn(bodyP_Xspacing[0, l]); //x方向移動
-                            mc.PrintContent(loadData[i][1][k][l]); // print
+                            mc.PrintContent(data[i][1][k][l]); // print
                         }
                         mc.CurrentRow(1);
                     }

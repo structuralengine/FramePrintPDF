@@ -21,8 +21,10 @@ namespace PDF_Manager.Printing
     {
         private PdfDoc mc;
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        public List<List<string[]>> data = new List<List<string[]>>();
 
-        public List<List<string[]>> Node(PdfDoc mc, Dictionary<string, object> value_)
+
+        public void Node(PdfDoc mc, Dictionary<string, object> value_)
         {
             int bottomCell = mc.bottomCell * 2;
 
@@ -32,7 +34,6 @@ namespace PDF_Manager.Printing
 
             // 集まったデータはここに格納する
             //ArrayList node_data = new ArrayList();
-            List<List<string[]>> node_data = new List<List<string[]>>();
 
             // 全部の行数
             var row = target.Count;
@@ -67,7 +68,7 @@ namespace PDF_Manager.Printing
                         line[7] = mc.TypeChange(targetValue_r["z"], 3);
                         body.Add(line);
                     }
-                    node_data.Add(body);
+                    data.Add(body);
                     row -= bottomCell;
                     page++;
                 }
@@ -109,11 +110,10 @@ namespace PDF_Manager.Printing
                             body.Add(line);
                         }
                     }
-                    node_data.Add(body);
+                    data.Add(body);
                     break;
                 }
             }
-            return node_data;
         }
 
         public double[] GetNodePos(string nodeNo, Dictionary<string, object> value)
@@ -140,7 +140,7 @@ namespace PDF_Manager.Printing
             return node;
         }
 
-        public void NodePDF(PdfDoc mc, List<List<string[]>> nodeData)
+        public void NodePDF(PdfDoc mc)
         {
             //タイトルの印刷
             mc.PrintContent("格点データ", 0);
@@ -161,17 +161,18 @@ namespace PDF_Manager.Printing
             // ボディーのx方向の余白
             int[,] body_Xspacing = { { 17, 77, 137, 197, 257, 317, 377, 437 } };
 
-            for (int i = 0; i < nodeData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < nodeData[i].Count; j++)
+                for (int j = 0; j < data[i].Count; j++)
                 {
-                    for (int k = 0; k < nodeData[i][j].Length; k++)
+                    for (int k = 0; k < data[i][j].Length; k++)
                     {
-                        mc.CurrentColumn(body_Xspacing[0, k]);　//x方向移動
-                        mc.PrintContent(nodeData[i][j][k], 3);　// print
+                        mc.CurrentColumn(body_Xspacing[0, k]); //x方向移動
+                        mc.PrintContent(data[i][j][k], 3); // print
                     }
                     mc.CurrentRow(1); // y方向移動
                 }
+
             }
         }
     }
