@@ -56,8 +56,8 @@ namespace PDF_Manager.Printing
                             line[0] = mc.TypeChange(member["m1"]);
                             line[1] = mc.TypeChange(member["m2"]);
                             line[2] = mc.TypeChange(member["direction"]);
-                            line[3] = mc.TypeChange(member["mark"]);
-                            line[4] = mc.TypeChange(member["L1"],3);
+                            line[3] = mc.TypeChange(member["mark"]); 
+                            line[4] = member["L1"].ToString().StartsWith("-0") ? "-0.000" : mc.TypeChange(double.Parse(member["L1"].ToString()),3);
                             line[5] = mc.TypeChange(member["L2"],3);
                             line[6] = mc.TypeChange(member["P1"], 2);
                             line[7] = mc.TypeChange(member["P2"], 2);

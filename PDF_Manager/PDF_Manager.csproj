@@ -28,4 +28,8 @@
     <PackageReference Include="PdfSharpCore" Version="1.3.9" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Printing\PrintInput\新しいフォルダー\" />
+  </ItemGroup>
+
 </Project>
