@@ -47,7 +47,7 @@ namespace PDF_Manager.Printing
 
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                double len = this.GetMemberLength(index, value); // 部材長さ
+                double len = this.GetMemberLength(mc, index, value); // 部材長さ
 
                 string name = item["e"].Type == JTokenType.Null ? "" : element.GetElementName(item["e"].ToString());
 
@@ -63,7 +63,7 @@ namespace PDF_Manager.Printing
             }
         }
 
-        public double GetMemberLength(string memberNo, Dictionary<string, object> value)
+        public double GetMemberLength(PdfDoc mc,string memberNo, Dictionary<string, object> value)
         {
             JToken memb = this.GetMember(memberNo);
 
@@ -75,8 +75,8 @@ namespace PDF_Manager.Printing
             }
 
             InputNode node = new InputNode();
-            double[] iPos = node.GetNodePos(ni, value);
-            double[] jPos = node.GetNodePos(nj, value);
+            double[] iPos = node.GetNodePos(mc,ni, value);
+            double[] jPos = node.GetNodePos(mc,nj, value);
             if (iPos == null || jPos == null)
             {
                 return 0;

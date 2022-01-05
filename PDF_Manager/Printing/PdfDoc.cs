@@ -210,7 +210,7 @@ namespace PDF_Manager.Printing
         //　タイプ別の改ページ判定
         public void TypeCount(int index, double headerRow, double count, string title)
         {
-            double typeCount = CurrentPos.Y + (headerRow + count) * single_Yrow;
+            double typeCount = CurrentPos.Y + (headerRow + count + 1) * single_Yrow;
             if (index != 0 && typeCount > Margine.Y + bottomCell * single_Yrow)
             {
                 NewPage();
@@ -228,7 +228,7 @@ namespace PDF_Manager.Printing
         {
             string newDataString = "";
 
-            if (data.Type == JTokenType.Null)
+            if (data == null)
             {
                 newDataString = "";
             }

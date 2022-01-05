@@ -39,7 +39,7 @@ namespace PDF_Manager.Printing
 
                 string m = mc.TypeChange(item["m"]);
 
-                double len = member.GetMemberLength(m, value); // 部材長さ
+                double len = member.GetMemberLength(mc,m, value); // 部材長さ
 
 
                 string[] line = new String[12];

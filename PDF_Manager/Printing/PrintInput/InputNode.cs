@@ -53,7 +53,7 @@ namespace PDF_Manager.Printing
                         var j = bottomCell * page + i;
                         var k = bottomCell * page + bottomCell / 2 + i;
                         //　各行のデータを取得する（左段/右段)
-                        var targetValue_l = JObject.FromObject(target.ElementAt(j).Value).ToObject<Dictionary<string, double>>();
+                        var targetValue_l = JObject.FromObject(target.ElementAt(j).Value);
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
@@ -61,7 +61,7 @@ namespace PDF_Manager.Printing
                         line[2] = mc.TypeChange(targetValue_l["y"], 3);
                         line[3] = mc.TypeChange(targetValue_l["z"], 3);
 
-                        var targetValue_r = JObject.FromObject(target.ElementAt(k).Value).ToObject<Dictionary<string, double>>();
+                        var targetValue_r = JObject.FromObject(target.ElementAt(k).Value);
                         line[4] = target.ElementAt(k).Key;
                         line[5] = mc.TypeChange(targetValue_r["x"], 3);
                         line[6] = mc.TypeChange(targetValue_r["y"], 3);
@@ -83,7 +83,7 @@ namespace PDF_Manager.Printing
                         var j = bottomCell * page + i;
                         var k = j + row;
                         //　各行のデータを取得する（左段)
-                        var targetValue_l = JObject.FromObject(target.ElementAt(j).Value).ToObject<Dictionary<string, double>>();
+                        var targetValue_l = JObject.FromObject(target.ElementAt(j).Value);
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
@@ -94,7 +94,7 @@ namespace PDF_Manager.Printing
                         try
                         {
                             //　各行のデータを取得する（右段)
-                            var targetValue_r = JObject.FromObject(target.ElementAtOrDefault(k).Value).ToObject<Dictionary<string, double>>();
+                            var targetValue_r = JObject.FromObject(target.ElementAtOrDefault(k).Value);
                             line[4] = target.ElementAtOrDefault(k).Key;
                             line[5] = mc.TypeChange(targetValue_r["x"], 3);
                             line[6] = mc.TypeChange(targetValue_r["y"], 3);
@@ -116,7 +116,7 @@ namespace PDF_Manager.Printing
             }
         }
 
-        public double[] GetNodePos(string nodeNo, Dictionary<string, object> value)
+        public double[] GetNodePos(PdfDoc mc,string nodeNo, Dictionary<string, object> value)
         {
             var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
 
@@ -130,12 +130,25 @@ namespace PDF_Manager.Printing
                 return null;
             }
 
-            var targetValue = JObject.FromObject(nodeList[nodeNo]).ToObject<Dictionary<string, double>>();
+            var targetValue = JObject.FromObject(nodeList[nodeNo]);
+
+            string[] node_st = new string[3];
+            node_st[0] = mc.TypeChange(targetValue["x"]);
+            node_st[1] = mc.TypeChange(targetValue["y"]);
+            node_st[2] = mc.TypeChange(targetValue["z"]);
 
             double[] node = new double[3];
-            node[0] = targetValue["x"];
-            node[1] = targetValue["y"];
-            node[2] = targetValue["z"];
+            for (int i = 0;i <3;i++)
+            {
+                if(node_st[i] == "")
+                {
+                    node[i] = 0;
+                }
+                else
+                {
+                    node[i] = double.Parse(node_st[i]);
+                }
+            }
 
             return node;
         }
