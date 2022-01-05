@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Globalization;
 using System.Threading.Tasks;
+using PdfSharpCore.Drawing.Layout;
 
 namespace PDF_Manager.Printing
 {
@@ -21,6 +22,10 @@ namespace PDF_Manager.Printing
         public XGraphics gfx;
         public XPoint CurrentPos; // 現在の座標
         public XPoint Margine; // マージン
+        public XRect rect;
+        public XStringFormat format;
+        public XTextFormatter tf;
+        public XPen xpen;
         public XFont font_mic;
         public XFont font_got;
         public int x;
@@ -62,8 +67,15 @@ namespace PDF_Manager.Printing
             // フォントの設定
             font_mic = new XFont("MS Mincho", 10, XFontStyle.Regular);
             font_got = new XFont("MS Gothic", 10, XFontStyle.Regular);
-            
+
             dataCount = Margine.Y;
+
+            //// 折り返し
+            //tf = new XTextFormatter(gfx);
+            //rect = new XRect(25, 50, 150, 34);
+            //format = new XStringFormat();
+            //xpen = new XPen(XColors.Navy, 0.4);
+
         }
 
         /// <summary>
@@ -81,6 +93,8 @@ namespace PDF_Manager.Printing
 
             // 初期位置を設定する
             CurrentPos = new XPoint(Margine.X, Margine.Y);
+            tf = new XTextFormatter(gfx);
+
         }
 
         /// <summary>
@@ -133,10 +147,12 @@ namespace PDF_Manager.Printing
             else if (dataHandle == 2)
             {
                 gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos, XStringFormats.BottomCenter);
-            }else if(dataHandle == 3)
+            }
+            else if (dataHandle == 3)
             {
                 gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos, XStringFormats.BottomRight);
             }
+      
         }
 
         // 行数の管理
@@ -168,7 +184,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < current_header.GetLength(1); j++)
                 {
                     CurrentColumn(currentHeader_Xspacing[i, j]);
-                    PrintContent(current_header[i, j],2);
+                    PrintContent(current_header[i, j], 2);
                 }
                 CurrentRow(1);
             }
@@ -195,24 +211,24 @@ namespace PDF_Manager.Printing
         public void TypeCount(int index, double headerRow, double count, string title)
         {
             double typeCount = CurrentPos.Y + (headerRow + count) * single_Yrow;
-            if (index!=0&&typeCount > Margine.Y + bottomCell * single_Yrow)
+            if (index != 0 && typeCount > Margine.Y + bottomCell * single_Yrow)
             {
                 NewPage();
                 CurrentRow(2);
             }
             else
             {
-                if(index != 0)CurrentPos.Y += single_Yrow;
+                if (index != 0) CurrentPos.Y += single_Yrow;
             }
         }
 
         // データの精査と変換
         // (data,四捨五入する時の桁数,指数形式の表示など)
-        public string TypeChange(JToken data,int round = 0, string style = "none")
+        public string TypeChange(JToken data, int round = 0, string style = "none")
         {
             string newDataString = "";
 
-            if(data.Type ==JTokenType.Null)
+            if (data.Type == JTokenType.Null)
             {
                 newDataString = "";
             }
@@ -235,14 +251,14 @@ namespace PDF_Manager.Printing
                 }
                 else
                 {
-                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString("E02",CultureInfo.CreateSpecificCulture("en-US"));
+                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString("E02", CultureInfo.CreateSpecificCulture("en-US"));
                 }
             }
             return newDataString;
         }
 
         //　countの値を超える文字数ならば，先頭から指定の文字数を取ったものを返す．
-        public string GetText(string text,int count)
+        public string GetText(string text, int count)
         {
             if (text.Length > count)
             {
@@ -251,6 +267,102 @@ namespace PDF_Manager.Printing
             else
             {
                 return text;
+            }
+        }
+
+        // 結果の印刷（基本形）
+        public void PrintResultBasic(List<string> title, List<List<string[]>> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing)
+        {
+            for (int i = 0; i < data.Count; i++)
+            {
+                //  1タイプ内でページをまたぐかどうか
+                TypeCount(i, 5, data[i].Count, title[i]);
+
+                // タイプの印刷
+                CurrentColumn(0);
+                PrintContent(title[i], 0);
+                CurrentRow(2);
+
+                // ヘッダーの印刷
+                Header(header_content, header_Xspacing);
+
+                for (int j = 0; j < data[i].Count; j++)
+                {
+                    for (int l = 0; l < data[i][j].Length; l++)
+                    {
+                        CurrentColumn(body_Xspacing[0, l]); //x方向移動
+                        PrintContent(data[i][j][l]); // print
+                    }
+                    CurrentRow(1); // y方向移動
+                }
+            }
+        }
+
+        // 結果の印刷（その他）
+        public void PrintResultAnnexing(List<string> title, string[] type, List<List<List<string[]>>> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing,int textLen)
+        {
+            for (int i = 0; i < data.Count; i++)
+            {
+                //  1ケースでページをまたぐかどうか
+                int count = 0;
+
+                for(int m = 0;m<data[i].Count; m++)
+                {
+                    count += data[i][m].Count;
+                }
+
+                TypeCount(i, 5, count, title[i]);
+
+                // タイトルの印刷
+                CurrentColumn(0);
+                PrintContent(title[i], 0);
+                CurrentRow(2);
+
+                for (int j = 0; j < data[i].Count; j++)
+                {
+                    //  1タイプ内でページをまたぐかどうか
+                    TypeCount(j, 2, data[i][j].Count, title[i]);
+
+                    // タイプの印刷
+                    CurrentColumn(0);
+                    PrintContent(type[j], 0);
+                    CurrentRow(2);
+
+                    // ヘッダーの印刷
+                    Header(header_content, header_Xspacing);
+
+                    for (int k = 0; k < data[i][j].Count; k++)
+                    {
+                        //組み合わせの文字数のカウント
+                        int numFullWidth = data[i][j][k][data[i][j][k].Length - 1].Length;
+
+                        //2行になるとき，組み合わせとそのほかデータがページ跨ぎしないようにする．
+                        //textLen:切り替わりの文字数の閾値
+                        if (numFullWidth > textLen)
+                        {
+                            double y = CurrentPos.Y + single_Yrow * 2;
+                            // 跨ぎそうなら1行あきらめて，次ページへ．
+                            if (y > single_Yrow * bottomCell + Margine.Y)
+                            {
+                                CurrentRow(2);
+                            }
+                        }
+
+                        for (int l = 0; l < data[i][j][k].Length; l++)
+                        {
+                            CurrentColumn(body_Xspacing[0, l]); //x方向移動
+                            
+                            // 組み合わせで2行になるとき，1行下に書く．
+                            if (l == data[i][j][k].Length - 1 && numFullWidth > textLen)
+                            {
+                                CurrentRow(1);
+                            }
+
+                            PrintContent(data[i][j][k][l]); // print
+                        }
+                        CurrentRow(1); // y方向移動
+                    }
+                }
             }
         }
     }
