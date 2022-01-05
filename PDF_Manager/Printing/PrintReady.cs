@@ -223,6 +223,28 @@ namespace PDF_Manager.Printing
                 class_set[(int)class_name.reac] = reac_call;
             }
 
+            // reaccombine
+            ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
+            if (data.ContainsKey("reacCombine"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "Combine");
+                class_set[(int)class_name.reacCombine] = reacAnnexing_call;
+            }
+
+            // reacPickup
+            if (data.ContainsKey("reacPickup"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.reacPickup] = reacAnnexing_call;
+            }
+
+            // reacLL
+            if (data.ContainsKey("reacLL"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "LL");
+                class_set[(int)class_name.reacLL] = reacAnnexing_call;
+            }
+
             return class_set;
         }
 

@@ -311,7 +311,7 @@ namespace PDF_Manager.Printing
                     count += data[i][m].Count;
                 }
 
-                TypeCount(i, 5, count, title[i]);
+                TypeCount(i, 7, count, title[i]);
 
                 // タイトルの印刷
                 CurrentColumn(0);
@@ -320,8 +320,12 @@ namespace PDF_Manager.Printing
 
                 for (int j = 0; j < data[i].Count; j++)
                 {
+                    //組み合わせの文字数のカウント
+                    //textLen:切り替わりの文字数の閾値
+                    int numFullWidth = data[i][j][0][data[i][j][0].Length - 1].Length > textLen ? 2 : 1 ;
+
                     //  1タイプ内でページをまたぐかどうか
-                    TypeCount(j, 2, data[i][j].Count, title[i]);
+                    TypeCount(j, 5, data[i][j].Count* numFullWidth, title[i]);
 
                     // タイプの印刷
                     CurrentColumn(0);
@@ -333,12 +337,8 @@ namespace PDF_Manager.Printing
 
                     for (int k = 0; k < data[i][j].Count; k++)
                     {
-                        //組み合わせの文字数のカウント
-                        int numFullWidth = data[i][j][k][data[i][j][k].Length - 1].Length;
-
                         //2行になるとき，組み合わせとそのほかデータがページ跨ぎしないようにする．
-                        //textLen:切り替わりの文字数の閾値
-                        if (numFullWidth > textLen)
+                        if (numFullWidth == 2)
                         {
                             double y = CurrentPos.Y + single_Yrow * 2;
                             // 跨ぎそうなら1行あきらめて，次ページへ．

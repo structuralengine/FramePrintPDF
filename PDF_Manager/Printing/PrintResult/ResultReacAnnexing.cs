@@ -17,23 +17,23 @@ using System.Collections.Generic;
 
 namespace PDF_Manager.Printing
 {
-    internal class ResultDisgAnnexing
+    internal class ResultReacAnnexing
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<string> title = new List<string>();
         string[] type = {
-            "x方向の移動量 最大",
-            "x方向の移動量 最小",
-            "y方向の移動量 最大",
-            "y方向の移動量 最小",
-            "z方向の移動量 最大",
-            "z方向の移動量 最小",
-            "x軸回りの回転角 最大",
-            "x軸回りの回転角 最小",
-            "y軸回りの回転角 最大",
-            "y軸回りの回転角 最小",
-            "z軸回りの回転角 最大",
-            "Z軸回りの回転角 最小"
+            "x方向の支点反力 最大",
+            "x方向の支点反力 最小",
+            "y方向の支点反力 最大",
+            "y方向の支点反力 最小",
+            "z方向の支点反力 最大",
+            "z方向の支点反力 最小",
+            "x軸回りの回転反力 最大",
+            "x軸回りの回転反力 最小",
+            "y軸回りの回転反力 最大",
+            "y軸回りの回転反力 最小",
+            "z軸回りの回転反力 最大",
+            "Z軸回りの回転反力 最小",
         };
         List<List<List<string[]>>> data = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
@@ -41,11 +41,11 @@ namespace PDF_Manager.Printing
         List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
 
 
-        public void DisgAnnexing(PdfDoc mc, Dictionary<string, object> value_, string key)
+        public void ReacAnnexing(PdfDoc mc, Dictionary<string, object> value_, string key)
         {
             value = value_;
             //nodeデータを取得する
-            var target = JObject.FromObject(value["disg" + key]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value["reac" + key]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
             title = new List<string>();
@@ -83,12 +83,12 @@ namespace PDF_Manager.Printing
                         string[] line = new String[8];
 
                         line[0] = mc.TypeChange(elist.ElementAt(k).Key);
-                        line[1] = mc.TypeChange(item["dx"], 4);
-                        line[2] = mc.TypeChange(item["dy"], 4);
-                        line[3] = mc.TypeChange(item["dz"], 4);
-                        line[4] = mc.TypeChange(item["rx"], 4);
-                        line[5] = mc.TypeChange(item["ry"], 4);
-                        line[6] = mc.TypeChange(item["rz"], 4);
+                        line[1] = mc.TypeChange(item["tx"], 2);
+                        line[2] = mc.TypeChange(item["ty"], 2);
+                        line[3] = mc.TypeChange(item["tz"], 2);
+                        line[4] = mc.TypeChange(item["mx"], 2);
+                        line[5] = mc.TypeChange(item["my"], 2);
+                        line[6] = mc.TypeChange(item["mz"], 2);
                         line[7] = mc.TypeChange(item["case"]);
 
                         body.Add(line);
@@ -111,7 +111,7 @@ namespace PDF_Manager.Printing
 
         }
 
-        public void DisgAnnexingPDF(PdfDoc mc, string key)
+        public void ReacAnnexingPDF(PdfDoc mc, string key)
         {
             data = new List<List<List<string[]>>>();
 
@@ -146,26 +146,27 @@ namespace PDF_Manager.Printing
 
             //　ヘッダー
             string[,] header_content = {
-                { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation","組合せ" },
-                { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)","" },
+                { "SUPPORT", "TX", "TY", "TZ", "MX", "MY","MZ","組合せ" },
+                { "",  "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)","" },
             };
+
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                { 10, 50, 100, 150, 200, 260, 320,410 },
-                { 10, 50, 100, 150, 200, 260, 320,410 },
+                { 18, 70, 130, 190, 250, 310, 370,420 },
+                { 18, 70, 130, 190, 250, 310, 370,420 },
             };
 
             // ボディーのx方向の余白　-1
             int[,] body_Xspacing = {
-                { 17, 65, 115, 165, 215, 275,335,435 }
+                { 23, 85, 145, 215, 265, 325,385,435 }
             };
 
             // タイトルの印刷
-            mc.PrintContent(key + "変位量", 0);
+            mc.PrintContent(key + "反力", 0);
             mc.CurrentRow(2);
 
             // 印刷
-            mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,20);
+            mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,10);
 
         }
     }
