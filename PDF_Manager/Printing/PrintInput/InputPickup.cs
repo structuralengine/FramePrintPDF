@@ -17,62 +17,82 @@ using System.Collections.Generic;
 
 namespace PDF_Manager.Printing
 {
-    internal class InputShell
+    internal class InputPickup
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void Shell(PdfDoc mc, Dictionary<string, object> value_)
+        public void Pickup(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
-
-            var target = JObject.FromObject(value["shell"]).ToObject<Dictionary<string, object>>();
+            //nodeデータを取得する
+            var target = JObject.FromObject(value["pickup"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
             data = new List<List<string[]>>();
             List<string[]> body = new List<string[]>();
 
-
             for (int i = 0; i < target.Count; i++)
             {
+                string[] line = new String[12];
+                line[0] = target.ElementAt(i).Key;
+
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                string[] line = new String[5];
-                line[0] = mc.TypeChange(item["e"]);
-                
-                int count = 0;
-                var itemPoints = item["nodes"];
-
-                for (int j = 0; j < itemPoints.Count(); j++)
+                // 荷重名称
+                if (item.ContainsKey("name"))
                 {
-                    line[count + 1] = mc.TypeChange(itemPoints[count]);
+                    line[1] = mc.TypeChange(item["name"]);
+                }
+                else
+                {
+                    line[1] = "";
+                }
+
+                //Keyをsortするため
+                var itemDic = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                string[] kk = itemDic.Keys.ToArray();
+                Array.Sort(kk);
+
+                int count = 0;
+
+                foreach (string key in kk)
+                {
+                    if (!key.StartsWith("C"))
+                    {
+                        continue;   
+                    }
+                    line[count + 2] = mc.TypeChange(item[key]);
                     count++;
-                    if (count == 4)
+
+                    if (count == 8)
                     {
                         body.Add(line);
                         count = 0;
-                        line = new string[5];
+                        line = new String[12];
                         line[0] = "";
+                        line[1] = "";
+                      
                     }
                 }
                 if (count > 0)
                 {
-                    for (int k = 1; k < 5; k++)
+                    for (int k = 2; k < 12; k++)
                     {
                         line[k] = line[k] == null ? "" : line[k];
+                      
                     }
-                   
+
                     body.Add(line);
                 }
-                if (body.Count > 0)
-                {
-                    data.Add(body);
-                }
             }
-            data.Add(body);
+            if (body.Count > 0)
+            {
+                data.Add(body);
+            }
         }
 
-        public void ShellPDF(PdfDoc mc)
+        public void PickupPDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
@@ -86,24 +106,24 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //  タイトルの印刷
-            mc.PrintContent("パネルデータ", 0);
+            mc.PrintContent("Pickupデータ", 0);
             mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
-                { "材料", "", "頂点No", "", ""},
-                { "No", "1", "2", "3", "4"}
+                { "No","荷重名称", "C1", "C2", "C3", "C4" , "C5", "C6", "C7", "C8","C9","C10"}
             };
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 10, 70, 175, 210, 280 },
-                 { 10, 70, 140, 210, 280 } 
+                 { 17, 100,203, 233, 263, 293, 323, 353, 383, 413,443,473},
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 17, 78, 148, 218,288 } };
+            int[,] body_Xspacing = {
+                 { 24, 42,208, 238, 268, 298, 328, 358, 388, 418,448,478},
+            };
 
             for (int i = 0; i < data.Count; i++)
             {
@@ -112,7 +132,14 @@ namespace PDF_Manager.Printing
                     for (int l = 0; l < data[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        mc.PrintContent(data[i][j][l]);  // print
+                        if (l == 1)
+                        {
+                            mc.PrintContent(data[i][j][l], 1);  // print
+                        }
+                        else
+                        {
+                            mc.PrintContent(data[i][j][l]);  // print
+                        }
                     }
                     mc.CurrentRow(1);
                 }

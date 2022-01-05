@@ -22,24 +22,27 @@ namespace PDF_Manager.Printing
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
         private List<List<string[]>> element_data = new List<List<string[]>>();
+        List<List<string[]>> data = new List<List<string[]>>();
+        List<string>title = new List<string>();
 
-        public (List<string>, List<List<string[]>>) Element(PdfDoc mc, Dictionary<string, object> value_)
+
+        public void Element(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             // elementデータを取得する．
             var target = JObject.FromObject(value["element"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはすべてここに格納する
-            List<string> elememt_title = new List<string>();
+            title = new List<string>();
             element_data = new List<List<string[]>>();
-            List<List<string[]>> print_element_data = new List<List<string[]>>();
+            data = new List<List<string[]>>();
 
 
             for (int i = 0; i < target.Count; i++)
             {
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
                 // タイトルを入れる．
-                elememt_title.Add("タイプ" + Elem.ElementAt(i).Key);
+                title.Add("タイプ" + Elem.ElementAt(i).Key);
 
                 List<string[]> table1 = new List<string[]>();
                 List<string[]> table2 = new List<string[]>();
@@ -77,21 +80,17 @@ namespace PDF_Manager.Printing
                     table2.Add(line2);
                 }
                 element_data.Add(table1);
-                print_element_data.Add(table2);
+                data.Add(table2);
             }
-            return (
-                elememt_title,
-                print_element_data
-            );
         }
 
-        public void ElementPDF(PdfDoc mc, List<string> elementTitle, List<List<string[]>> elementData)
+        public void ElementPDF(PdfDoc mc)
         {
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < elementTitle.Count; i++)
+            for (int i = 0; i < title.Count; i++)
             {
-                count += (elementData[i].Count + 5) * mc.single_Yrow + 1;
+                count += (data[i].Count + 5) * mc.single_Yrow + 1;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
@@ -120,32 +119,32 @@ namespace PDF_Manager.Printing
 
             int k = 0;
 
-            for (int i = 0; i < elementData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
                 //  1タイプ内でページをまたぐかどうか
-                mc.TypeCount(i, 5, elementData[i].Count, elementTitle[i]);
+                mc.TypeCount(i, 5, data[i].Count, title[i]);
 
                 // タイプの印刷
                 mc.CurrentColumn(0);
-                mc.PrintContent(elementTitle[i], 0);
+                mc.PrintContent(title[i], 0);
                 mc.CurrentRow(2);
 
 
                 // ヘッダーの印刷
                 mc.Header(header_content, header_Xspacing);
 
-                for (int j = 0; j < elementData[i].Count; j++)
+                for (int j = 0; j < data[i].Count; j++)
                 {
-                    for (int l = 0; l < elementData[i][j].Length; l++)
+                    for (int l = 0; l < data[i][j].Length; l++)
                     {
                         mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
                         if (l == 1 && k == 0) // 材料名称のみ左詰め
                         {
-                            mc.PrintContent(elementData[i][j][l], 1); // print
+                            mc.PrintContent(data[i][j][l], 1); // print
                         }
                         else
                         {
-                            mc.PrintContent(elementData[i][j][l]); // print
+                            mc.PrintContent(data[i][j][l]); // print
                         }
                     }
                     mc.CurrentRow(1); // y方向移動

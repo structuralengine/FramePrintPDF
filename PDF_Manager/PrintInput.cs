@@ -42,13 +42,13 @@ public class PrintInput
     {
         //　準備のためのclassの呼び出し
         var pri_ready = new PrintReady();
-        //　jsonから取り出した生データを送る
-        object[] dataset = pri_ready.Ready(mc,value);
+        //　jsonから取り出した生データを送って，クラスを返す
+        object[] class_set = pri_ready.Ready(mc,value);
 
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, dataset);
+        exp.Export(mc, class_set);
 
 
 

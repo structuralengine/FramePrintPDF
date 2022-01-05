@@ -24,8 +24,11 @@ namespace PDF_Manager.Printing
         private JToken mem;
         private InputElement element;
 
+        // 集まったデータはここに格納する
+        List<string[]> data = new List<string[]>();
 
-        public List<string[]> Member(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
+
+        public void Member(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
@@ -34,9 +37,6 @@ namespace PDF_Manager.Printing
 
             var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
             targetLen = JObject.FromObject(value["member"]);
-
-            // 集まったデータはここに格納する
-            List<string[]> member_data = new List<string[]>();
 
             // 全部の行数
             var row = target.Count;
@@ -59,9 +59,8 @@ namespace PDF_Manager.Printing
                 line[4] = mc.TypeChange(item["e"]);
                 line[5] = mc.TypeChange(item["cg"]);
                 line[6] = name;
-                member_data.Add(line);
+                data.Add(line);
             }
-            return member_data;
         }
 
         public double GetMemberLength(string memberNo, Dictionary<string, object> value)
@@ -101,12 +100,13 @@ namespace PDF_Manager.Printing
             return member;
         }
 
-        public void MemberPDF(PdfDoc mc, List<string[]> memberData)
+        public void MemberPDF(PdfDoc mc)
         {
+
             int bottomCell = mc.bottomCell;
 
             // 全行数の取得
-            double count = (memberData.Count + ((memberData.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
+            double count = (data.Count + ((data.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
             //  改ページ判定
             mc.DataCountKeep(count);
 
@@ -126,23 +126,22 @@ namespace PDF_Manager.Printing
             // ボディーのx方向の余白
             int[,] body_Xspacing = { { 17, 60, 110, 157, 208, 284, 341 } };
 
-            for (int i = 0; i < memberData.Count; i++)
+            for (int i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < memberData[i].Length; j++)
+                for (int j = 0; j < data[i].Length; j++)
                 {
                     mc.CurrentColumn(body_Xspacing[0, j]); //x方向移動
                     if (j == 6) // 材料名称のみ左詰め
                     {
-                        mc.PrintContent(memberData[i][j], 1);　// print
+                        mc.PrintContent(data[i][j], 1); // print
                     }
                     else
                     {
-                        mc.PrintContent(memberData[i][j]);　// print
+                        mc.PrintContent(data[i][j]); // print
                     }
                 }
                 mc.CurrentRow(1);
             }
-
         }
     }
 }

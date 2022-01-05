@@ -17,16 +17,16 @@ using System.Collections.Generic;
 
 namespace PDF_Manager.Printing
 {
-    internal class InputShell
+    internal class InputDefine
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void Shell(PdfDoc mc, Dictionary<string, object> value_)
+        public void Define(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
-
-            var target = JObject.FromObject(value["shell"]).ToObject<Dictionary<string, object>>();
+            //nodeデータを取得する
+            var target = JObject.FromObject(value["define"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
             data = new List<List<string[]>>();
@@ -35,44 +35,48 @@ namespace PDF_Manager.Printing
 
             for (int i = 0; i < target.Count; i++)
             {
+                string[] line = new String[11];
+                line[0] = target.ElementAt(i).Key;
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                string[] line = new String[5];
-                line[0] = mc.TypeChange(item["e"]);
-                
-                int count = 0;
-                var itemPoints = item["nodes"];
+                //Keyをsortするため
+                var itemDic = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                string[] kk = itemDic.Keys.ToArray();
+                Array.Sort(kk);
 
-                for (int j = 0; j < itemPoints.Count(); j++)
+                int count = 0;
+
+                for (int j = 0; j < kk.Length - 1; j++)
                 {
-                    line[count + 1] = mc.TypeChange(itemPoints[count]);
+                    string key = kk[j];
+                    line[count + 1] = mc.TypeChange(item[key]);
                     count++;
-                    if (count == 4)
+                    if (count == 10)
                     {
                         body.Add(line);
                         count = 0;
-                        line = new string[5];
+                        line = new string[11];
                         line[0] = "";
                     }
                 }
                 if (count > 0)
                 {
-                    for (int k = 1; k < 5; k++)
+                    for (int k = 1; k < 11; k++)
                     {
                         line[k] = line[k] == null ? "" : line[k];
                     }
-                   
+
                     body.Add(line);
                 }
-                if (body.Count > 0)
-                {
-                    data.Add(body);
-                }
             }
-            data.Add(body);
+            if (body.Count > 0)
+            {
+                data.Add(body);
+            }
+
         }
 
-        public void ShellPDF(PdfDoc mc)
+        public void DefinePDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
@@ -86,24 +90,22 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //  タイトルの印刷
-            mc.PrintContent("パネルデータ", 0);
+            mc.PrintContent("Defineデータ", 0);
             mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
-                { "材料", "", "頂点No", "", ""},
-                { "No", "1", "2", "3", "4"}
+                { "DefineNo", "C1", "C2", "C3", "C4" , "C5", "C6", "C7", "C8", "C9", "C10"}
             };
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 10, 70, 175, 210, 280 },
-                 { 10, 70, 140, 210, 280 } 
+                 { 20, 60, 100, 140, 180, 220, 260, 300, 340, 380, 420 },
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 17, 78, 148, 218,288 } };
+            int[,] body_Xspacing = { { 27, 67, 107, 147, 187, 227, 267, 307, 347, 387, 427 } };
 
             for (int i = 0; i < data.Count; i++)
             {
