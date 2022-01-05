@@ -17,108 +17,85 @@ using System.Collections.Generic;
 
 namespace PDF_Manager.Printing
 {
-    internal class InputDefine
+    internal class ResultDisg
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<string> title = new List<string>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void Define(PdfDoc mc, Dictionary<string, object> value_)
+        public void Disg(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する
-            var target = JObject.FromObject(value["define"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value["disg"]).ToObject<Dictionary<string, object>>();
 
             // 集まったデータはここに格納する
+            title = new List<string>();
             data = new List<List<string[]>>();
-            List<string[]> body = new List<string[]>();
-
 
             for (int i = 0; i < target.Count; i++)
             {
-                string[] line = new String[11];
-                line[0] = target.ElementAt(i).Key;
-                var item = JObject.FromObject(target.ElementAt(i).Value);
+                JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
 
-                //Keyをsortするため
-                var itemDic = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
-                string[] kk = itemDic.Keys.ToArray();
-                Array.Sort(kk);
+                // タイトルを入れる．
+                title.Add("Case." + target.ElementAt(i).Key);
 
-                int count = 0;
+                List<string[]> table = new List<string[]>();
 
-                for (int j = 0; j < kk.Length - 1; j++)
+                for (int j = 0; j < Elem.Count; j++)
                 {
-                    string key = kk[j];
-                    line[count + 1] = mc.TypeChange(item[key]);
-                    count++;
-                    if (count == 10)
-                    {
-                        body.Add(line);
-                        count = 0;
-                        line = new string[11];
-                        line[0] = "";
-                    }
-                }
-                if (count > 0)
-                {
-                    for (int k = 1; k < 11; k++)
-                    {
-                        line[k] = line[k] == null ? "" : line[k];
-                    }
+                    JToken item = Elem[j];
 
-                    body.Add(line);
+                    string[] line = new String[7];
+
+                    line[0] = mc.TypeChange(item["id"]);
+                    line[1] = mc.TypeChange(item["dx"], 4);
+                    line[2] = mc.TypeChange(item["dy"], 4);
+                    line[3] = mc.TypeChange(item["dz"], 4);
+                    line[4] = mc.TypeChange(item["rx"], 4);
+                    line[5] = mc.TypeChange(item["ry"], 4);
+                    line[6] = mc.TypeChange(item["rz"], 4);
+
+                    table.Add(line);
                 }
-            }
-            if (body.Count > 0)
-            {
-                data.Add(body);
+                data.Add(table);
             }
 
         }
 
-        public void DefinePDF(PdfDoc mc)
+        public void DisgPDF(PdfDoc mc)
         {
-            int bottomCell = mc.bottomCell;
-
             // 全行の取得
             int count = 2;
-            for (int i = 0; i < data.Count; i++)
+            for (int i = 0; i < title.Count; i++)
             {
-                count += (data[i].Count + 2) * mc.single_Yrow;
+                count += (data[i].Count + 5) * mc.single_Yrow + 1;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
 
-            //  タイトルの印刷
-            mc.PrintContent("Defineデータ", 0);
-            mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
-                { "DefineNo", "C1", "C2", "C3", "C4" , "C5", "C6", "C7", "C8", "C9", "C10"}
+                { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation" },
+                { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
             };
-
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 20, 60, 100, 140, 180, 220, 260, 300, 340, 380, 420 },
+                { 10, 70, 140, 210, 280, 350, 420 },
+                { 10, 70, 140, 210, 280, 350, 420 },
             };
 
-            mc.Header(header_content, header_Xspacing);
+            // ボディーのx方向の余白　-1
+            int[,] body_Xspacing = {
+                { 17, 85, 155, 225, 295, 365,435 }
+            };
 
-            // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 27, 67, 107, 147, 187, 227, 267, 307, 347, 387, 427 } };
+            // タイトルの印刷
+            mc.PrintContent("変位量", 0);
+            mc.CurrentRow(2);
 
-            for (int i = 0; i < data.Count; i++)
-            {
-                for (int j = 0; j < data[i].Count; j++)
-                {
-                    for (int l = 0; l < data[i][j].Length; l++)
-                    {
-                        mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        mc.PrintContent(data[i][j][l]);  // print
-                    }
-                    mc.CurrentRow(1);
-                }
-            }
+            // 印刷
+            mc.PrintResultBasic(title, data, header_content, header_Xspacing, body_Xspacing);
 
         }
     }

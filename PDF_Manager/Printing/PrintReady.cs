@@ -33,7 +33,19 @@ namespace PDF_Manager.Printing
             load,
             define,
             combine,
-            pickup
+            pickup,
+            disg,
+            disgCombine,
+            disgPickup,
+            disgLL,
+            fsec,
+            fsecCombine,
+            fsecPickup,
+            fsecLL,
+            reac,
+            reacCombine,
+            reacPickup,
+            reacLL
         }
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
@@ -141,6 +153,96 @@ namespace PDF_Manager.Printing
                 InputPickup pickup_call = new InputPickup();
                 pickup_call.Pickup(mc, data);
                 class_set[(int)class_name.pickup] = pickup_call;
+            }
+
+            // disg
+            if (data.ContainsKey("disg"))
+            {
+                ResultDisg disg_call = new ResultDisg();
+                disg_call.Disg(mc, data);
+                class_set[(int)class_name.disg] = disg_call;
+            }
+
+            // disgcombine
+            ResultDisgAnnexing disgAnnexing_call = new ResultDisgAnnexing();
+            if (data.ContainsKey("disgCombine"))
+            {
+                disgAnnexing_call.DisgAnnexing(mc, data,"Combine");
+                class_set[(int)class_name.disgCombine] = disgAnnexing_call;
+            }
+
+            // disgPickup
+            if (data.ContainsKey("disgPickup"))
+            {
+                disgAnnexing_call.DisgAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.disgPickup] = disgAnnexing_call;
+            }
+
+            // disgLL
+            if (data.ContainsKey("disgLL"))
+            {
+                disgAnnexing_call.DisgAnnexing(mc, data, "LL");
+                class_set[(int)class_name.disgLL] = disgAnnexing_call;
+            }
+
+            // fsec
+            if (data.ContainsKey("fsec"))
+            {
+                ResultFsec fsec_call = new ResultFsec();
+                fsec_call.Fsec(mc, data);
+                class_set[(int)class_name.fsec] = fsec_call;
+            }
+
+            // disgcombine
+            ResultFsecAnnexing fsecAnnexing_call = new ResultFsecAnnexing();
+            if (data.ContainsKey("fsecCombine"))
+            {
+                fsecAnnexing_call.FsecAnnexing(mc, data, "Combine");
+                class_set[(int)class_name.fsecCombine] = fsecAnnexing_call;
+            }
+
+            // disgPickup
+            if (data.ContainsKey("fsecPickup"))
+            {
+                fsecAnnexing_call.FsecAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.fsecPickup] = fsecAnnexing_call;
+            }
+
+            // disgLL
+            if (data.ContainsKey("fsecLL"))
+            {
+                fsecAnnexing_call.FsecAnnexing(mc, data, "LL");
+                class_set[(int)class_name.fsecLL] = fsecAnnexing_call;
+            }
+
+            // reac
+            if (data.ContainsKey("reac"))
+            {
+                ResultReac reac_call = new ResultReac();
+                reac_call.Reac(mc, data);
+                class_set[(int)class_name.reac] = reac_call;
+            }
+
+            // reaccombine
+            ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
+            if (data.ContainsKey("reacCombine"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "Combine");
+                class_set[(int)class_name.reacCombine] = reacAnnexing_call;
+            }
+
+            // reacPickup
+            if (data.ContainsKey("reacPickup"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.reacPickup] = reacAnnexing_call;
+            }
+
+            // reacLL
+            if (data.ContainsKey("reacLL"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "LL");
+                class_set[(int)class_name.reacLL] = reacAnnexing_call;
             }
 
             return class_set;
