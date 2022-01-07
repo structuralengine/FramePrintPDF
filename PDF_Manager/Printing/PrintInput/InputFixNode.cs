@@ -53,9 +53,9 @@ namespace PDF_Manager.Printing
                     line[0] = mc.TypeChange(item["n"]);
                     line[1] = mc.TypeChange(item["tx"]);
                     line[2] = mc.TypeChange(item["ty"]); ;
-                    line[3] = mc.TypeChange(item["tz"]); ;
-                    line[4] = mc.TypeChange(item["rx"]); ;
-                    line[5] = mc.TypeChange(item["ry"]); ;
+                    line[3] = mc.dimension == 3 ? mc.TypeChange(item["tz"]):"" ;
+                    line[4] = mc.dimension == 3 ? mc.TypeChange(item["rx"]):"" ;
+                    line[5] = mc.dimension == 3 ? mc.TypeChange(item["ry"]):"" ;
                     line[6] = mc.TypeChange(item["rz"]); ;
                     
                     table.Add(line);
@@ -76,22 +76,43 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //　ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
                 { "格点", "", "", "", "", "", "" },
                 { "No", "TX", "TY", "TZ", "RX", "RY", "RZ" },
                 {"","(kN/m)","(kN/m)","(kN/m)","","y軸周り","z軸周り" }
             };
+
+            string[,] header_content2D = {
+                { "格点", "", "", "", "", "", "" },
+                { "No", "TX", "TY", "", "", "", "RZ" },
+                {"","(kN/m)","(kN/m)","","","","z軸周り" }
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing ={
+            int[,] header_Xspacing3D ={
                 { 10, 65, 130, 195, 260, 325, 390 },
                 { 10, 65, 130, 195, 260, 325, 390 },
                 { 10, 65, 130, 195, 260, 325, 390 },
             };
 
+            int[,] header_Xspacing2D ={
+                { 10, 90, 180, 0, 0, 0, 270 },
+                { 10, 90, 180, 0, 0, 0, 270 },
+                { 10, 90, 180, 0, 0, 0, 270 },
+            };
+
             // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
+            int[,] body_Xspacing3D = {
                 { 17, 82, 147, 212, 277, 342, 407 }
             };
+
+            int[,] body_Xspacing2D = {
+                { 17, 102, 197, 0, 0, 0, 287 }
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             // タイトルの印刷
             mc.PrintContent("支点データ", 0);
@@ -121,7 +142,10 @@ namespace PDF_Manager.Printing
                         mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
                         mc.PrintContent(data[i][j][l]); // print
                     }
-                    mc.CurrentRow(1); // y方向移動
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
         }

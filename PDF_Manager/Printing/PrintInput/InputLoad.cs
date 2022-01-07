@@ -177,7 +177,10 @@ namespace PDF_Manager.Printing
                                 mc.CurrentColumn(bodyM_Xspacing[0, l]); //x方向移動
                                 mc.PrintContent(data[i][0][k][l]); // print
                             }
-                            mc.CurrentRow(1);
+                            if (!(i == data.Count - 1 && k == data[i][0].Count - 1))
+                            {
+                                mc.CurrentRow(1); // y方向移動
+                            }
                         }
                     }
                 }
@@ -211,7 +214,10 @@ namespace PDF_Manager.Printing
                             mc.CurrentColumn(bodyP_Xspacing[0, l]); //x方向移動
                             mc.PrintContent(data[i][1][k][l]); // print
                         }
-                        mc.CurrentRow(1);
+                        if (!(i == data.Count - 1 && k == data[i][1].Count - 1))
+                        {
+                            mc.CurrentRow(1); // y方向移動
+                        }
                     }
                 }
 

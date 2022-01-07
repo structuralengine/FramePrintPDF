@@ -76,20 +76,38 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //　ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
                 { "部材", "", "i端側", "", "", "j端側", "" },
                 { "No", "X", "Y", "Z", "X", "Y", "Z" },
             };
+            string[,] header_content2D = {
+                { "部材", "", "i端側", "", "", "j端側", "" },
+                { "No", "", "", "Z", "", "", "Z" },
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
+            int[,] header_Xspacing3D = {
                 { 10, 60, 120, 180, 240, 300, 360 },
                 { 10, 60, 120, 180, 240, 300, 360 },
             };
 
-            // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
-                { 17, 70, 130, 190, 250, 310, 370 }
+            int[,] header_Xspacing2D = {
+                { 10, 0, 120, 0, 0, 300, 0 },
+                { 10, 0, 0, 120, 0, 0, 300 },
             };
+
+            // ボディーのx方向の余白　-1
+            int[,] body_Xspacing3D = {
+                { 17, 67, 127, 187, 247, 307, 367 }
+            };
+
+            int[,] body_Xspacing2D = {
+                { 17, 0, 0, 127, 0, 0, 307 }
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             // タイトルの印刷
             mc.PrintContent("結合データ", 0);
@@ -119,7 +137,10 @@ namespace PDF_Manager.Printing
                         mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
                         mc.PrintContent(data[i][j][l]); // print
                     }
-                    mc.CurrentRow(1); // y方向移動
+                    if (i == data.Count - 1 && j == data[i].Count - 1)
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
 

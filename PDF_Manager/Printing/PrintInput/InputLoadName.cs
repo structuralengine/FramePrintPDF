@@ -94,7 +94,10 @@ namespace PDF_Manager.Printing
                         mc.PrintContent(data[i][j]);  // print
                     }
                 }
-                mc.CurrentRow(1);
+                if (!(i == data.Count - 1)
+                {
+                    mc.CurrentRow(1); // y方向移動
+                }
             }
 
         }

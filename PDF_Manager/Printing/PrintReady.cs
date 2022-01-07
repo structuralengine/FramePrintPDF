@@ -50,6 +50,9 @@ namespace PDF_Manager.Printing
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
         {
+            // 2次元か3次元かを記憶
+            mc.dimension = Int32.Parse(data["dimension"].ToString());
+
             // classをまとめてここに代入する．
             var class_set = new object[Enum.GetNames(typeof(class_name)).Length];
 

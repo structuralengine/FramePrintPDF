@@ -114,17 +114,28 @@ namespace PDF_Manager.Printing
             mc.PrintContent("部材データ", 0);
             mc.CurrentRow(2);
             //　ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
                 { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "コードアングル" , "材料名称"}
             };
 
+            string[,] header_content2D = {
+                { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "" , "材料名称"}
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = { { 10, 50, 100, 145, 203, 280, 360 } };
+            int[,] header_Xspacing3D = { { 10, 50, 100, 145, 203, 280, 360 } };
+            int[,] header_Xspacing2D = { { 10, 60, 120, 180, 255, 280, 351 } };
+
+            // ボディーのx方向の余白
+            int[,] body_Xspacing3D = { { 17, 60, 110, 157, 208, 284, 341 } };
+            int[,] body_Xspacing2D = { { 17, 70, 130, 192, 260, 284, 330 } };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             mc.Header(header_content, header_Xspacing);
 
-            // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 17, 60, 110, 157, 208, 284, 341 } };
 
             for (int i = 0; i < data.Count; i++)
             {
@@ -140,7 +151,10 @@ namespace PDF_Manager.Printing
                         mc.PrintContent(data[i][j]); // print
                     }
                 }
-                mc.CurrentRow(1);
+                if (!(i == data.Count - 1))
+                {
+                    mc.CurrentRow(1); // y方向移動
+                }
             }
         }
     }

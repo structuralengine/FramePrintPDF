@@ -23,7 +23,7 @@ namespace PDF_Manager.Printing
         private Dictionary<string, object> value = new Dictionary<string, object>();
         private List<List<string[]>> element_data = new List<List<string[]>>();
         List<List<string[]>> data = new List<List<string[]>>();
-        List<string>title = new List<string>();
+        List<string> title = new List<string>();
 
 
         public void Element(PdfDoc mc, Dictionary<string, object> value_)
@@ -59,25 +59,30 @@ namespace PDF_Manager.Printing
                     line[1] = mc.TypeChange(item["n"]);
                     table1.Add(line);
 
+                    var name = mc.TypeChange(item["n"]);
+
                     line1[0] = Elem.ElementAt(j).Key.ToString();
-                    line1[1] = mc.TypeChange(item["n"]);
-                    line1[2] = "";
-                    line1[3] = "";
-                    line1[4] = "";
-                    line1[5] = "";
-                    line1[6] = "";
-                    line1[7] = "";
+                    line1[1] = name == "" ? mc.TypeChange(item["A"], 4) : mc.TypeChange(item["n"]);
+                    line1[2] = name == "" ? mc.TypeChange(item["E"], 0, "E") : "";
+                    line1[3] = name == "" ? mc.TypeChange(item["G"], 0, "E") : "";
+                    line1[4] = name == "" ? mc.TypeChange(item["Xp"], 0, "E") : "";
+                    line1[5] = name == "" ? mc.TypeChange(item["Iy"], 6) : "";
+                    line1[6] = name == "" ? mc.TypeChange(item["Iz"], 6) : "";
+                    line1[7] = name == "" ? mc.TypeChange(item["J"], 6) : "";
                     table2.Add(line1);
 
-                    line2[0] = "";
-                    line2[1] = mc.TypeChange(item["A"], 4);
-                    line2[2] = mc.TypeChange(item["E"], 0, "E");
-                    line2[3] = mc.TypeChange(item["G"], 0, "E"); ;
-                    line2[4] = mc.TypeChange(item["Xp"], 0, "E"); ;
-                    line2[5] = mc.TypeChange(item["Iy"], 6);
-                    line2[6] = mc.TypeChange(item["Iz"], 6);
-                    line2[7] = mc.TypeChange(item["J"], 6);
-                    table2.Add(line2);
+                    if (name != "")
+                    {
+                        line2[0] = "";
+                        line2[1] = mc.TypeChange(item["A"], 4);
+                        line2[2] = mc.TypeChange(item["E"], 0, "E");
+                        line2[3] = mc.TypeChange(item["G"], 0, "E");
+                        line2[4] = mc.TypeChange(item["Xp"], 0, "E");
+                        line2[5] = mc.TypeChange(item["Iy"], 6);
+                        line2[6] = mc.TypeChange(item["Iz"], 6);
+                        line2[7] = mc.TypeChange(item["J"], 6);
+                        table2.Add(line2);
+                    }
                 }
                 element_data.Add(table1);
                 data.Add(table2);
@@ -96,21 +101,41 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //　ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
             {"No","A","E","G","ESP","断面二次モーメント","","ねじり剛性" },
             {"","(m2)","(kN/m2)","(kN/m2)","","y軸周り","z軸周り","" }
             };
+
+            string[,] header_content2D = {
+            {"No","A","E","","ESP","断面二次モーメント","","" },
+            {"","(m2)","(kN/m2)","","","","z軸周り","" }
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing ={
-                { 10, 60, 120, 180, 240, 330, 330, 420 },
-                { 10, 60, 120, 180, 240, 300, 360, 420 }
+            int[,] header_Xspacing3D ={
+                { 10, 60, 120, 180, 240, 330, 330, 415 },
+                { 10, 60, 120, 180, 240, 300, 360, 415 }
+            };
+
+            int[,] header_Xspacing2D ={
+                { 10, 90, 180, 0, 260, 360, 0, 0 },
+                { 10, 90, 180, 0, 260, 0, 360, 0 }
             };
 
             // ボディーのx方向の余白　
-            int[,] body_Xspacing = {
-                { 17, 40, 0, 0, 0, 0, 0, 0 },
+            int[,] body_Xspacing3D = {
+                { 17, 40, 143, 203, 263, 320, 380, 440 },
                 { 17, 75, 143, 203, 263, 320, 380, 440 }
             };
+
+            int[,] body_Xspacing2D = {
+                { 17, 60, 203, 0, 283, 0, 380, 0 },
+                { 17, 105, 203, 0, 283, 0, 380, 0 }
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             // タイトルの印刷
             mc.PrintContent("材料データ", 0);
@@ -135,20 +160,49 @@ namespace PDF_Manager.Printing
 
                 for (int j = 0; j < data[i].Count; j++)
                 {
+                    try
+                    {
+                        // 名称が入っているかAが入っているか．
+                        double.Parse(data[i][j][1]);
+                    }
+                    catch //2段になるとき
+                    {
+                        double y = mc.CurrentPos.Y + mc.single_Yrow * 2;
+                        // 跨ぎそうなら1行あきらめて，次ページへ．
+                        if (y > mc.single_Yrow * mc.bottomCell + mc.Margine.Y)
+                        {
+                            mc.CurrentRow(1);
+                        }
+                    }
+
                     for (int l = 0; l < data[i][j].Length; l++)
                     {
-                        mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
-                        if (l == 1 && k == 0) // 材料名称のみ左詰め
+                        if (l == 1)
                         {
-                            mc.PrintContent(data[i][j][l], 1); // print
+                            try //材料名称が存在しない→Aなどのパラメータを段下げせずに表示
+                            {
+                                double.Parse(data[i][j][l]);
+                                k = 1;
+                                mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
+                                mc.PrintContent(data[i][j][l]); // print
+                            }
+                            catch //材料名称が存在する
+                            {
+                                k = 0;
+                                mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
+                                mc.PrintContent(data[i][j][l], 1); // print　材料名称：左詰め
+                            }
                         }
                         else
                         {
+                            mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
                             mc.PrintContent(data[i][j][l]); // print
                         }
                     }
-                    mc.CurrentRow(1); // y方向移動
-                    k = (j + 1) % 2 == 0 ? 0 : 1; //　x方向余白の切り替え
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
 

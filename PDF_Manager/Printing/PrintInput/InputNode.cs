@@ -75,6 +75,7 @@ namespace PDF_Manager.Printing
                 else
                 {
                     List<string[]> body = new List<string[]>();
+
                     row = row % 2 == 0 ? row / 2 : row / 2 + 1;
 
                     for (var i = 0; i < row; i++)
@@ -116,7 +117,7 @@ namespace PDF_Manager.Printing
             }
         }
 
-        public double[] GetNodePos(PdfDoc mc,string nodeNo, Dictionary<string, object> value)
+        public double[] GetNodePos(PdfDoc mc, string nodeNo, Dictionary<string, object> value)
         {
             var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
 
@@ -138,9 +139,9 @@ namespace PDF_Manager.Printing
             node_st[2] = mc.TypeChange(targetValue["z"]);
 
             double[] node = new double[3];
-            for (int i = 0;i <3;i++)
+            for (int i = 0; i < 3; i++)
             {
-                if(node_st[i] == "")
+                if (node_st[i] == "")
                 {
                     node[i] = 0;
                 }
@@ -159,20 +160,38 @@ namespace PDF_Manager.Printing
             mc.PrintContent("格点データ", 0);
             mc.CurrentRow(2);
             // ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
                 { "格点", "", "", "", "格点", "", "", "", },
                 { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
             };
+            // ヘッダー
+            string[,] header_content2D = {
+                { "格点", "", "", "", "格点", "", "", "", },
+                { "No", "X", "Y", "", "No", "X", "Y", "" }
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
+            int[,] header_Xspacing3D = {
                 { 10, 60, 120, 180, 250, 300, 360, 420 },
                 { 10, 60, 120, 180, 250, 300, 360, 420 },
             };
+
+            // ヘッダーのx方向の余白
+            int[,] header_Xspacing2D = {
+                { 10, 60, 120, 120, 190, 240, 300, 420 },
+                { 10, 60, 120, 120, 190, 240, 300, 420 },
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
-            int[,] body_Xspacing = { { 17, 77, 137, 197, 257, 317, 377, 437 } };
+            int[,] body_Xspacing3D = { { 17, 77, 137, 197, 257, 317, 377, 437 } };
+            int[,] body_Xspacing2D = { { 17, 77, 137, 137, 197, 257, 317, 437 } };
+
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             for (int i = 0; i < data.Count; i++)
             {
@@ -183,7 +202,10 @@ namespace PDF_Manager.Printing
                         mc.CurrentColumn(body_Xspacing[0, k]); //x方向移動
                         mc.PrintContent(data[i][j][k], 3); // print
                     }
-                    mc.CurrentRow(1); // y方向移動
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
 
             }

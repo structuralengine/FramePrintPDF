@@ -39,6 +39,7 @@ namespace PDF_Manager.Printing
         public int[,] currentBody_Xspacing;
         public int[,] currentHeader_Yspacing;
         CultureInfo ci = new CultureInfo("en-us");
+        public int dimension;
 
 
         public PdfDoc()
@@ -152,7 +153,7 @@ namespace PDF_Manager.Printing
             {
                 gfx.DrawString(data, font_mic, XBrushes.Black, CurrentPos, XStringFormats.BottomRight);
             }
-      
+
         }
 
         // 行数の管理
@@ -293,20 +294,23 @@ namespace PDF_Manager.Printing
                         CurrentColumn(body_Xspacing[0, l]); //x方向移動
                         PrintContent(data[i][j][l]); // print
                     }
-                    CurrentRow(1); // y方向移動
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
         }
 
         // 結果の印刷（その他）
-        public void PrintResultAnnexing(List<string> title, string[] type, List<List<List<string[]>>> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing,int textLen)
+        public void PrintResultAnnexing(List<string> title, string[] type, List<List<List<string[]>>> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing, int textLen)
         {
             for (int i = 0; i < data.Count; i++)
             {
                 //  1ケースでページをまたぐかどうか
                 int count = 0;
 
-                for(int m = 0;m<data[i].Count; m++)
+                for (int m = 0; m < data[i].Count; m++)
                 {
                     count += data[i][m].Count;
                 }
@@ -322,10 +326,10 @@ namespace PDF_Manager.Printing
                 {
                     //組み合わせの文字数のカウント
                     //textLen:切り替わりの文字数の閾値
-                    int numFullWidth = data[i][j][0][data[i][j][0].Length - 1].Length > textLen ? 2 : 1 ;
+                    int numFullWidth = data[i][j][0][data[i][j][0].Length - 1].Length > textLen ? 2 : 1;
 
                     //  1タイプ内でページをまたぐかどうか
-                    TypeCount(j, 5, data[i][j].Count* numFullWidth, title[i]);
+                    TypeCount(j, 5, data[i][j].Count * numFullWidth, title[i]);
 
                     // タイプの印刷
                     CurrentColumn(0);
@@ -351,7 +355,7 @@ namespace PDF_Manager.Printing
                         for (int l = 0; l < data[i][j][k].Length; l++)
                         {
                             CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                            
+
                             // 組み合わせで2行になるとき，1行下に書く．
                             if (l == data[i][j][k].Length - 1 && numFullWidth > textLen)
                             {
@@ -360,7 +364,10 @@ namespace PDF_Manager.Printing
 
                             PrintContent(data[i][j][k][l]); // print
                         }
-                        CurrentRow(1); // y方向移動
+                        if (!(i == data.Count - 1 && j == data[i].Count - 1 && k == data[i][j].Count - 1))
+                        {
+                            CurrentRow(1); // y方向移動
+                        }
                     }
                 }
             }
