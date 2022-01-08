@@ -114,7 +114,10 @@ namespace PDF_Manager.Printing
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
                         mc.PrintContent(data[i][j][l]);  // print
                     }
-                    mc.CurrentRow(1);
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
 

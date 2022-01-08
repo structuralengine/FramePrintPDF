@@ -33,14 +33,18 @@ namespace PDF_Manager.Printing
             "y軸回りの回転反力 最大",
             "y軸回りの回転反力 最小",
             "z軸回りの回転反力 最大",
-            "Z軸回りの回転反力 最小",
+            "z軸回りの回転反力 最小",
         };
-        List<List<List<string[]>>> data = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
-        List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
+        public List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
 
-
+        /// <summary>
+        /// Combine/Pickup反力データの読み取り
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="value_">全データ</param>
+        /// <param name="key">combine,pickupのいずれか</param>
         public void ReacAnnexing(PdfDoc mc, Dictionary<string, object> value_, string key)
         {
             value = value_;
@@ -57,9 +61,6 @@ namespace PDF_Manager.Printing
                 case "Pickup":
                     dataPickup = new List<List<List<string[]>>>();
                     break;
-                case "LL":
-                    dataLL = new List<List<List<string[]>>>();
-                    break;
             }
 
             for (int i = 0; i < target.Count; i++)
@@ -69,81 +70,69 @@ namespace PDF_Manager.Printing
                 // タイトルを入れる．
                 title.Add("Case." + target.ElementAt(i).Key);
 
-                List<List<string[]>> table = new List<List<string[]>>();
-
-                for (int j = 0; j < Elem.Count; j++)
-                {
-                    Dictionary<string, object> elist = JObject.FromObject(Elem.ElementAt(j).Value).ToObject<Dictionary<string, object>>();
-
-                    List<string[]> body = new List<string[]>();
-
-                    for (int k = 0; k < elist.Count; k++)
-                    {
-                        var item = JObject.FromObject(elist.ElementAt(k).Value); ;
-                        string[] line = new String[8];
-
-                        line[0] = mc.TypeChange(elist.ElementAt(k).Key);
-                        line[1] = mc.TypeChange(item["tx"], 2);
-                        line[2] = mc.TypeChange(item["ty"], 2);
-                        line[3] = mc.TypeChange(item["tz"], 2);
-                        line[4] = mc.TypeChange(item["mx"], 2);
-                        line[5] = mc.TypeChange(item["my"], 2);
-                        line[6] = mc.TypeChange(item["mz"], 2);
-                        line[7] = mc.TypeChange(item["case"]);
-
-                        body.Add(line);
-                    }
-                    table.Add(body);
-                }
-                switch (key)
-                {
-                    case "Combine":
-                        dataCombine.Add(table);
-                        break;
-                    case "Pickup":
-                        dataPickup.Add(table);
-                        break;
-                    case "LL":
-                        dataLL.Add(table);
-                        break;
-                }
+                dataTreat(mc, Elem, key);
             }
 
         }
 
-        public void ReacAnnexingPDF(PdfDoc mc, string key)
+        /// <summary>
+        /// 基本形以外のデータを取得する（ResultReac.csの判定でLLであった場合もここで読み取る）
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="Elem">1caseぶんのデータ</param>
+        /// <param name="key">combine,pickup,LLのいずれか</param>
+        public void dataTreat(PdfDoc mc, Dictionary<string, object> Elem, string key)
         {
-            data = new List<List<List<string[]>>>();
+            List<List<string[]>> table = new List<List<string[]>>();
+            for (int j = 0; j < Elem.Count; j++)
+            {
+                Dictionary<string, object> elist = JObject.FromObject(Elem.ElementAt(j).Value).ToObject<Dictionary<string, object>>();
 
+                List<string[]> body = new List<string[]>();
+
+                for (int k = 0; k < elist.Count; k++)
+                {
+                    var item = JObject.FromObject(elist.ElementAt(k).Value); ;
+                    string[] line = new String[8];
+
+                    line[0] = mc.TypeChange(elist.ElementAt(k).Key);
+                    line[1] = mc.TypeChange(item["tx"], 2);
+                    line[2] = mc.TypeChange(item["ty"], 2);
+                    line[3] = mc.TypeChange(item["tz"], 2);
+                    line[4] = mc.TypeChange(item["mx"], 2);
+                    line[5] = mc.TypeChange(item["my"], 2);
+                    line[6] = mc.TypeChange(item["mz"], 2);
+                    line[7] = mc.TypeChange(item["case"]);
+
+                    body.Add(line);
+                }
+                table.Add(body);
+            }
+
+            //keyに応じたListに挿入する
             switch (key)
             {
                 case "Combine":
-                    data = dataCombine;
+                    dataCombine.Add(table);
                     break;
                 case "Pickup":
-                    data = dataPickup;
+                    dataPickup.Add(table);
                     break;
                 case "LL":
-                    data = dataLL;
+                    dataLL.Add(table);
                     break;
             }
+        }
 
-            // 全行の取得
-            int count = 2;
-            for (int i = 0; i < title.Count; i++)
-            {
-                for (int j = 0; j < data[i].Count; j++)
-                {
-                    for (int k = 0; k < data[i][j].Count; k++)
-                    {
-                        count += (data[i].Count * 5 + data[i][j].Count * 2 + data[i][j][k].Length) * mc.single_Yrow + 1;
-                    }
-                }
-            }
-
-            // 改ページ判定
-            mc.DataCountKeep(count);
-
+        /// <summary>
+        /// Combine/Pickup/LL反力データのPDF書き込み（LLのみcase1つ当たりの処理）
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="key">combine,pickup,LLのいずれか</param>
+        /// <param name="title_LL">LLにかぎりケース番号を取得 ex)case2</param>
+        /// <param name="LL_count">dataLLの何番目に必要なデータがあるか</param>
+        public void ReacAnnexingPDF(PdfDoc mc, string key, string title_LL = "", int LL_count = 0)
+        {
             //　ヘッダー
             string[,] header_content = {
                 { "SUPPORT", "TX", "TY", "TZ", "MX", "MY","MZ","組合せ" },
@@ -161,12 +150,44 @@ namespace PDF_Manager.Printing
                 { 23, 85, 145, 215, 265, 325,385,435 }
             };
 
-            // タイトルの印刷
-            mc.PrintContent(key + "反力", 0);
-            mc.CurrentRow(2);
+            mc.header_content = header_content;
+            mc.header_Xspacing = header_Xspacing;
+            mc.body_Xspacing = body_Xspacing;
+
+            switch (key)
+            {
+                case "Combine":
+                    mc.PrintResultAnnexingReady("reac", key, title, type, dataCombine, 14);
+                    break;
+
+                case "Pickup":
+                    mc.PrintResultAnnexingReady("reac", key, title, type, dataPickup, 14);
+                    break;
+
+                case "LL":
+                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], 14);
+                    break;
+            }
+
+
+            //// 全行の取得
+            //int count = 2;
+            //for (int i = 0; i < title.Count; i++)
+            //{
+            //    for (int j = 0; j < data[i].Count; j++)
+            //    {
+            //        for (int k = 0; k < data[i][j].Count; k++)
+            //        {
+            //            count += (data[i].Count * 5 + data[i][j].Count * 2 + data[i][j][k].Length) * mc.single_Yrow + 1;
+            //        }
+            //    }
+            //}
+
+            //// 改ページ判定
+            //mc.DataCountKeep(count, "reac" + key);
 
             // 印刷
-            mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,10);
+            //mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,10);
 
         }
     }

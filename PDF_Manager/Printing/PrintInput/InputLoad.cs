@@ -120,9 +120,14 @@ namespace PDF_Manager.Printing
             };
 
             //　ヘッダー(節点荷重)
-            string[,] headerP_content = {
+            string[,] headerP_content3D = {
             {"節点荷重","","","","","","","" },
             {"","節点番号","Fx","Fy","Fz","Mx","My","Mz" }
+            };
+
+            string[,] headerP_content2D = {
+            {"節点荷重","","","","","","","" },
+            {"","節点番号","Fx","Fy","","","","Mz" }
             };
 
             // ヘッダーのx方向の余白（部材荷重）
@@ -132,9 +137,14 @@ namespace PDF_Manager.Printing
             };
 
             // ヘッダーのx方向の余白（節点荷重）
-            int[,] headerP_Xspacing ={
+            int[,] headerP_Xspacing3D ={
                 { 20, 70, 120, 180, 240, 300, 360, 420 },
                 { 20, 70, 120, 180, 240, 300, 360, 420 }
+            };
+
+            int[,] headerP_Xspacing2D ={
+                { 20, 70, 120, 180, 0, 0, 0, 240 },
+                { 20, 70, 120, 180, 0, 0, 0, 240 }
             };
 
             // ボディーのx方向の余白（部材荷重）
@@ -143,9 +153,17 @@ namespace PDF_Manager.Printing
             };
 
             // ボディーのx方向の余白（節点荷重）
-            int[,] bodyP_Xspacing = {
+            int[,] bodyP_Xspacing3D = {
               { 27, 80, 135, 195, 255, 315, 375, 435 }
             };
+
+            int[,] bodyP_Xspacing2D = {
+              { 27, 80, 135, 195, 0, 0, 0, 255 }
+            };
+
+            string[,] headerP_content = mc.dimension == 3 ? headerP_content3D : headerP_content2D;
+            int[,] headerP_Xspacing = mc.dimension == 3 ? headerP_Xspacing3D : headerP_Xspacing2D;
+            int[,] bodyP_Xspacing = mc.dimension == 3 ? bodyP_Xspacing3D : bodyP_Xspacing2D;
 
             // タイトルの印刷
             mc.PrintContent("実荷重データ", 0);
@@ -177,7 +195,10 @@ namespace PDF_Manager.Printing
                                 mc.CurrentColumn(bodyM_Xspacing[0, l]); //x方向移動
                                 mc.PrintContent(data[i][0][k][l]); // print
                             }
-                            mc.CurrentRow(1);
+                            if (!(i == data.Count - 1 && k == data[i][0].Count - 1))
+                            {
+                                mc.CurrentRow(1); // y方向移動
+                            }
                         }
                     }
                 }
@@ -211,7 +232,10 @@ namespace PDF_Manager.Printing
                             mc.CurrentColumn(bodyP_Xspacing[0, l]); //x方向移動
                             mc.PrintContent(data[i][1][k][l]); // print
                         }
-                        mc.CurrentRow(1);
+                        if (!(i == data.Count - 1 && k == data[i][1].Count - 1))
+                        {
+                            mc.CurrentRow(1); // y方向移動
+                        }
                     }
                 }
 

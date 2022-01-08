@@ -41,7 +41,6 @@ namespace PDF_Manager.Printing
 
                 double len = member.GetMemberLength(mc,m, value); // 部材長さ
 
-
                 string[] line = new String[12];
                 line[0] = m;
                 line[1] = len == 0 ? "" : mc.TypeChange(len, 3);
@@ -120,7 +119,10 @@ namespace PDF_Manager.Printing
                         mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
                         mc.PrintContent(data[i][j][l]);  // print
                     }
-                    mc.CurrentRow(1);
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
 

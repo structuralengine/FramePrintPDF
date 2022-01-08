@@ -37,19 +37,19 @@ namespace PDF_Manager.Printing
             disg,
             disgCombine,
             disgPickup,
-            disgLL,
             fsec,
             fsecCombine,
             fsecPickup,
-            fsecLL,
             reac,
             reacCombine,
-            reacPickup,
-            reacLL
+            reacPickup
         }
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
         {
+            // 2次元か3次元かを記憶
+            mc.dimension = Int32.Parse(data["dimension"].ToString());
+
             // classをまとめてここに代入する．
             var class_set = new object[Enum.GetNames(typeof(class_name)).Length];
 
@@ -156,18 +156,18 @@ namespace PDF_Manager.Printing
             }
 
             // disg
+            ResultDisgAnnexing disgAnnexing_call = new ResultDisgAnnexing();
             if (data.ContainsKey("disg"))
             {
                 ResultDisg disg_call = new ResultDisg();
-                disg_call.Disg(mc, data);
+                disg_call.Disg(mc, data,disgAnnexing_call);
                 class_set[(int)class_name.disg] = disg_call;
             }
 
             // disgcombine
-            ResultDisgAnnexing disgAnnexing_call = new ResultDisgAnnexing();
             if (data.ContainsKey("disgCombine"))
             {
-                disgAnnexing_call.DisgAnnexing(mc, data,"Combine");
+                disgAnnexing_call.DisgAnnexing(mc, data, "Combine");
                 class_set[(int)class_name.disgCombine] = disgAnnexing_call;
             }
 
@@ -178,53 +178,40 @@ namespace PDF_Manager.Printing
                 class_set[(int)class_name.disgPickup] = disgAnnexing_call;
             }
 
-            // disgLL
-            if (data.ContainsKey("disgLL"))
-            {
-                disgAnnexing_call.DisgAnnexing(mc, data, "LL");
-                class_set[(int)class_name.disgLL] = disgAnnexing_call;
-            }
-
             // fsec
+            ResultFsecAnnexing fsecAnnexing_call = new ResultFsecAnnexing();
             if (data.ContainsKey("fsec"))
             {
                 ResultFsec fsec_call = new ResultFsec();
-                fsec_call.Fsec(mc, data);
+                fsec_call.Fsec(mc, data, fsecAnnexing_call);
                 class_set[(int)class_name.fsec] = fsec_call;
             }
 
-            // disgcombine
-            ResultFsecAnnexing fsecAnnexing_call = new ResultFsecAnnexing();
+            // fseccombine
             if (data.ContainsKey("fsecCombine"))
             {
                 fsecAnnexing_call.FsecAnnexing(mc, data, "Combine");
                 class_set[(int)class_name.fsecCombine] = fsecAnnexing_call;
             }
 
-            // disgPickup
+            // fsecPickup
             if (data.ContainsKey("fsecPickup"))
             {
                 fsecAnnexing_call.FsecAnnexing(mc, data, "Pickup");
                 class_set[(int)class_name.fsecPickup] = fsecAnnexing_call;
             }
 
-            // disgLL
-            if (data.ContainsKey("fsecLL"))
-            {
-                fsecAnnexing_call.FsecAnnexing(mc, data, "LL");
-                class_set[(int)class_name.fsecLL] = fsecAnnexing_call;
-            }
 
+            ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
             // reac
             if (data.ContainsKey("reac"))
             {
                 ResultReac reac_call = new ResultReac();
-                reac_call.Reac(mc, data);
+                reac_call.Reac(mc, data, reacAnnexing_call);
                 class_set[(int)class_name.reac] = reac_call;
             }
 
             // reaccombine
-            ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
             if (data.ContainsKey("reacCombine"))
             {
                 reacAnnexing_call.ReacAnnexing(mc, data, "Combine");
@@ -236,13 +223,6 @@ namespace PDF_Manager.Printing
             {
                 reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
                 class_set[(int)class_name.reacPickup] = reacAnnexing_call;
-            }
-
-            // reacLL
-            if (data.ContainsKey("reacLL"))
-            {
-                reacAnnexing_call.ReacAnnexing(mc, data, "LL");
-                class_set[(int)class_name.reacLL] = reacAnnexing_call;
             }
 
             return class_set;

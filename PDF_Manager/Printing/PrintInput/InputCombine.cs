@@ -120,14 +120,14 @@ namespace PDF_Manager.Printing
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {
-                 { 17, 100,203, 233, 263, 293, 323, 353, 383, 413},
+                 { 16, 100,203, 233, 263, 293, 323, 353, 383, 413},
             };
 
             mc.Header(header_content, header_Xspacing);
 
             // ボディーのx方向の余白
             int[,] body_Xspacing = {
-                 { 24, 42,210, 240, 270, 300, 330, 360, 390, 420},
+                 { 23, 42,210, 240, 270, 300, 330, 360, 390, 420},
             };
 
             for (int i = 0; i < data.Count; i++)
@@ -146,7 +146,10 @@ namespace PDF_Manager.Printing
                             mc.PrintContent(data[i][j][l]);  // print
                         }
                     }
-                    mc.CurrentRow(1);
+                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
+                    {
+                        mc.CurrentRow(1); // y方向移動
+                    }
                 }
             }
 
