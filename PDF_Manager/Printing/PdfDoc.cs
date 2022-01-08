@@ -280,7 +280,7 @@ namespace PDF_Manager.Printing
         }
 
         // 結果の印刷（基本形）
-        public void PrintResultBasic(List<string[]> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing, int LL = 0)
+        public void PrintResultBasic(List<string[]> data, int LL = 0)
         {
             // ヘッダーの印刷
             Header(header_content, header_Xspacing);
@@ -301,16 +301,31 @@ namespace PDF_Manager.Printing
         /// <summary>
         /// Combine/Pickupのときの準備（LLのfor文の状態にあわせる）
         /// </summary>
+        /// <param name="result">disg/fsec/reacのいずれか</param>
         /// <param name="key">combine/pickupのいずれか</param>
         /// <param name="title">ex)case2</param>
         /// <param name="type">ex)x軸方向最大</param>
         /// <param name="data">combine/pickupのデータ全てが入る</param>
         /// <param name="textLen">組合せが一行あたりに入る文字数</param>
-        public void PrintResultAnnexingReady(string key, List<string> title, string[] type, List<List<List<string[]>>> data, int textLen)
+        public void PrintResultAnnexingReady(string result,string key, List<string> title, string[] type, List<List<List<string[]>>> data, int textLen)
         {
-            DataCountKeep(100, "disg" + key);
+            var resultJa = "";
+            switch (result)
+            {
+                case "disg":
+                    resultJa = "変位量";
+                    break;
+                case "fsec":
+                    resultJa = "断面力";
+                    break;
+                case "reac":
+                    resultJa = "反力";
+                    break;
+            }
+
+            DataCountKeep(100, result + key);
             // タイトルの印刷
-            PrintContent(key + "変位量", 0);
+            PrintContent(key + resultJa, 0);
             CurrentRow(2);
 
             for (int i = 0; i < data.Count; i++)

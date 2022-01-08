@@ -135,33 +135,33 @@ namespace PDF_Manager.Printing
                 cls_disgAnnexing.DisgAnnexingPDF(mc, "Combine");
             }
 
-            ////disgPickup
-            //if ((ResultDisgAnnexing)class_set[(int)PrintReady.class_name.disgPickup] != null)
-            //{
-            //    ResultDisgAnnexing cls_disgAnnexing = (ResultDisgAnnexing)class_set[(int)PrintReady.class_name.disgPickup];
-            //    cls_disgAnnexing.DisgAnnexingPDF(mc, "Pickup");
-            //}
+            //disgPickup
+            if ((ResultDisgAnnexing)class_set[(int)PrintReady.class_name.disgPickup] != null)
+            {
+                ResultDisgAnnexing cls_disgAnnexing = (ResultDisgAnnexing)class_set[(int)PrintReady.class_name.disgPickup];
+                cls_disgAnnexing.DisgAnnexingPDF(mc, "Pickup");
+            }
 
-            ////fsec
-            //if ((ResultFsec)class_set[(int)PrintReady.class_name.fsec] != null)
-            //{
-            //    ResultFsec cls_fsec = (ResultFsec)class_set[(int)PrintReady.class_name.fsec];
-            //    cls_fsec.FsecPDF(mc);
-            //}
+            //fsec
+            if ((ResultFsec)class_set[(int)PrintReady.class_name.fsec] != null)
+            {
+                ResultFsec cls_fsec = (ResultFsec)class_set[(int)PrintReady.class_name.fsec];
+                cls_fsec.FsecPDF(mc);
+            }
 
-            ////fsecCombine
-            //if ((ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecCombine] != null)
-            //{
-            //    ResultFsecAnnexing cls_fsecAnnexing = (ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecCombine];
-            //    cls_fsecAnnexing.FsecAnnexingPDF(mc, "Combine");
-            //}
+            //fsecCombine
+            if ((ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecCombine] != null)
+            {
+                ResultFsecAnnexing cls_fsecAnnexing = (ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecCombine];
+                cls_fsecAnnexing.FsecAnnexingPDF(mc, "Combine");
+            }
 
-            ////fsecPickup
-            //if ((ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecPickup] != null)
-            //{
-            //    ResultFsecAnnexing cls_fsecAnnexing = (ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecPickup];
-            //    cls_fsecAnnexing.FsecAnnexingPDF(mc, "Pickup");
-            //}
+            //fsecPickup
+            if ((ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecPickup] != null)
+            {
+                ResultFsecAnnexing cls_fsecAnnexing = (ResultFsecAnnexing)class_set[(int)PrintReady.class_name.fsecPickup];
+                cls_fsecAnnexing.FsecAnnexingPDF(mc, "Pickup");
+            }
 
             ////reac
             //if ((ResultReac)class_set[(int)PrintReady.class_name.reac] != null)

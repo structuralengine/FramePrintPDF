@@ -40,6 +40,7 @@ namespace PDF_Manager.Printing
 
             disgBasic.data = new List<List<string[]>>(); 
             disgAnnex.dataLL = new List<List<List<string[]>>>();
+            title = new List<string>();
 
             //変位量データを取得する
             var target = JObject.FromObject(value["disg"]).ToObject<Dictionary<string, object>>();

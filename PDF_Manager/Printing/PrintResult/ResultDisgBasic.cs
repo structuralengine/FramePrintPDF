@@ -85,9 +85,12 @@ namespace PDF_Manager.Printing
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
             int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
             int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
+            mc.header_content = header_content;
+            mc.header_Xspacing = header_Xspacing;
+            mc.body_Xspacing = body_Xspacing;
 
             // 印刷
-            mc.PrintResultBasic(data[LL], header_content, header_Xspacing, body_Xspacing, LL);
+            mc.PrintResultBasic(data[LL], LL);
 
         }
     }

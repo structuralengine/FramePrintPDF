@@ -154,11 +154,11 @@ namespace PDF_Manager.Printing
             switch (key)
             { 
                 case "Combine":
-                    mc.PrintResultAnnexingReady(key, title, type, dataCombine, 14);
+                    mc.PrintResultAnnexingReady("disg",key, title, type, dataCombine, 14);
                     break;
 
                 case "Pickup":
-                    mc.PrintResultAnnexingReady(key, title, type, dataPickup, 14);
+                    mc.PrintResultAnnexingReady("disg",key, title, type, dataPickup, 14);
                     break;
 
                 case "LL":

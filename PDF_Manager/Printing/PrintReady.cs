@@ -171,35 +171,35 @@ namespace PDF_Manager.Printing
                 class_set[(int)class_name.disgCombine] = disgAnnexing_call;
             }
 
-            //// disgPickup
-            //if (data.ContainsKey("disgPickup"))
-            //{
-            //    disgAnnexing_call.DisgAnnexing(mc, data, "Pickup");
-            //    class_set[(int)class_name.disgPickup] = disgAnnexing_call;
-            //}
+            // disgPickup
+            if (data.ContainsKey("disgPickup"))
+            {
+                disgAnnexing_call.DisgAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.disgPickup] = disgAnnexing_call;
+            }
 
-            //// fsec
-            //if (data.ContainsKey("fsec"))
-            //{
-            //    ResultFsec fsec_call = new ResultFsec();
-            //    fsec_call.Fsec(mc, data);
-            //    class_set[(int)class_name.fsec] = fsec_call;
-            //}
+            // fsec
+            ResultFsecAnnexing fsecAnnexing_call = new ResultFsecAnnexing();
+            if (data.ContainsKey("fsec"))
+            {
+                ResultFsec fsec_call = new ResultFsec();
+                fsec_call.Fsec(mc, data, fsecAnnexing_call);
+                class_set[(int)class_name.fsec] = fsec_call;
+            }
 
-            //// fseccombine
-            //ResultFsecAnnexing fsecAnnexing_call = new ResultFsecAnnexing();
-            //if (data.ContainsKey("fsecCombine"))
-            //{
-            //    fsecAnnexing_call.FsecAnnexing(mc, data, "Combine");
-            //    class_set[(int)class_name.fsecCombine] = fsecAnnexing_call;
-            //}
+            // fseccombine
+            if (data.ContainsKey("fsecCombine"))
+            {
+                fsecAnnexing_call.FsecAnnexing(mc, data, "Combine");
+                class_set[(int)class_name.fsecCombine] = fsecAnnexing_call;
+            }
 
-            //// fsecPickup
-            //if (data.ContainsKey("fsecPickup"))
-            //{
-            //    fsecAnnexing_call.FsecAnnexing(mc, data, "Pickup");
-            //    class_set[(int)class_name.fsecPickup] = fsecAnnexing_call;
-            //}
+            // fsecPickup
+            if (data.ContainsKey("fsecPickup"))
+            {
+                fsecAnnexing_call.FsecAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.fsecPickup] = fsecAnnexing_call;
+            }
 
 
             //// reac

@@ -35,11 +35,17 @@ namespace PDF_Manager.Printing
             "z軸回りの曲げモーメント 最大",
             "z軸回りの曲げモーメント 最小",
         };
-        List<List<List<string[]>>> data = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
+        public List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
 
 
+        /// <summary>
+        /// Combine/Pickup断面力データの読み取り
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="value_">全データ</param>
+        /// <param name="key">combine,pickupのいずれか</param>
         public void FsecAnnexing(PdfDoc mc, Dictionary<string, object> value_, string key)
         {
             value = value_;
@@ -65,77 +71,110 @@ namespace PDF_Manager.Printing
                 // タイトルを入れる．
                 title.Add("Case." + target.ElementAt(i).Key);
 
-                List<List<string[]>> table = new List<List<string[]>>();
+                dataTreat(mc,Elem, key);
 
-                for (int j = 0; j < Elem.Count; j++)
-                {
-                    var elist = JArray.FromObject(Elem.ElementAt(j).Value);
+                //List<List<string[]>> table = new List<List<string[]>>();
 
-                    List<string[]> body = new List<string[]>();
+                //for (int j = 0; j < Elem.Count; j++)
+                //{
+                //    var elist = JArray.FromObject(Elem.ElementAt(j).Value);
 
-                    for (int k = 0; k < elist.Count; k++)
-                    {
-                        var item = elist[k]; 
-                        string[] line = new String[10];
+                //    List<string[]> body = new List<string[]>();
 
-                        line[0] = mc.TypeChange(item["m"]);
-                        line[1] = mc.TypeChange(item["n"]);
-                        line[2] = mc.TypeChange(item["l"], 3);
-                        line[3] = mc.TypeChange(item["fx"], 2);
-                        line[4] = mc.TypeChange(item["fy"], 2);
-                        line[5] = mc.TypeChange(item["fz"], 2);
-                        line[6] = mc.TypeChange(item["mx"], 2);
-                        line[7] = mc.TypeChange(item["my"], 2);
-                        line[8] = mc.TypeChange(item["mz"], 2);
-                        line[9] = mc.TypeChange(item["case"]);
+                //    for (int k = 0; k < elist.Count; k++)
+                //    {
+                //        var item = elist[k]; 
+                //        string[] line = new String[10];
 
-                        body.Add(line);
-                    }
-                    table.Add(body);
-                }
-                switch (key)
-                {
-                    case "Combine":
-                        dataCombine.Add(table);
-                        break;
-                    case "Pickup":
-                        dataPickup.Add(table);
-                        break;
-                }
+                //        line[0] = mc.TypeChange(item["m"]);
+                //        line[1] = mc.TypeChange(item["n"]);
+                //        line[2] = mc.TypeChange(item["l"], 3);
+                //        line[3] = mc.TypeChange(item["fx"], 2);
+                //        line[4] = mc.TypeChange(item["fy"], 2);
+                //        line[5] = mc.TypeChange(item["fz"], 2);
+                //        line[6] = mc.TypeChange(item["mx"], 2);
+                //        line[7] = mc.TypeChange(item["my"], 2);
+                //        line[8] = mc.TypeChange(item["mz"], 2);
+                //        line[9] = mc.TypeChange(item["case"]);
+
+                //        body.Add(line);
+                //    }
+                //    table.Add(body);
+                //}
+                //switch (key)
+                //{
+                //    case "Combine":
+                //        dataCombine.Add(table);
+                //        break;
+                //    case "Pickup":
+                //        dataPickup.Add(table);
+                //        break;
+                //}
             }
 
         }
 
-        public void FsecAnnexingPDF(PdfDoc mc, string key)
+        /// <summary>
+        /// 基本形以外のデータを取得する（ResultFsec.csの判定でLLであった場合もここで読み取る）
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="Elem">1caseぶんのデータ</param>
+        /// <param name="key">combine,pickup,LLのいずれか</param>
+        public void dataTreat(PdfDoc mc, Dictionary<string, object> Elem, string key)
         {
-            data = new List<List<List<string[]>>>();
+            List<List<string[]>> table = new List<List<string[]>>();
+            for (int j = 0; j < Elem.Count; j++)
+            {
+                JArray elist = JArray.FromObject(Elem.ElementAt(j).Value);
 
+                List<string[]> body = new List<string[]>();
+
+                for (int k = 0; k < elist.Count; k++)
+                {
+                    var item = elist[k] ;
+                    string[] line = new String[10];
+
+                    line[0] = mc.TypeChange(item["m"]);
+                    line[1] = mc.TypeChange(item["n"]);
+                    line[2] = mc.TypeChange(item["l"], 3);
+                    line[3] = mc.TypeChange(item["fx"], 2);
+                    line[4] = mc.TypeChange(item["fy"], 2);
+                    line[5] = mc.TypeChange(item["fz"], 2);
+                    line[6] = mc.TypeChange(item["mx"], 2);
+                    line[7] = mc.TypeChange(item["my"], 2);
+                    line[8] = mc.TypeChange(item["mz"], 2);
+                    line[9] = mc.TypeChange(item["case"]);
+
+
+                    body.Add(line);
+                }
+                table.Add(body);
+            }
+
+            //keyに応じたListに挿入する
             switch (key)
             {
                 case "Combine":
-                    data = dataCombine;
+                    dataCombine.Add(table);
                     break;
                 case "Pickup":
-                    data = dataPickup;
+                    dataPickup.Add(table);
+                    break;
+                case "LL":
+                    dataLL.Add(table);
                     break;
             }
+        }
 
-            // 全行の取得
-            int count = 2;
-            for (int i = 0; i < title.Count; i++)
-            {
-                for (int j = 0; j < data[i].Count; j++)
-                {
-                    for (int k = 0; k < data[i][j].Count; k++)
-                    {
-                        count += (data[i].Count * 5 + data[i][j].Count * 2 + data[i][j][k].Length) * mc.single_Yrow + 1;
-                    }
-                }
-            }
-
-            // 改ページ判定
-            mc.DataCountKeep(count,"fsec" + key);
-
+        /// <summary>
+        /// Combine/Pickup/LL断面力データのPDF書き込み（LLのみcase1つ当たりの処理）
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="key">combine,pickup,LLのいずれか</param>
+        /// <param name="title_LL">LLにかぎりケース番号を取得 ex)case2</param>
+        /// <param name="LL_count">dataLLの何番目に必要なデータがあるか</param>
+        public void FsecAnnexingPDF(PdfDoc mc, string key, string title_LL = "", int LL_count = 0)
+        {
             //　ヘッダー
             string[,] header_content = {
                 { "部材", "節点", "着目位置", "FX", "FY", "FZ", "MX","MY","MZ","組合せ" },
@@ -152,9 +191,40 @@ namespace PDF_Manager.Printing
                 { 17, 50, 97, 150, 200, 250,300,350,400,440 }
             };
 
-            // タイトルの印刷
-            mc.PrintContent(key + "断面力", 0);
-            mc.CurrentRow(2);
+            mc.header_content = header_content;
+            mc.header_Xspacing = header_Xspacing;
+            mc.body_Xspacing = body_Xspacing;
+
+            switch (key)
+            {
+                case "Combine":
+                    mc.PrintResultAnnexingReady("fsec", key, title, type, dataCombine, 14);
+                    break;
+
+                case "Pickup":
+                    mc.PrintResultAnnexingReady("fsec", key, title, type, dataPickup, 14);
+                    break;
+
+                case "LL":
+                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], 14);
+                    break;
+            }
+
+            //// 全行の取得
+            //int count = 2;
+            //for (int i = 0; i < title.Count; i++)
+            //{
+            //    for (int j = 0; j < data[i].Count; j++)
+            //    {
+            //        for (int k = 0; k < data[i][j].Count; k++)
+            //        {
+            //            count += (data[i].Count * 5 + data[i][j].Count * 2 + data[i][j][k].Length) * mc.single_Yrow + 1;
+            //        }
+            //    }
+            //}
+
+            //// 改ページ判定
+            //mc.DataCountKeep(count, "fsec" + key);
 
             // 印刷
             //mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,6);

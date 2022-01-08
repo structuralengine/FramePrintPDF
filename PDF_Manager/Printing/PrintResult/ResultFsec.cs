@@ -20,81 +20,141 @@ namespace PDF_Manager.Printing
     internal class ResultFsec
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
-        List<string> title = new List<string>();
-        List<List<string[]>> data = new List<List<string[]>>();
+        public ResultFsecBasic fsecBasic;
+        public ResultFsecAnnexing fsecAnnex;
+        public List<string> title = new List<string>();
+        public List<int> LL_list = new List<int>();
 
-        public void Fsec(PdfDoc mc, Dictionary<string, object> value_)
+        /// <summary>
+        /// 断面力データの読み取り（LLと基本形の分離）
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="value_">全データが入っている</param>
+        /// <param name="disgAnnex_">基本データ以外の断面力読み取り，書き込みを行う</param>
+        public void Fsec(PdfDoc mc, Dictionary<string, object> value_, ResultFsecAnnexing fsecAnnex_)
         {
             value = value_;
-            //nodeデータを取得する
+            fsecAnnex = fsecAnnex_;
+            fsecBasic = new ResultFsecBasic();
+
+            fsecBasic.data = new List<List<string[]>>();
+            fsecAnnex.dataLL = new List<List<List<string[]>>>();
+            title = new List<string>();
+
+            //断面力データを取得する
             var target = JObject.FromObject(value["fsec"]).ToObject<Dictionary<string, object>>();
 
-            // 集まったデータはここに格納する
-            title = new List<string>();
-            data = new List<List<string[]>>();
-
+            //LLか基本形かを判定しながら1行1行確認
             for (int i = 0; i < target.Count; i++)
             {
-                JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
-
                 // タイトルを入れる．
                 title.Add("Case." + target.ElementAt(i).Key);
 
-                List<string[]> table = new List<string[]>();
-
-                for (int j = 0; j < Elem.Count; j++)
+                //LLのとき
+                try
                 {
-                    JToken item = Elem[j];
-
-                    string[] line = new String[9];
-
-                    line[0] = mc.TypeChange(item["m"]);
-                    line[1] = mc.TypeChange(item["n"]);
-                    line[2] = mc.TypeChange(item["l"], 3);
-                    line[3] = mc.TypeChange(item["fx"], 2);
-                    line[4] = mc.TypeChange(item["fy"], 2);
-                    line[5] = mc.TypeChange(item["fz"], 2);
-                    line[6] = mc.TypeChange(item["mx"], 2);
-                    line[7] = mc.TypeChange(item["my"], 2);
-                    line[8] = mc.TypeChange(item["mz"], 2);
-
-                    table.Add(line);
+                    var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                    //LLの存在する配列番号を記録しておく
+                    LL_list.Add(i);
+                    //データを取得する
+                    fsecAnnex.dataTreat(mc, Elem, "LL");
                 }
-                data.Add(table);
+
+                //基本形の時
+                catch
+                {
+                    JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
+                    //データを取得する
+                    fsecBasic.FsecBasic(mc, Elem);
+                }
             }
 
         }
 
+        /// <summary>
+        /// 断面力データのPDF書き込み
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
         public void FsecPDF(PdfDoc mc)
         {
-            // 全行の取得
-            int count = 2;
-            for (int i = 0; i < title.Count; i++)
-            {
-                count += (data[i].Count + 5) * mc.single_Yrow + 1;
-            }
-            // 改ページ判定
-            mc.DataCountKeep(count,"fsec");
-
-            //　ヘッダー
-            string[,] header_content = {
-                { "部材", "節点","", "FX", "FY", "FZ", "MX", "MY","MZ" },
-                { "No", "No", "DIST", "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
-            };
-            // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
-                { 10, 50, 105, 160, 210, 260, 310,360,410 },
-                { 10, 50, 105, 160, 210, 260, 310,360,410 },
-            };
-
-            // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
-                { 17, 57, 118, 174, 224, 274, 324,374,424 }
-            };
+            int LL_count = 0;
+            int LL_count2 = 0;
 
             // タイトルの印刷
             mc.PrintContent("断面力", 0);
             mc.CurrentRow(2);
+
+            // 印刷
+            for (int i = 0; i < title.Count; i++)
+            {
+                //LLの時
+                if (i == LL_list.IndexOf(i))
+                {
+                    //  1ケースでページをまたぐかどうか
+                    int count = 0;
+
+                    for (int m = 0; m < fsecAnnex.dataLL[LL_count].Count; m++)
+                    {
+                        count += fsecAnnex.dataLL[LL_count][m].Count;
+                    }
+
+                    mc.TypeCount(i, 7, count, title[i]);
+
+                    // タイトルの印刷 ex)case2
+                    mc.CurrentColumn(0);
+                    mc.PrintContent(title[i], 0);
+                    mc.CurrentRow(2);
+
+                    // header情報を取り，印刷へ
+                    fsecAnnex.FsecAnnexingPDF(mc, "LL", title[i], LL_count);
+                    LL_count++;
+                }
+                //基本形の時
+                else
+                {
+                    //  1タイプ内でページをまたぐかどうか
+                    mc.TypeCount(i, 5, fsecBasic.data[LL_count2].Count, title[i]);
+
+                    // タイプの印刷　ex)case2
+                    mc.CurrentColumn(0);
+                    mc.PrintContent(title[i], 0);
+                    mc.CurrentRow(2);
+
+                    // header情報を取り，印刷へ
+                    fsecBasic.FsecBasicPDF(mc, LL_count2);
+                    LL_count2++;
+                }
+            }
+
+
+            //// 全行の取得
+            ////int count = 2;
+            //for (int i = 0; i < title.Count; i++)
+            //{
+            //    count += (data[i].Count + 5) * mc.single_Yrow + 1;
+            //}
+            //// 改ページ判定
+            //mc.DataCountKeep(count,"fsec");
+
+            ////　ヘッダー
+            //string[,] header_content = {
+            //    { "部材", "節点","", "FX", "FY", "FZ", "MX", "MY","MZ" },
+            //    { "No", "No", "DIST", "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
+            //};
+            //// ヘッダーのx方向の余白
+            //int[,] header_Xspacing = {
+            //    { 10, 50, 105, 160, 210, 260, 310,360,410 },
+            //    { 10, 50, 105, 160, 210, 260, 310,360,410 },
+            //};
+
+            //// ボディーのx方向の余白　-1
+            //int[,] body_Xspacing = {
+            //    { 17, 57, 118, 174, 224, 274, 324,374,424 }
+            //};
+
+            //// タイトルの印刷
+            //mc.PrintContent("断面力", 0);
+            //mc.CurrentRow(2);
 
             // 印刷
             //mc.PrintResultBasic(title, data, header_content, header_Xspacing, body_Xspacing);
