@@ -202,28 +202,28 @@ namespace PDF_Manager.Printing
             }
 
 
-            //// reac
-            //if (data.ContainsKey("reac"))
-            //{
-            //    ResultReac reac_call = new ResultReac();
-            //    reac_call.Reac(mc, data);
-            //    class_set[(int)class_name.reac] = reac_call;
-            //}
+            ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
+            // reac
+            if (data.ContainsKey("reac"))
+            {
+                ResultReac reac_call = new ResultReac();
+                reac_call.Reac(mc, data, reacAnnexing_call);
+                class_set[(int)class_name.reac] = reac_call;
+            }
 
-            //// reaccombine
-            //ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
-            //if (data.ContainsKey("reacCombine"))
-            //{
-            //    reacAnnexing_call.ReacAnnexing(mc, data, "Combine");
-            //    class_set[(int)class_name.reacCombine] = reacAnnexing_call;
-            //}
+            // reaccombine
+            if (data.ContainsKey("reacCombine"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "Combine");
+                class_set[(int)class_name.reacCombine] = reacAnnexing_call;
+            }
 
-            //// reacPickup
-            //if (data.ContainsKey("reacPickup"))
-            //{
-            //    reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
-            //    class_set[(int)class_name.reacPickup] = reacAnnexing_call;
-            //}
+            // reacPickup
+            if (data.ContainsKey("reacPickup"))
+            {
+                reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
+                class_set[(int)class_name.reacPickup] = reacAnnexing_call;
+            }
 
             return class_set;
         }

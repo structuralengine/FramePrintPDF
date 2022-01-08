@@ -50,6 +50,11 @@ namespace PDF_Manager.Printing
             data.Add(table);
         }
 
+        /// <summary>
+        ///　変位データの基本形PDF書き込み
+        /// </summary>
+        /// <param name="mc">PdfDoc</param>
+        /// <param name="LL">LLがList何番目のデータか</param>
         public void DisgBasicPDF(PdfDoc mc, int LL = 0)
         {   //　ヘッダー
             string[,] header_content3D = {

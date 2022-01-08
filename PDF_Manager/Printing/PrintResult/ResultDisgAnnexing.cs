@@ -33,7 +33,7 @@ namespace PDF_Manager.Printing
             "y軸回りの回転角 最大",
             "y軸回りの回転角 最小",
             "z軸回りの回転角 最大",
-            "Z軸回りの回転角 最小"
+            "z軸回りの回転角 最小"
         };
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();

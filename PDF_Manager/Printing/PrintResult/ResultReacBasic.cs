@@ -17,9 +17,9 @@ using System.Collections.Generic;
 
 namespace PDF_Manager.Printing
 {
-    internal class ResultFsecBasic
+    internal class ResultReacBasic
     {
-        //変位量データの基本形のデータはここに入る
+        //反力データの基本形のデータはここに入る
         public List<List<string[]>> data = new List<List<string[]>>();
 
         /// <summary>
@@ -27,7 +27,7 @@ namespace PDF_Manager.Printing
         /// </summary>
         /// <param name="mc">PdfDoc</param>
         /// <param name="Elem">case1つぶんのデータ</param>
-        public void FsecBasic(PdfDoc mc, JArray Elem)
+        public void ReacBasic(PdfDoc mc, JArray Elem)
         {
             List<string[]> table = new List<string[]>();
 
@@ -35,17 +35,15 @@ namespace PDF_Manager.Printing
             {
                 JToken item = Elem[j];
 
-                string[] line = new String[9];
+                string[] line = new String[7];
 
-                line[0] = mc.TypeChange(item["m"]);
-                line[1] = mc.TypeChange(item["n"]);
-                line[2] = mc.TypeChange(item["l"], 3);
-                line[3] = mc.TypeChange(item["fx"], 2);
-                line[4] = mc.TypeChange(item["fy"], 2);
-                line[5] = mc.TypeChange(item["fz"], 2);
-                line[6] = mc.TypeChange(item["mx"], 2);
-                line[7] = mc.TypeChange(item["my"], 2);
-                line[8] = mc.TypeChange(item["mz"], 2);
+                line[0] = mc.TypeChange(item["id"]);
+                line[1] = mc.TypeChange(item["tx"], 2);
+                line[2] = mc.TypeChange(item["ty"], 2);
+                line[3] = mc.TypeChange(item["tz"], 2);
+                line[4] = mc.TypeChange(item["mx"], 2);
+                line[5] = mc.TypeChange(item["my"], 2);
+                line[6] = mc.TypeChange(item["mz"], 2);
 
                 table.Add(line);
             }
@@ -53,43 +51,43 @@ namespace PDF_Manager.Printing
         }
 
         /// <summary>
-        ///　断面力データの基本形PDF書き込み
+        ///　反力データの基本形PDF書き込み
         /// </summary>
         /// <param name="mc">PdfDoc</param>
         /// <param name="LL">LLがList何番目のデータか</param>
-        public void FsecBasicPDF(PdfDoc mc, int LL = 0)
-        {   //　ヘッダー
+        public void ReacBasicPDF(PdfDoc mc, int LL = 0)
+        {
+            //　ヘッダー
             string[,] header_content3D = {
-                { "部材", "節点","", "FX", "FY", "FZ", "MX", "MY","MZ" },
-                { "No", "No", "DIST", "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
+                { "SUPPORT", "TX", "TY", "TZ", "MX", "MY","MZ" },
+                { "",  "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
             };
             string[,] header_content2D = {
-                { "部材", "節点","", "FX", "FY", "FZ", "MX", "MY","MZ" },
-                { "No", "No", "DIST", "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
+                { "SUPPORT", "TX", "TY", "TZ", "MX", "MY","MZ" },
+                { "",  "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
             };
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {
-                { 10, 50, 105, 160, 210, 260, 310,360,410 },
-                { 10, 50, 105, 160, 210, 260, 310,360,410 },
+                { 18, 70, 140, 210, 280, 350, 420 },
+                { 18, 70, 140, 210, 280, 350, 420 },
             };
             int[,] header_Xspacing2D = {
-                { 10, 50, 105, 160, 210, 260, 310,360,410 },
-                { 10, 50, 105, 160, 210, 260, 310,360,410 },
+                { 18, 70, 140, 210, 280, 350, 420 },
+                { 18, 70, 140, 210, 280, 350, 420 },
             };
 
             // ボディーのx方向の余白　-1
             int[,] body_Xspacing3D = {
-                { 17, 57, 118, 174, 224, 274, 324,374,424 }
+                { 23, 85, 155, 225, 295, 365,435 }
             };
             int[,] body_Xspacing2D = {
-                { 17, 57, 118, 174, 224, 274, 324,374,424 }
+                { 23, 85, 155, 225, 295, 365,435 }
             };
 
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
             int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
             int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
-
             mc.header_content = header_content;
             mc.header_Xspacing = header_Xspacing;
             mc.body_Xspacing = body_Xspacing;

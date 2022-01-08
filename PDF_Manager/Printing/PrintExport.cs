@@ -163,26 +163,26 @@ namespace PDF_Manager.Printing
                 cls_fsecAnnexing.FsecAnnexingPDF(mc, "Pickup");
             }
 
-            ////reac
-            //if ((ResultReac)class_set[(int)PrintReady.class_name.reac] != null)
-            //{
-            //    ResultReac cls_reac = (ResultReac)class_set[(int)PrintReady.class_name.reac];
-            //    cls_reac.ReacPDF(mc);
-            //}
+            //reac
+            if ((ResultReac)class_set[(int)PrintReady.class_name.reac] != null)
+            {
+                ResultReac cls_reac = (ResultReac)class_set[(int)PrintReady.class_name.reac];
+                cls_reac.ReacPDF(mc);
+            }
 
-            ////reacCombine
-            //if ((ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacCombine] != null)
-            //{
-            //    ResultReacAnnexing cls_reacAnnexing = (ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacCombine];
-            //    cls_reacAnnexing.ReacAnnexingPDF(mc, "Combine");
-            //}
+            //reacCombine
+            if ((ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacCombine] != null)
+            {
+                ResultReacAnnexing cls_reacAnnexing = (ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacCombine];
+                cls_reacAnnexing.ReacAnnexingPDF(mc, "Combine");
+            }
 
-            ////reacPickup
-            //if ((ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacPickup] != null)
-            //{
-            //    ResultReacAnnexing cls_reacAnnexing = (ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacPickup];
-            //    cls_reacAnnexing.ReacAnnexingPDF(mc, "Pickup");
-            //}
+            //reacPickup
+            if ((ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacPickup] != null)
+            {
+                ResultReacAnnexing cls_reacAnnexing = (ResultReacAnnexing)class_set[(int)PrintReady.class_name.reacPickup];
+                cls_reacAnnexing.ReacAnnexingPDF(mc, "Pickup");
+            }
         }
     }
 }
