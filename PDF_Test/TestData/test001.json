@@ -1112,6 +1112,18 @@
       "symbol": "D1-1",
       "rate": 1,
       "name": "固定死荷重（主桁）",
+      "load_node": [
+        {
+          "n": "1",
+          "tx": 1,
+          "ty": 1,
+          "tz": null,
+          "rx": null,
+          "ry": null,
+          "rz": 1,
+          "row": 1
+        }
+      ],
       "load_member": [
         {
           "m1": "21",
@@ -4121,5 +4133,5 @@
       "z": 19.999999999999993
     }
   },
-  "dimension": 3
+  "dimension": 2
 }

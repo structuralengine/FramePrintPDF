@@ -75,20 +75,39 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //　ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
                 { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation" },
                 { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
             };
+
+            string[,] header_content2D = {
+                { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation" },
+                { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
+            int[,] header_Xspacing3D = {
+                { 10, 70, 140, 210, 280, 350, 420 },
+                { 10, 70, 140, 210, 280, 350, 420 },
+            };
+
+            int[,] header_Xspacing2D = {
                 { 10, 70, 140, 210, 280, 350, 420 },
                 { 10, 70, 140, 210, 280, 350, 420 },
             };
 
             // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
+            int[,] body_Xspacing3D = {
                 { 17, 85, 155, 225, 295, 365,435 }
             };
+
+            int[,] body_Xspacing2D = {
+                { 17, 85, 155, 225, 295, 365,435 }
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             // タイトルの印刷
             mc.PrintContent("変位量", 0);

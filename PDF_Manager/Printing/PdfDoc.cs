@@ -296,7 +296,7 @@ namespace PDF_Manager.Printing
                     }
                     if (!(i == data.Count - 1 && j == data[i].Count - 1))
                     {
-                        mc.CurrentRow(1); // y方向移動
+                        CurrentRow(1); // y方向移動
                     }
                 }
             }
