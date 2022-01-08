@@ -74,7 +74,7 @@ namespace PDF_Manager.Printing
                 count += (data[i].Count + 5) * mc.single_Yrow + 1;
             }
             // 改ページ判定
-            mc.DataCountKeep(count);
+            mc.DataCountKeep(count,"fsec");
 
             //　ヘッダー
             string[,] header_content = {
@@ -97,7 +97,7 @@ namespace PDF_Manager.Printing
             mc.CurrentRow(2);
 
             // 印刷
-            mc.PrintResultBasic(title, data, header_content, header_Xspacing, body_Xspacing);
+            //mc.PrintResultBasic(title, data, header_content, header_Xspacing, body_Xspacing);
         }
     }
 }

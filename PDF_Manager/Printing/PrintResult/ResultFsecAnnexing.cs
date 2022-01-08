@@ -38,7 +38,6 @@ namespace PDF_Manager.Printing
         List<List<List<string[]>>> data = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
-        List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
 
 
         public void FsecAnnexing(PdfDoc mc, Dictionary<string, object> value_, string key)
@@ -56,9 +55,6 @@ namespace PDF_Manager.Printing
                     break;
                 case "Pickup":
                     dataPickup = new List<List<List<string[]>>>();
-                    break;
-                case "LL":
-                    dataLL = new List<List<List<string[]>>>();
                     break;
             }
 
@@ -105,9 +101,6 @@ namespace PDF_Manager.Printing
                     case "Pickup":
                         dataPickup.Add(table);
                         break;
-                    case "LL":
-                        dataLL.Add(table);
-                        break;
                 }
             }
 
@@ -125,9 +118,6 @@ namespace PDF_Manager.Printing
                 case "Pickup":
                     data = dataPickup;
                     break;
-                case "LL":
-                    data = dataLL;
-                    break;
             }
 
             // 全行の取得
@@ -144,7 +134,7 @@ namespace PDF_Manager.Printing
             }
 
             // 改ページ判定
-            mc.DataCountKeep(count);
+            mc.DataCountKeep(count,"fsec" + key);
 
             //　ヘッダー
             string[,] header_content = {
@@ -167,7 +157,7 @@ namespace PDF_Manager.Printing
             mc.CurrentRow(2);
 
             // 印刷
-            mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,6);
+            //mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,6);
 
         }
     }

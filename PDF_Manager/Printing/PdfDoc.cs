@@ -36,11 +36,12 @@ namespace PDF_Manager.Printing
         public int single_Yrow = 10;  //　1行あたりの高さ
         public string[,] current_header;
         public int[,] currentHeader_Xspacing;
-        public int[,] currentBody_Xspacing;
-        public int[,] currentHeader_Yspacing;
         CultureInfo ci = new CultureInfo("en-us");
         public int dimension;
-
+        public string name;
+        public string[,] header_content;
+        public int[,] header_Xspacing;
+        public int[,] body_Xspacing;
 
         public PdfDoc()
         {
@@ -176,10 +177,10 @@ namespace PDF_Manager.Printing
         }
 
         //　ヘッダー関係
-        public void Header(string[,] header_content, int[,] header_Xspacing)
+        public void Header(string[,] header_content1, int[,] header_Xspacing1)
         {
-            current_header = header_content;
-            currentHeader_Xspacing = header_Xspacing;
+            current_header = header_content1;
+            currentHeader_Xspacing = header_Xspacing1;
             for (int i = 0; i < current_header.GetLength(0); i++)
             {
                 for (int j = 0; j < current_header.GetLength(1); j++)
@@ -195,16 +196,19 @@ namespace PDF_Manager.Printing
 
         //　classをまたいで，改ページするかの判定
         // 次の項目がまたがず入りきるなら同一ページで2行空き，そうでないなら改ページ
-        public void DataCountKeep(double value)
+        public void DataCountKeep(double value, string title = "")
         {
-            if ((value + CurrentPos.Y) > Margine.Y + bottomCell * single_Yrow)
+            if (name != title)
             {
-                NewPage();
-            }
-            else
-            {
-                CurrentPos.X = x;
-                CurrentPos.Y += single_Yrow * 2;
+                if ((value + CurrentPos.Y) > Margine.Y + bottomCell * single_Yrow)
+                {
+                    NewPage();
+                }
+                else
+                {
+                    CurrentPos.X = x;
+                    CurrentPos.Y += single_Yrow * 2;
+                }
             }
         }
 
@@ -245,14 +249,18 @@ namespace PDF_Manager.Printing
             {
                 if (data.Type == JTokenType.Null) data = double.NaN;
                 double newDataDouble = double.Parse(data.ToString());
+                if (StringInfo.ParseCombiningCharacters(data.ToString()).Length > 8)
+                {
+                    style = "E";
+                }
                 if (style == "none")
                 {
                     var digit = "F" + round.ToString();
                     newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(digit);
                 }
-                else
+                else if (style == "E")
                 {
-                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString("E02", CultureInfo.CreateSpecificCulture("en-US"));
+                    newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString("E2", CultureInfo.CreateSpecificCulture("en-US"));
                 }
             }
             return newDataString;
@@ -272,39 +280,39 @@ namespace PDF_Manager.Printing
         }
 
         // 結果の印刷（基本形）
-        public void PrintResultBasic(List<string> title, List<List<string[]>> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing)
+        public void PrintResultBasic(List<string[]> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing, int LL = 0)
         {
-            for (int i = 0; i < data.Count; i++)
+            // ヘッダーの印刷
+            Header(header_content, header_Xspacing);
+
+            for (int j = 0; j < data.Count; j++)
             {
-                //  1タイプ内でページをまたぐかどうか
-                TypeCount(i, 5, data[i].Count, title[i]);
-
-                // タイプの印刷
-                CurrentColumn(0);
-                PrintContent(title[i], 0);
-                CurrentRow(2);
-
-                // ヘッダーの印刷
-                Header(header_content, header_Xspacing);
-
-                for (int j = 0; j < data[i].Count; j++)
+                for (int l = 0; l < data[j].Length; l++)
                 {
-                    for (int l = 0; l < data[i][j].Length; l++)
-                    {
-                        CurrentColumn(body_Xspacing[0, l]); //x方向移動
-                        PrintContent(data[i][j][l]); // print
-                    }
-                    if (!(i == data.Count - 1 && j == data[i].Count - 1))
-                    {
-                        CurrentRow(1); // y方向移動
-                    }
+                    CurrentColumn(body_Xspacing[0, l]); //x方向移動
+                    PrintContent(data[j][l]); // print
+                }
+                if (!(LL == data.Count - 1 && j == data.Count - 1))
+                {
+                    CurrentRow(1); // y方向移動
                 }
             }
         }
-
-        // 結果の印刷（その他）
-        public void PrintResultAnnexing(List<string> title, string[] type, List<List<List<string[]>>> data, string[,] header_content, int[,] header_Xspacing, int[,] body_Xspacing, int textLen)
+        /// <summary>
+        /// Combine/Pickupのときの準備（LLのfor文の状態にあわせる）
+        /// </summary>
+        /// <param name="key">combine/pickupのいずれか</param>
+        /// <param name="title">ex)case2</param>
+        /// <param name="type">ex)x軸方向最大</param>
+        /// <param name="data">combine/pickupのデータ全てが入る</param>
+        /// <param name="textLen">組合せが一行あたりに入る文字数</param>
+        public void PrintResultAnnexingReady(string key, List<string> title, string[] type, List<List<List<string[]>>> data, int textLen)
         {
+            DataCountKeep(100, "disg" + key);
+            // タイトルの印刷
+            PrintContent(key + "変位量", 0);
+            CurrentRow(2);
+
             for (int i = 0; i < data.Count; i++)
             {
                 //  1ケースでページをまたぐかどうか
@@ -322,53 +330,64 @@ namespace PDF_Manager.Printing
                 PrintContent(title[i], 0);
                 CurrentRow(2);
 
-                for (int j = 0; j < data[i].Count; j++)
+                PrintResultAnnexing(title[i], type, data[i], textLen);
+            }
+        }
+
+
+        /// <summary>
+        /// Combine/Pickup/LLの印刷
+        /// </summary>
+        /// <param name="title">ex)case2</param>
+        /// <param name="type">ex)x軸方向最大</param>
+        /// <param name="data">combine/pickup/LLのデータのcase1つぶん</param>
+        /// <param name="textLen">組合せが一行あたりに入る文字数</param>
+        public void PrintResultAnnexing(string title, string[] type, List<List<string[]>> data, int textLen)
+        {
+            for (int j = 0; j < data.Count; j++)
+            {
+                //組み合わせの文字数のカウント
+                //textLen:切り替わりの文字数の閾値
+                int numFullWidth = data[j][0][data[j][0].Length - 1].Length > textLen ? 2 : 1;
+
+                //  1タイプ内でページをまたぐかどうか
+                TypeCount(j, 5, data[j].Count * numFullWidth, title);
+
+                // タイプの印刷
+                CurrentColumn(0);
+                PrintContent(type[j], 0);
+                CurrentRow(2);
+
+                // ヘッダーの印刷
+                Header(header_content, header_Xspacing);
+
+                for (int k = 0; k < data[j].Count; k++)
                 {
-                    //組み合わせの文字数のカウント
-                    //textLen:切り替わりの文字数の閾値
-                    int numFullWidth = data[i][j][0][data[i][j][0].Length - 1].Length > textLen ? 2 : 1;
-
-                    //  1タイプ内でページをまたぐかどうか
-                    TypeCount(j, 5, data[i][j].Count * numFullWidth, title[i]);
-
-                    // タイプの印刷
-                    CurrentColumn(0);
-                    PrintContent(type[j], 0);
-                    CurrentRow(2);
-
-                    // ヘッダーの印刷
-                    Header(header_content, header_Xspacing);
-
-                    for (int k = 0; k < data[i][j].Count; k++)
+                    //2行になるとき，組み合わせとそのほかデータがページ跨ぎしないようにする．
+                    if (numFullWidth == 2)
                     {
-                        //2行になるとき，組み合わせとそのほかデータがページ跨ぎしないようにする．
-                        if (numFullWidth == 2)
+                        double y = CurrentPos.Y + single_Yrow * 2;
+                        // 跨ぎそうなら1行あきらめて，次ページへ．
+                        if (y > single_Yrow * bottomCell + Margine.Y)
                         {
-                            double y = CurrentPos.Y + single_Yrow * 2;
-                            // 跨ぎそうなら1行あきらめて，次ページへ．
-                            if (y > single_Yrow * bottomCell + Margine.Y)
-                            {
-                                CurrentRow(2);
-                            }
-                        }
-
-                        for (int l = 0; l < data[i][j][k].Length; l++)
-                        {
-                            CurrentColumn(body_Xspacing[0, l]); //x方向移動
-
-                            // 組み合わせで2行になるとき，1行下に書く．
-                            if (l == data[i][j][k].Length - 1 && numFullWidth > textLen)
-                            {
-                                CurrentRow(1);
-                            }
-
-                            PrintContent(data[i][j][k][l]); // print
-                        }
-                        if (!(i == data.Count - 1 && j == data[i].Count - 1 && k == data[i][j].Count - 1))
-                        {
-                            CurrentRow(1); // y方向移動
+                            CurrentRow(2);
                         }
                     }
+
+                    for (int l = 0; l < data[j][k].Length; l++)
+                    {
+                        CurrentColumn(body_Xspacing[0, l]); //x方向移動
+
+                        // 組み合わせで2行になるとき，1行下に書く．
+                        if (l == data[j][k].Length - 1 && numFullWidth == 2)
+                        {
+                            CurrentRow(1);
+                        }
+
+                        PrintContent(data[j][k][l]); // print
+                    }
+
+                    CurrentRow(1); // y方向移動
                 }
             }
         }
