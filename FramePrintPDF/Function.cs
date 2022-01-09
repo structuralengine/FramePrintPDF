@@ -1,7 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 
 using Amazon.Lambda.Core;
@@ -41,36 +44,56 @@ namespace FramePrintPDF
         /// <returns></returns>
         public LambdaResponse FunctionHandler(LambdaRequest input, ILambdaContext context)
         {
-            try
-            {
-                // データの読み込み
-                var myPrintInput = new PrintInput(input.body);
-                string base64str = myPrintInput.getPdfSource();
+            // base64をデコード
+            byte[] a = Convert.FromBase64String(input.body);
+            String stCsvData = Encoding.UTF8.GetString(a);
 
-                // 結果データを書きだす(json形式) -------------------------------------------------------
-                return new LambdaResponse
-                {
-                    statusCode = HttpStatusCode.OK,
-                    headers = new Dictionary<string, string>() {
-                    { "Content-Type", "application/json" },
+            // カンマ区切りで分割して配列に格納する
+            string[] stArrayData = stCsvData.Split(',');
+
+            // byte 配列に変換する
+            byte[] b = new byte[stArrayData.Length];
+            for (int i = 0; i < stArrayData.Length; i++)
+                b[i] = Convert.ToByte(stArrayData[i]);
+
+            // gzip解凍
+            String line = Unzip(b);
+
+            // データの読み込み
+            var myPrintInput = new PrintInput(line);
+            string base64str = myPrintInput.getPdfSource(); 
+
+            // 結果データを書きだす(json形式) -------------------------------------------------------
+            return new LambdaResponse
+            {
+                statusCode = HttpStatusCode.OK,
+                headers = new Dictionary<string, string>() {
+                    { "Content-Type", "text/plain" },
                     { "Access-Control-Allow-Origin", "*" }
                 },
-                    body = base64str,
+                body = base64str,
             };
-            }
-            catch (Exception ex)
-            {
-                return new LambdaResponse
-                {
-                    statusCode = HttpStatusCode.InternalServerError,
-                    headers = new Dictionary<string, string>(){
-                        { "Content-Type", "application/json" },
-                        { "Access-Control-Allow-Origin", "*" }
-                    },
-                    body = "{\"error\":\"" + ex.Message + "\"}"
-                };
-            }
-
         }
+
+        /// <summary>
+        /// 圧縮データを文字列として復元します。
+        /// </summary>
+
+
+        public string Unzip(byte[] bytes)
+        {
+            using (var msi = new MemoryStream(bytes))
+            using (var mso = new MemoryStream())
+            {
+                using (var gs = new GZipStream(msi, CompressionMode.Decompress))
+                {
+                    gs.CopyTo(mso);
+                }
+                return Encoding.UTF8.GetString(mso.ToArray());
+            }
+        }
+ 
+
+
     }
 }

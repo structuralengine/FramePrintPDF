@@ -125,8 +125,7 @@ namespace PDF_Manager.Printing
         public void SavePDF(string filename = "HelloWorld.pdf")
         {
             // PDF保存（カレントディレクトリ）
-            //document.Save(filename);
-            document.Save("D:\\work\\sasaco\\PDF_generate\\bin\\Debug\\netcoreapp3.1\\work\\Test.pdf");
+            document.Save(filename);
 
         }
 

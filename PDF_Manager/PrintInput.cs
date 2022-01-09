@@ -51,17 +51,6 @@ public class PrintInput
         exp.Export(mc, class_set);
 
 
-
-
-        //List<List<string[]>> nodeData = this.node();
-        //this.member();
-
-        //Text.GeneratePDF(mc,data);
-
-
-        //Text.PrtText(mc, "あああああああああ！");
-
-
         // PDFファイルを生成する
         mc.SavePDF();
     }
@@ -87,6 +76,21 @@ public class PrintInput
         // PDFファイルを生成する
         return str;
     }
+
+
+    public string getTestPDF()
+    {
+        Text.PrtText(mc, "あああああああああ！");
+        // PDF を Byte型に変換
+        var b = mc.GetPDFBytes();
+
+        // Byte型配列をBase64文字列に変換
+        string str = Convert.ToBase64String(b);
+
+        // PDFファイルを生成する
+        return str;
+    }
+
 
     // nodeの印刷
     public List<List<string[]>> node()
