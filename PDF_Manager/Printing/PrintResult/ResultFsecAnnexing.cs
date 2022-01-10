@@ -221,7 +221,7 @@ namespace PDF_Manager.Printing
             mc.body_Xspacing = body_Xspacing;
 
             // 組合せ　一行にはいる文字数
-            int textLen = mc.dimension == 3 ? 6 : 50;
+            int textLen = mc.dimension == 3 ? 6 : 40;
 
             switch (key)
             {
