@@ -21,19 +21,20 @@ namespace PDF_Manager.Printing
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<string> title = new List<string>();
-        string[] type = {
-            "x方向の支点反力 最大",
-            "x方向の支点反力 最小",
-            "y方向の支点反力 最大",
-            "y方向の支点反力 最小",
-            "z方向の支点反力 最大",
-            "z方向の支点反力 最小",
-            "x軸回りの回転反力 最大",
-            "x軸回りの回転反力 最小",
-            "y軸回りの回転反力 最大",
-            "y軸回りの回転反力 最小",
-            "z軸回りの回転反力 最大",
-            "z軸回りの回転反力 最小",
+        List<string> type = new List<string>();
+        Dictionary<string,string> typeList = new Dictionary<string, string>(){
+           { "tx_max","x方向の支点反力 最大"},
+           { "tx_min","x方向の支点反力 最小" },
+           { "ty_max", "y方向の支点反力 最大" },
+           { "ty_min","y方向の支点反力 最小" },
+           { "tz_max","z方向の支点反力 最大" },
+           { "tz_min", "z方向の支点反力 最小" },
+           { "mx_max", "x軸回りの回転反力 最大" },
+           { "mx_min", "x軸回りの回転反力 最小" },
+           { "my_max", "y軸回りの回転反力 最大" },
+           { "my_min", "y軸回りの回転反力 最小" },
+           { "mz_max", "z軸回りの回転反力 最大" },
+           { "mz_min", "z軸回りの回転反力 最小" },
         };
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
@@ -53,6 +54,8 @@ namespace PDF_Manager.Printing
 
             // 集まったデータはここに格納する
             title = new List<string>();
+            type = new List<string>();
+
             switch (key)
             {
                 case "Combine":
@@ -87,6 +90,8 @@ namespace PDF_Manager.Printing
             for (int j = 0; j < Elem.Count; j++)
             {
                 Dictionary<string, object> elist = JObject.FromObject(Elem.ElementAt(j).Value).ToObject<Dictionary<string, object>>();
+
+                type.Add(typeList[Elem.ElementAt(j).Key]);
 
                 List<string[]> body = new List<string[]>();
 
