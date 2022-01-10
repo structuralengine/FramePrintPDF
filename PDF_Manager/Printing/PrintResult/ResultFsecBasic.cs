@@ -98,7 +98,7 @@ namespace PDF_Manager.Printing
             mc.body_Xspacing = body_Xspacing;
 
             // 印刷
-            mc.PrintResultBasic(data[LL], LL);
+            mc.PrintResultBasic(data[LL], LL,"fsec");
 
         }
     }

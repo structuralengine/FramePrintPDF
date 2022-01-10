@@ -158,7 +158,7 @@ namespace PDF_Manager.Printing
         }
 
         // 行数の管理
-        public void CurrentRow(int row)
+        public void CurrentRow(double row)
         {
             CurrentPos.Y += single_Yrow * row;
 
@@ -249,7 +249,7 @@ namespace PDF_Manager.Printing
             {
                 if (data.Type == JTokenType.Null) data = double.NaN;
                 double newDataDouble = double.Parse(data.ToString());
-               
+
                 if (style == "none")
                 {
                     var digit = "F" + round.ToString();
@@ -290,8 +290,42 @@ namespace PDF_Manager.Printing
             }
         }
 
+        public void FsecJudge(List<string[]> data, int j, int numFullWidth = 1)
+        {
+            double y = CurrentPos.Y;
+
+            while (true)
+            {
+                y += single_Yrow * numFullWidth;
+
+                // 跨ぎそうなら1行あきらめて，次ページへ．
+                if (y > single_Yrow * bottomCell + Margine.Y - 0.5)
+                {
+                    NewPage();
+                    CurrentPos.Y += single_Yrow * 2;
+                    Header(current_header, currentHeader_Xspacing);
+                    break;
+                }
+
+                try
+                {
+                    // 部材（"m")が入っているかどうか
+                    if (data[j + 1][0] != "")
+                    {
+                        break;
+                    }
+                }
+                catch
+                {
+                    break;
+                }
+
+                j++;
+            }
+        }
+
         // 結果の印刷（基本形）
-        public void PrintResultBasic(List<string[]> data, int LL = 0)
+        public void PrintResultBasic(List<string[]> data, int LL = 0, string dataType = "fsec")
         {
             // ヘッダーの印刷
             Header(header_content, header_Xspacing);
@@ -303,9 +337,22 @@ namespace PDF_Manager.Printing
                     CurrentColumn(body_Xspacing[0, l]); //x方向移動
                     PrintContent(data[j][l]); // print
                 }
+
                 if (!(LL == data.Count - 1 && j == data.Count - 1))
                 {
                     CurrentRow(1); // y方向移動
+                }
+
+                // 断面力データの時には部材ごとにまとまって印刷できるようにする
+                //　まとまりごとに0.5行ずつ開ける
+                if (dataType == "fsec" && j + 1 < data.Count)
+                {                
+                    // 部材（"m")が入っているかどうか
+                    if (data[j + 1][0] != "")
+                    {
+                        CurrentRow(0.5);
+                        FsecJudge(data, j + 1);
+                    }
                 }
             }
         }
@@ -318,7 +365,7 @@ namespace PDF_Manager.Printing
         /// <param name="type">ex)x軸方向最大</param>
         /// <param name="data">combine/pickupのデータ全てが入る</param>
         /// <param name="textLen">組合せが一行あたりに入る文字数</param>
-        public void PrintResultAnnexingReady(string result,string key, List<string> title, List<string> type, List<List<List<string[]>>> data, int textLen)
+        public void PrintResultAnnexingReady(string result, string key, List<string> title, List<string> type, List<List<List<string[]>>> data, int textLen)
         {
             var resultJa = "";
             switch (result)
@@ -356,7 +403,7 @@ namespace PDF_Manager.Printing
                 PrintContent(title[i], 0);
                 CurrentRow(2);
 
-                PrintResultAnnexing(title[i], type, data[i], textLen);
+                PrintResultAnnexing(title[i], type, data[i], textLen, result);
             }
         }
 
@@ -368,7 +415,7 @@ namespace PDF_Manager.Printing
         /// <param name="type">ex)x軸方向最大</param>
         /// <param name="data">combine/pickup/LLのデータのcase1つぶん</param>
         /// <param name="textLen">組合せが一行あたりに入る文字数</param>
-        public void PrintResultAnnexing(string title, List<string> type, List<List<string[]>> data, int textLen)
+        public void PrintResultAnnexing(string title, List<string> type, List<List<string[]>> data, int textLen, string result = "")
         {
             for (int j = 0; j < data.Count; j++)
             {
@@ -412,8 +459,19 @@ namespace PDF_Manager.Printing
 
                         PrintContent(data[j][k][l]); // print
                     }
-
                     CurrentRow(1); // y方向移動
+
+                    // 断面力データの時には部材ごとにまとまって印刷できるようにする
+                    //　まとまりごとに0.5行ずつ開ける
+                    if (result == "fsec" && k + 1 < data[j].Count)
+                    {
+                        // 部材（"m")が入っているかどうか
+                        if (data[j][k + 1][0] != "")
+                        {
+                            CurrentRow(0.5);
+                            FsecJudge(data[j], k + 1, numFullWidth);
+                        }
+                    }
                 }
             }
         }

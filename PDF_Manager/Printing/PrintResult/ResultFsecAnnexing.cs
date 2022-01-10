@@ -234,7 +234,7 @@ namespace PDF_Manager.Printing
                     break;
 
                 case "LL":
-                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], textLen);
+                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], textLen ,"fsec");
                     break;
             }
 
