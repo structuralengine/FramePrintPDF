@@ -36,7 +36,7 @@ namespace PDF_Manager.Printing
            { "rz_max", "z軸回りの回転角 最大" },
            { "rz_min", "z軸回りの回転角 最小" },
         };
-       
+
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
         public List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
@@ -89,7 +89,7 @@ namespace PDF_Manager.Printing
             for (int j = 0; j < Elem.Count; j++)
             {
                 Dictionary<string, object> elist = JObject.FromObject(Elem.ElementAt(j).Value).ToObject<Dictionary<string, object>>();
-                
+
                 type.Add(typeList[Elem.ElementAt(j).Key]);
 
                 List<string[]> body = new List<string[]>();
@@ -102,9 +102,9 @@ namespace PDF_Manager.Printing
                     line[0] = mc.TypeChange(elist.ElementAt(k).Key);
                     line[1] = mc.TypeChange(item["dx"], 4);
                     line[2] = mc.TypeChange(item["dy"], 4);
-                    line[3] = mc.TypeChange(item["dz"], 4);
-                    line[4] = mc.TypeChange(item["rx"], 4);
-                    line[5] = mc.TypeChange(item["ry"], 4);
+                    line[3] = mc.Dimension(mc.TypeChange(item["dz"], 4));
+                    line[4] = mc.Dimension(mc.TypeChange(item["rx"], 4));
+                    line[5] = mc.Dimension(mc.TypeChange(item["ry"], 4));
                     line[6] = mc.TypeChange(item["rz"], 4);
                     line[7] = mc.TypeChange(item["case"]);
 
@@ -138,37 +138,62 @@ namespace PDF_Manager.Printing
         public void DisgAnnexingPDF(PdfDoc mc, string key, string title_LL = "", int LL_count = 0)
         {
             //　ヘッダー
-            string[,] header_content = {
-                { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation","組合せ" },
-                { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)","" },
+            string[,] header_content3D = {
+                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの", "z軸回りの","組合せ" },
+                { "No", "移動量", "移動量", "移動量", "回転量", "回転量", "回転量","" },
+                { "", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)","" },
             };
-            mc.header_content = header_content;
-           
+
+            string[,] header_content2D = {
+                { "節点", "x方向の", "y方向の", "", "", "", "z軸回りの","組合せ" },
+                { "No", "移動量", "移動量", "", "", "", "回転量","" },
+                { "", "(mm)", "(mm)", "", "", "", "(mmrad)","" },
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
-                { 10, 50, 100, 150, 200, 260, 320,410 },
-                { 10, 50, 100, 150, 200, 260, 320,410 },
+            int[,] header_Xspacing3D = {
+                { 10, 60, 120, 180, 240, 300, 360,417 },
+                { 10, 60, 120, 180, 240, 300, 360,417 },
+                { 10, 60, 120, 180, 240, 300, 360,417 },
             };
-            mc.header_Xspacing = header_Xspacing;
+
+            int[,] header_Xspacing2D = {
+                { 10, 60, 120, 0, 0, 0, 180,350 },
+                { 10, 60, 120, 0, 0, 0, 180,350 },
+                { 10, 60, 120, 0, 0, 0, 180,350 },
+            };
 
             // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
-                { 17, 65, 115, 165, 215, 275,335,435 }
+            int[,] body_Xspacing3D = {
+                { 17, 80, 140, 200, 260,320,380,435 }
             };
+
+            int[,] body_Xspacing2D = {
+                { 17, 80, 140, 0, 0,0,200,435 }
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
+            mc.header_content = header_content;
+            mc.header_Xspacing = header_Xspacing;
             mc.body_Xspacing = body_Xspacing;
 
+            // 組合せ　一行にはいる文字数
+            int textLen = mc.dimension == 3 ? 8 : 50;
+
             switch (key)
-            { 
+            {
                 case "Combine":
-                    mc.PrintResultAnnexingReady("disg",key, title, type, dataCombine, 14);
+                    mc.PrintResultAnnexingReady("disg", key, title, type, dataCombine, textLen);
                     break;
 
                 case "Pickup":
-                    mc.PrintResultAnnexingReady("disg",key, title, type, dataPickup, 14);
+                    mc.PrintResultAnnexingReady("disg", key, title, type, dataPickup, textLen);
                     break;
 
                 case "LL":
-                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], 14);
+                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], textLen);
                     break;
             }
 

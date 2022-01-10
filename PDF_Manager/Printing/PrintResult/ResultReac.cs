@@ -89,7 +89,7 @@ namespace PDF_Manager.Printing
                         count += reacAnnex.dataLL[LL_count][m].Count;
                     }
 
-                    mc.TypeCount(i, 7, count, title[i]);
+                    mc.TypeCount(i, 8, count, title[i]);
 
                     // タイトルの印刷 ex)case2
                     mc.CurrentColumn(0);
@@ -104,7 +104,7 @@ namespace PDF_Manager.Printing
                 else
                 {
                     //  1タイプ内でページをまたぐかどうか
-                    mc.TypeCount(i, 5, reacBasic.data[LL_count2].Count, title[i]);
+                    mc.TypeCount(i, 6, reacBasic.data[LL_count2].Count, title[i]);
 
                     // タイプの印刷　ex)case2
                     mc.CurrentColumn(0);

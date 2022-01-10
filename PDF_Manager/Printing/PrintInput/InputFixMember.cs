@@ -76,22 +76,43 @@ namespace PDF_Manager.Printing
             mc.DataCountKeep(count);
 
             //　ヘッダー
-            string[,] header_content = {
+            string[,] header_content3D = {
                 { "部材", "", "", "", "",},
                 { "No", "TX", "TY", "TZ", "TR" },
                 {"","(kN/m2)","(kN/m2)","(kN/m2)","(kN/rad)"}
             };
+            string[,] header_content2D = {
+                { "部材", "", "", "", "",},
+                { "No", "TX", "TY", "", "" },
+                {"","(kN/m2)","(kN/m2)","",""}
+            };
+
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing ={
+            int[,] header_Xspacing3D ={
                 { 10, 70, 140, 210, 280 },
                 { 10, 70, 140, 210, 280 },
                 { 10, 70, 140, 210, 280 },
+            };
+            int[,] header_Xspacing2D ={
+                { 10, 70, 140, 0, 0 },
+                { 10, 70, 140, 0, 0 },
+                { 10, 70, 140, 0, 0 },
             };
 
             // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
+            int[,] body_Xspacing3D = {
                 { 17, 85, 155, 225, 295 }
             };
+            int[,] body_Xspacing2D = {
+                { 17, 85, 155, 0, 0 }
+            };
+
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
+            mc.header_content = header_content;
+            mc.header_Xspacing = header_Xspacing;
+            mc.body_Xspacing = body_Xspacing;
 
             // タイトルの印刷
             mc.PrintContent("バネデータ", 0);
