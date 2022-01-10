@@ -92,7 +92,7 @@ namespace PDF_Manager.Printing
         public void ElementPDF(PdfDoc mc)
         {
             // 全行の取得
-            int count = 2;
+            int count = 20;
             for (int i = 0; i < title.Count; i++)
             {
                 count += (data[i].Count + 5) * mc.single_Yrow + 1;
@@ -118,8 +118,8 @@ namespace PDF_Manager.Printing
             };
 
             int[,] header_Xspacing2D ={
-                { 10, 90, 180, 0, 260, 360, 0, 0 },
-                { 10, 90, 180, 0, 260, 0, 360, 0 }
+                { 10, 85, 180, 0, 260, 360, 0, 0 },
+                { 10, 85, 180, 0, 260, 0, 360, 0 }
             };
 
             // ボディーのx方向の余白　
