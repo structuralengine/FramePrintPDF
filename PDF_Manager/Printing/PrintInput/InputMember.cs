@@ -63,7 +63,7 @@ namespace PDF_Manager.Printing
             }
         }
 
-        public double GetMemberLength(PdfDoc mc,string memberNo, Dictionary<string, object> value)
+        public double GetMemberLength(PdfDoc mc, string memberNo, Dictionary<string, object> value)
         {
             JToken memb = this.GetMember(memberNo);
 
@@ -75,8 +75,8 @@ namespace PDF_Manager.Printing
             }
 
             InputNode node = new InputNode();
-            double[] iPos = node.GetNodePos(mc,ni, value);
-            double[] jPos = node.GetNodePos(mc,nj, value);
+            double[] iPos = node.GetNodePos(mc, ni, value);
+            double[] jPos = node.GetNodePos(mc, nj, value);
             if (iPos == null || jPos == null)
             {
                 return 0;
@@ -106,7 +106,7 @@ namespace PDF_Manager.Printing
             int bottomCell = mc.bottomCell;
 
             // 全行数の取得
-            double count = (data.Count + ((data.Count / bottomCell) + 1) * 4) * mc.single_Yrow;
+            double count = (data.Count + ((data.Count / bottomCell) + 1) * 5) * mc.single_Yrow;
             //  改ページ判定
             mc.DataCountKeep(count);
 
@@ -115,16 +115,25 @@ namespace PDF_Manager.Printing
             mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content3D = {
-                { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "コードアングル" , "材料名称"}
+                { "", "節点", "", "L", "材料番号", "コードアングル" , "材料名称"},
+                { "No", "I端", "J端", "(m)", "", "(°)" , ""}
+
             };
 
             string[,] header_content2D = {
-                { "No", "I-TAN", "J-TAN", "L(m)", "材料番号", "" , "材料名称"}
+                { "", "節点", "", "L", "材料番号", "" , "材料名称"},
+                { "No", "I端", "J端", "(m)", "", "" , ""}            
             };
 
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing3D = { { 10, 50, 100, 145, 203, 280, 360 } };
-            int[,] header_Xspacing2D = { { 10, 60, 120, 180, 255, 280, 351 } };
+            int[,] header_Xspacing3D = {
+                { 0, 75, 100, 145, 203, 280, 360 },
+                { 10, 50, 100, 145, 203, 280, 360 } 
+            };
+            int[,] header_Xspacing2D = {
+                { 10, 90, 120, 180, 255, 280, 351 },
+                { 10, 60, 120, 180, 255, 280, 351 }
+            };
 
             // ボディーのx方向の余白
             int[,] body_Xspacing3D = { { 17, 60, 110, 157, 208, 284, 341 } };

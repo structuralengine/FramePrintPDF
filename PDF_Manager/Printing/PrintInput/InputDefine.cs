@@ -81,7 +81,7 @@ namespace PDF_Manager.Printing
             int bottomCell = mc.bottomCell;
 
             // 全行の取得
-            int count = 2;
+            int count = 20;
             for (int i = 0; i < data.Count; i++)
             {
                 count += (data[i].Count + 2) * mc.single_Yrow;

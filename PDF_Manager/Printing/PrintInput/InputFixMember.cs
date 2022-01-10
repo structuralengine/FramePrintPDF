@@ -46,65 +46,150 @@ namespace PDF_Manager.Printing
 
                 List<string[]> table = new List<string[]>();
 
-                for (int j = 0; j < Elem.Count; j++)
+                if (mc.dimension == 3)
                 {
-                    JToken item = Elem[j];
-                   
-                    string[] line = new String[5];
+                    for (int j = 0; j < Elem.Count; j++)
+                    {
+                        JToken item = Elem[j];
 
-                    line[0] = mc.TypeChange(item["m"]);
-                    line[1] = mc.TypeChange(item["tx"]);
-                    line[2] = mc.TypeChange(item["ty"]);
-                    line[3] = mc.TypeChange(item["tz"]);
-                    line[4] = mc.TypeChange(item["tr"]);
-                                        
-                    table.Add(line);
+                        string[] line = new String[5];
+
+                        line[0] = mc.TypeChange(item["m"]);
+                        line[1] = mc.TypeChange(item["tx"]);
+                        line[2] = mc.TypeChange(item["ty"]);
+                        line[3] = mc.TypeChange(item["tz"]);
+                        line[4] = mc.TypeChange(item["tr"]);
+
+                        table.Add(line);
+                    }
+                    data.Add(table);
                 }
-                data.Add(table);
+                else if (mc.dimension == 2)
+                {
+                    int bottomCell = mc.bottomCell * 2;
+
+                    // 全部の行数
+                    var row = Elem.Count;
+
+                    var page = 0;
+                    //var body = new ArrayList()
+
+                    while (true)
+                    {
+                        if (row > bottomCell)
+                        {
+                            List<string[]> body = new List<string[]>();
+                            var half = bottomCell / 2;
+                            for (var l = 0; l < half; l++)
+                            {
+                                //　各行の配列開始位置を取得する（左段/右段)
+                                var j = bottomCell * page + l;
+                                var k = bottomCell * page + bottomCell / 2 + l;
+                                //　各行のデータを取得する（左段/右段)
+                                var targetValue_l = Elem[j];
+
+                                string[] line = new String[6];
+                                line[0] = mc.TypeChange(targetValue_l["m"]);
+                                line[1] = mc.TypeChange(targetValue_l["tx"], 3);
+                                line[2] = mc.TypeChange(targetValue_l["ty"], 3);                
+
+                                var targetValue_r = Elem[k];
+                                line[3] = mc.TypeChange(targetValue_r["m"]);
+                                line[4] = mc.TypeChange(targetValue_r["tx"], 3);
+                                line[5] = mc.TypeChange(targetValue_r["ty"], 3);
+                          
+                                body.Add(line);
+                            }
+                            data.Add(body);
+                            row -= bottomCell;
+                            page++;
+                        }
+                        else
+                        {
+                            List<string[]> body = new List<string[]>();
+
+                            row = row % 2 == 0 ? row / 2 : row / 2 + 1;
+
+                            for (var l = 0; l < row; l++)
+                            {
+                                //　各行の配列開始位置を取得する（左段/右段)
+                                var j = bottomCell * page + l;
+                                var k = j + row;
+                                //　各行のデータを取得する（左段)
+                                var targetValue_l = Elem[j];
+
+                                string[] line = new String[6];
+                                line[0] = mc.TypeChange(targetValue_l["m"]);
+                                line[1] = mc.TypeChange(targetValue_l["tx"], 3);
+                                line[2] = mc.TypeChange(targetValue_l["ty"], 3);
+
+                                try
+                                {
+                                    //　各行のデータを取得する（右段)
+                                    var targetValue_r = Elem[k];
+                                    line[3] = mc.TypeChange(targetValue_r["m"]);
+                                    line[4] = mc.TypeChange(targetValue_r["tx"], 3);
+                                    line[5] = mc.TypeChange(targetValue_r["ty"], 3);
+
+                                    body.Add(line);
+                                }
+                                catch
+                                {
+                                    line[3] = "";
+                                    line[4] = "";
+                                    line[5] = "";
+                                    body.Add(line);
+                                }
+                            }
+                            data.Add(body);
+                            break;
+                        }
+                    }
+                }
             }
         }
 
         public void FixMemberPDF(PdfDoc mc)
         {
             // 全行の取得
-            int count = 2;
+            int count = 20;
             for (int i = 0; i < title.Count; i++)
             {
-                count += (data[i].Count + 5) * mc.single_Yrow + 1;
+                count += (data[i].Count + 7) * mc.single_Yrow ;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
 
             //　ヘッダー
             string[,] header_content3D = {
-                { "部材", "", "", "", "",},
-                { "No", "TX", "TY", "TZ", "TR" },
-                {"","(kN/m2)","(kN/m2)","(kN/m2)","(kN/rad)"}
+                { "部材", "", "変位拘束", "", "回転拘束",},
+                { "No", "部材軸方向", "部材Y軸", "部材Z軸", "" },
+                {"","(kN/m/m)","(kN/m/m)","(kN/m/m)","(kN・m/rad/m)"}
             };
             string[,] header_content2D = {
-                { "部材", "", "", "", "",},
-                { "No", "TX", "TY", "", "" },
-                {"","(kN/m2)","(kN/m2)","",""}
+                { "部材", "変位拘束", "","部材", "変位拘束", "" },
+                { "No", "部材軸方向", "部材Y軸","No", "部材軸方向", "部材Y軸"},
+                {"","(kN/m/m)","(kN/m/m)","","(kN/m/m)","(kN/m/m)"}
             };
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D ={
-                { 10, 70, 140, 210, 280 },
-                { 10, 70, 140, 210, 280 },
-                { 10, 70, 140, 210, 280 },
+                { 10, 105, 140, 210, 280},
+                { 10, 70, 140, 210, 280},
+                { 10, 70, 140, 210, 280},
             };
             int[,] header_Xspacing2D ={
-                { 10, 70, 140, 0, 0 },
-                { 10, 70, 140, 0, 0 },
-                { 10, 70, 140, 0, 0 },
+                { 10, 105, 140, 210, 305, 340},
+                { 10, 70, 140, 210, 270, 340},
+                { 10, 70, 140, 210, 270, 340},
             };
 
             // ボディーのx方向の余白　-1
             int[,] body_Xspacing3D = {
-                { 17, 85, 155, 225, 295 }
+                { 17, 90, 160, 230, 300 }
             };
             int[,] body_Xspacing2D = {
-                { 17, 85, 155, 0, 0 }
+                { 17, 90, 160, 230, 290, 360 }
             };
 
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
@@ -118,7 +203,6 @@ namespace PDF_Manager.Printing
             mc.PrintContent("バネデータ", 0);
             mc.CurrentRow(2);
 
-            int k = 0;
 
             for (int i = 0; i < data.Count; i++)
             {
@@ -138,7 +222,7 @@ namespace PDF_Manager.Printing
                 {
                     for (int l = 0; l < data[i][j].Length; l++)
                     {
-                        mc.CurrentColumn(body_Xspacing[k, l]); //x方向移動
+                        mc.CurrentColumn(body_Xspacing[0, l]); //x方向移動
                         mc.PrintContent(data[i][j][l]); // print
                     }
                     if (!(i == data.Count - 1 && j == data[i].Count - 1))

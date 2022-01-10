@@ -102,13 +102,13 @@ namespace PDF_Manager.Printing
         public void LoadPDF(PdfDoc mc)
         {
             // 全行の取得
-            int count = 2;
+            int count = 20;
             for (int i = 0; i < title.Count; i++)
             {
                 int mCount = data[i][0] != null ? data[i][0].Count : 0;
                 int pCount = data[i][1] != null ? data[i][1].Count : 0;
 
-                count += ((mCount + 5) + (pCount + 5)) * mc.single_Yrow + 1;
+                count += ((mCount + 5) + (pCount + 5)) * mc.single_Yrow + 10;
             }
             // 改ページ判定
             mc.DataCountKeep(count);

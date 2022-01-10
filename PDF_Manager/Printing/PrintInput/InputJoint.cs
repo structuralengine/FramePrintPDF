@@ -67,10 +67,10 @@ namespace PDF_Manager.Printing
         public void JointPDF(PdfDoc mc)
         {
             // 全行の取得
-            int count = 2;
+            int count = 20;
             for (int i = 0; i < title.Count; i++)
             {
-                count += (data[i].Count + 5) * mc.single_Yrow + 1;
+                count += (data[i].Count + 6) * mc.single_Yrow;
             }
             // 改ページ判定
             mc.DataCountKeep(count);
