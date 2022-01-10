@@ -59,13 +59,13 @@ namespace PDF_Manager.Printing
                         line[0] = target.ElementAt(j).Key;
                         line[1] = mc.TypeChange(targetValue_l["x"], 3);
                         line[2] = mc.TypeChange(targetValue_l["y"], 3);
-                        line[3] = mc.TypeChange(targetValue_l["z"], 3);
+                        line[3] = mc.Dimension(mc.TypeChange(targetValue_l["z"], 3));
 
                         var targetValue_r = JObject.FromObject(target.ElementAt(k).Value);
                         line[4] = target.ElementAt(k).Key;
                         line[5] = mc.TypeChange(targetValue_r["x"], 3);
                         line[6] = mc.TypeChange(targetValue_r["y"], 3);
-                        line[7] = mc.TypeChange(targetValue_r["z"], 3);
+                        line[7] = mc.Dimension(mc.TypeChange(targetValue_r["z"], 3));
                         body.Add(line);
                     }
                     data.Add(body);
@@ -90,7 +90,7 @@ namespace PDF_Manager.Printing
                         line[0] = target.ElementAt(j).Key;
                         line[1] = mc.TypeChange(targetValue_l["x"], 3);
                         line[2] = mc.TypeChange(targetValue_l["y"], 3);
-                        line[3] = mc.TypeChange(targetValue_l["z"], 3);
+                        line[3] = mc.Dimension(mc.TypeChange(targetValue_l["z"], 3));
 
                         try
                         {
@@ -99,7 +99,7 @@ namespace PDF_Manager.Printing
                             line[4] = target.ElementAtOrDefault(k).Key;
                             line[5] = mc.TypeChange(targetValue_r["x"], 3);
                             line[6] = mc.TypeChange(targetValue_r["y"], 3);
-                            line[7] = mc.TypeChange(targetValue_r["z"], 3);
+                            line[7] = mc.Dimension(mc.TypeChange(targetValue_r["z"], 3));
                             body.Add(line);
                         }
                         catch

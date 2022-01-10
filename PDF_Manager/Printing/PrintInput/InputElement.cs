@@ -64,11 +64,11 @@ namespace PDF_Manager.Printing
                     line1[0] = Elem.ElementAt(j).Key.ToString();
                     line1[1] = name == "" ? mc.TypeChange(item["A"], 4) : mc.TypeChange(item["n"]);
                     line1[2] = name == "" ? mc.TypeChange(item["E"], 0, "E") : "";
-                    line1[3] = name == "" ? mc.TypeChange(item["G"], 0, "E") : "";
+                    line1[3] = mc.Dimension(name == "" ? mc.TypeChange(item["G"], 0, "E") : "");
                     line1[4] = name == "" ? mc.TypeChange(item["Xp"], 0, "E") : "";
-                    line1[5] = name == "" ? mc.TypeChange(item["Iy"], 6) : "";
+                    line1[5] = mc.Dimension(name == "" ? mc.TypeChange(item["Iy"], 6) : "");
                     line1[6] = name == "" ? mc.TypeChange(item["Iz"], 6) : "";
-                    line1[7] = name == "" ? mc.TypeChange(item["J"], 6) : "";
+                    line1[7] = mc.Dimension(name == "" ? mc.TypeChange(item["J"], 6) : "");
                     table2.Add(line1);
 
                     if (name != "")
@@ -76,11 +76,11 @@ namespace PDF_Manager.Printing
                         line2[0] = "";
                         line2[1] = mc.TypeChange(item["A"], 4);
                         line2[2] = mc.TypeChange(item["E"], 0, "E");
-                        line2[3] = mc.TypeChange(item["G"], 0, "E");
+                        line2[3] = mc.Dimension(mc.TypeChange(item["G"], 0, "E"));
                         line2[4] = mc.TypeChange(item["Xp"], 0, "E");
-                        line2[5] = mc.TypeChange(item["Iy"], 6);
+                        line2[5] = mc.Dimension(mc.TypeChange(item["Iy"], 6));
                         line2[6] = mc.TypeChange(item["Iz"], 6);
-                        line2[7] = mc.TypeChange(item["J"], 6);
+                        line2[7] = mc.Dimension(mc.TypeChange(item["J"], 6));
                         table2.Add(line2);
                     }
                 }

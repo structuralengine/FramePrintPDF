@@ -82,9 +82,9 @@ namespace PDF_Manager.Printing
                         line[1] = mc.TypeChange(node["n"]);
                         line[2] = mc.TypeChange(node["tx"], 2);
                         line[3] = mc.TypeChange(node["ty"], 2);
-                        line[4] = mc.TypeChange(node["tz"], 2);
-                        line[5] = mc.TypeChange(node["rx"], 2);
-                        line[6] = mc.TypeChange(node["ry"], 2);
+                        line[4] = mc.Dimension(mc.TypeChange(node["tz"], 2));
+                        line[5] = mc.Dimension(mc.TypeChange(node["rx"], 2));
+                        line[6] = mc.Dimension(mc.TypeChange(node["ry"], 2));
                         line[7] = mc.TypeChange(node["rz"], 2);
                         table2.Add(line);
                     }
@@ -122,12 +122,12 @@ namespace PDF_Manager.Printing
             //　ヘッダー(節点荷重)
             string[,] headerP_content3D = {
             {"節点荷重","","","","","","","" },
-            {"","節点番号","Fx","Fy","Fz","Mx","My","Mz" }
+            {"","節点番号","X","Y","Z","RX","RY","RZ" }
             };
 
             string[,] headerP_content2D = {
             {"節点荷重","","","","","","","" },
-            {"","節点番号","Fx","Fy","","","","Mz" }
+            {"","節点番号","X","Y","","","","RZ" }
             };
 
             // ヘッダーのx方向の余白（部材荷重）

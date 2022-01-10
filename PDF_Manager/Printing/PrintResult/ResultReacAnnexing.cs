@@ -103,9 +103,9 @@ namespace PDF_Manager.Printing
                     line[0] = mc.TypeChange(elist.ElementAt(k).Key);
                     line[1] = mc.TypeChange(item["tx"], 2);
                     line[2] = mc.TypeChange(item["ty"], 2);
-                    line[3] = mc.TypeChange(item["tz"], 2);
-                    line[4] = mc.TypeChange(item["mx"], 2);
-                    line[5] = mc.TypeChange(item["my"], 2);
+                    line[3] = mc.Dimension(mc.TypeChange(item["tz"], 2));
+                    line[4] = mc.Dimension(mc.TypeChange(item["mx"], 2));
+                    line[5] = mc.Dimension(mc.TypeChange(item["my"], 2));
                     line[6] = mc.TypeChange(item["mz"], 2);
                     line[7] = mc.TypeChange(item["case"]);
 
@@ -139,38 +139,59 @@ namespace PDF_Manager.Printing
         public void ReacAnnexingPDF(PdfDoc mc, string key, string title_LL = "", int LL_count = 0)
         {
             //　ヘッダー
-            string[,] header_content = {
-                { "SUPPORT", "TX", "TY", "TZ", "MX", "MY","MZ","組合せ" },
+            string[,] header_content3D = {
+                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの","z軸周りの","組合せ" },
+                { "No", "支点反力", "支点反力", "支点反力", "回転反力", "回転反力","回転反力","" },
                 { "",  "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)","" },
+            };
+            string[,] header_content2D = {
+                { "節点", "x方向の", "y方向の", "", "", "","回転","組合せ" },
+                { "No", "支点反力", "支点反力", "", "", "","拘束力","" },
+                { "",  "(kN)", "(kN)", "", "", "", "(kN・m)","" },
             };
 
             // ヘッダーのx方向の余白
-            int[,] header_Xspacing = {
+            int[,] header_Xspacing3D = {
                 { 18, 70, 130, 190, 250, 310, 370,420 },
                 { 18, 70, 130, 190, 250, 310, 370,420 },
+                { 18, 70, 130, 190, 250, 310, 370,420 },
+            };
+            int[,] header_Xspacing2D = {
+                { 10, 70, 130, 0, 0, 0, 190,350 },
+                { 10, 70, 130, 0, 0, 0, 190,350 },
+                { 10, 70, 130, 0, 0, 0, 190,350 },
             };
 
             // ボディーのx方向の余白　-1
-            int[,] body_Xspacing = {
+            int[,] body_Xspacing3D = {
                 { 23, 85, 145, 215, 265, 325,385,435 }
             };
+            int[,] body_Xspacing2D = {
+                { 23, 85, 145, 0, 0, 0,205,435 }
+            };
 
+            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
+            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
+            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
             mc.header_content = header_content;
             mc.header_Xspacing = header_Xspacing;
             mc.body_Xspacing = body_Xspacing;
 
+            // 組合せ　一行にはいる文字数
+            int textLen = mc.dimension == 3 ? 8 : 50;
+
             switch (key)
             {
                 case "Combine":
-                    mc.PrintResultAnnexingReady("reac", key, title, type, dataCombine, 14);
+                    mc.PrintResultAnnexingReady("reac", key, title, type, dataCombine, textLen);
                     break;
 
                 case "Pickup":
-                    mc.PrintResultAnnexingReady("reac", key, title, type, dataPickup, 14);
+                    mc.PrintResultAnnexingReady("reac", key, title, type, dataPickup, textLen);
                     break;
 
                 case "LL":
-                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], 14);
+                    mc.PrintResultAnnexing(title_LL, type, dataLL[LL_count], textLen);
                     break;
             }
 

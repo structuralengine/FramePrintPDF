@@ -57,7 +57,7 @@ namespace PDF_Manager.Printing
                 line[2] = mc.TypeChange(item["nj"]);
                 line[3] = mc.TypeChange(len, 3);
                 line[4] = mc.TypeChange(item["e"]);
-                line[5] = mc.TypeChange(item["cg"]);
+                line[5] = mc.Dimension(mc.TypeChange(item["cg"]));
                 line[6] = name;
                 data.Add(line);
             }

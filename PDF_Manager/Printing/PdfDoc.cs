@@ -249,14 +249,15 @@ namespace PDF_Manager.Printing
             {
                 if (data.Type == JTokenType.Null) data = double.NaN;
                 double newDataDouble = double.Parse(data.ToString());
-                if (StringInfo.ParseCombiningCharacters(data.ToString()).Length > 8)
-                {
-                    style = "E";
-                }
+               
                 if (style == "none")
                 {
                     var digit = "F" + round.ToString();
                     newDataString = Double.IsNaN(Math.Round(newDataDouble, round, MidpointRounding.AwayFromZero)) ? "" : newDataDouble.ToString(digit);
+                    if (StringInfo.ParseCombiningCharacters(newDataString).Length > round + 5)
+                    {
+                        newDataString = newDataDouble.ToString("E2", CultureInfo.CreateSpecificCulture("en-US"));
+                    }
                 }
                 else if (style == "E")
                 {
@@ -264,6 +265,16 @@ namespace PDF_Manager.Printing
                 }
             }
             return newDataString;
+        }
+
+        /// <summary>
+        /// 次元によって表示するか否かを判定
+        /// </summary>
+        /// <param name="data">精査するデータ</param>
+        /// <returns>3次元ならデータ保持，2次元なら放棄</returns>
+        public string Dimension(string data)
+        {
+            return dimension == 3 ? data : "";
         }
 
         //　countの値を超える文字数ならば，先頭から指定の文字数を取ったものを返す．
@@ -338,7 +349,7 @@ namespace PDF_Manager.Printing
                     count += data[i][m].Count;
                 }
 
-                TypeCount(i, 7, count, title[i]);
+                TypeCount(i, 8, count, title[i]);
 
                 // タイトルの印刷
                 CurrentColumn(0);
@@ -366,7 +377,7 @@ namespace PDF_Manager.Printing
                 int numFullWidth = data[j][0][data[j][0].Length - 1].Length > textLen ? 2 : 1;
 
                 //  1タイプ内でページをまたぐかどうか
-                TypeCount(j, 5, data[j].Count * numFullWidth, title);
+                TypeCount(j, 6, data[j].Count * numFullWidth, title);
 
                 // タイプの印刷
                 CurrentColumn(0);

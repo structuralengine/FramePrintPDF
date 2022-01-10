@@ -53,9 +53,9 @@ namespace PDF_Manager.Printing
                     line[0] = mc.TypeChange(item["n"]);
                     line[1] = mc.TypeChange(item["tx"]);
                     line[2] = mc.TypeChange(item["ty"]); ;
-                    line[3] = mc.dimension == 3 ? mc.TypeChange(item["tz"]):"" ;
-                    line[4] = mc.dimension == 3 ? mc.TypeChange(item["rx"]):"" ;
-                    line[5] = mc.dimension == 3 ? mc.TypeChange(item["ry"]):"" ;
+                    line[3] = mc.Dimension(mc.TypeChange(item["tz"]));
+                    line[4] = mc.Dimension(mc.TypeChange(item["rx"]));
+                    line[5] = mc.Dimension(mc.TypeChange(item["ry"]));
                     line[6] = mc.TypeChange(item["rz"]); ;
                     
                     table.Add(line);
