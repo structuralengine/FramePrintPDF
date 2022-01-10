@@ -21,20 +21,22 @@ namespace PDF_Manager.Printing
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<string> title = new List<string>();
-        string[] type = {
-            "軸方向力 最大",
-            "軸方向力 最小",
-            "y方向のせん断力 最大",
-            "y方向のせん断力 最小",
-            "z方向のせん断力 最大",
-            "z方向のせん断力 最小",
-            "ねじりモーメント 最大",
-            "ねじりモーメント 最小",
-            "y軸回りの曲げモーメント 最大",
-            "y軸回りの曲げモーメント力 最小",
-            "z軸回りの曲げモーメント 最大",
-            "z軸回りの曲げモーメント 最小",
+        List<string> type = new List<string>();
+        Dictionary<string, string> typeList = new Dictionary<string, string>(){
+           { "fx_max", "軸方向力 最大"},
+           { "fx_min", "軸方向力 最小" },
+           { "fy_max", "y方向のせん断力 最大" },
+           { "fy_min", "y方向のせん断力 最小" },
+           { "fz_max", "z方向のせん断力 最大" },
+           { "fz_min", "z方向のせん断力 最小" },
+           { "mx_max", "ねじりモーメント 最大" },
+           { "mx_min", "ねじりモーメント 最小" },
+           { "my_max", "y軸回りの曲げモーメント 最大" },
+           { "my_min", "y軸回りの曲げモーメント 最小" },
+           { "mz_max", "z軸回りの曲げモーメント 最大" },
+           { "mz_min", "z軸回りの曲げモーメント 最小" },
         };
+       
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
         public List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
@@ -54,6 +56,8 @@ namespace PDF_Manager.Printing
 
             // 集まったデータはここに格納する
             title = new List<string>();
+            type = new List<string>();
+
             switch (key)
             {
                 case "Combine":
@@ -71,7 +75,7 @@ namespace PDF_Manager.Printing
                 // タイトルを入れる．
                 title.Add("Case." + target.ElementAt(i).Key);
 
-                dataTreat(mc,Elem, key);
+                dataTreat(mc, Elem, key);
 
                 //List<List<string[]>> table = new List<List<string[]>>();
 
@@ -127,11 +131,13 @@ namespace PDF_Manager.Printing
             {
                 JArray elist = JArray.FromObject(Elem.ElementAt(j).Value);
 
+                type.Add(typeList[Elem.ElementAt(j).Key]);
+
                 List<string[]> body = new List<string[]>();
 
                 for (int k = 0; k < elist.Count; k++)
                 {
-                    var item = elist[k] ;
+                    var item = elist[k];
                     string[] line = new String[10];
 
                     line[0] = mc.TypeChange(item["m"]);

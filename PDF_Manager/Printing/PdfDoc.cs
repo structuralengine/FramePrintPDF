@@ -307,7 +307,7 @@ namespace PDF_Manager.Printing
         /// <param name="type">ex)x軸方向最大</param>
         /// <param name="data">combine/pickupのデータ全てが入る</param>
         /// <param name="textLen">組合せが一行あたりに入る文字数</param>
-        public void PrintResultAnnexingReady(string result,string key, List<string> title, string[] type, List<List<List<string[]>>> data, int textLen)
+        public void PrintResultAnnexingReady(string result,string key, List<string> title, List<string> type, List<List<List<string[]>>> data, int textLen)
         {
             var resultJa = "";
             switch (result)
@@ -357,7 +357,7 @@ namespace PDF_Manager.Printing
         /// <param name="type">ex)x軸方向最大</param>
         /// <param name="data">combine/pickup/LLのデータのcase1つぶん</param>
         /// <param name="textLen">組合せが一行あたりに入る文字数</param>
-        public void PrintResultAnnexing(string title, string[] type, List<List<string[]>> data, int textLen)
+        public void PrintResultAnnexing(string title, List<string> type, List<List<string[]>> data, int textLen)
         {
             for (int j = 0; j < data.Count; j++)
             {
