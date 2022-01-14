@@ -134,9 +134,9 @@ namespace PDF_Manager.Printing
             var targetValue = JObject.FromObject(nodeList[nodeNo]);
 
             string[] node_st = new string[3];
-            node_st[0] = mc.TypeChange(targetValue["x"]);
-            node_st[1] = mc.TypeChange(targetValue["y"]);
-            node_st[2] = mc.TypeChange(targetValue["z"]);
+            node_st[0] = mc.TypeChange(targetValue["x"], 3);
+            node_st[1] = mc.TypeChange(targetValue["y"], 3);
+            node_st[2] = mc.TypeChange(targetValue["z"], 3);
 
             double[] node = new double[3];
             for (int i = 0; i < 3; i++)
