@@ -71,7 +71,8 @@ namespace PDF_Manager.Printing
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
 
                 // タイトルを入れる．
-                title.Add("Case." + target.ElementAt(i).Key);
+                var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
+                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(10));
 
                 dataTreat(mc, Elem, key);
             }
@@ -140,7 +141,7 @@ namespace PDF_Manager.Printing
         {
             //　ヘッダー
             string[,] header_content3D = {
-                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの","z軸周りの","組合せ" },
+                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの","z軸回りの","組合せ" },
                 { "No", "支点反力", "支点反力", "支点反力", "回転反力", "回転反力","回転反力","" },
                 { "",  "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)","" },
             };

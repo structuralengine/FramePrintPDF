@@ -19,7 +19,7 @@ public class PrintInput
 {
     private PdfDoc mc;
     private JObject data;
-    private Dictionary<string, object> value = new Dictionary<string, object>();
+    public Dictionary<string, object> value = new Dictionary<string, object>();
     private int bottomCell = 88;
 
 
@@ -48,7 +48,7 @@ public class PrintInput
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, class_set);
+        exp.Export(mc, class_set,value);
 
 
 
@@ -76,7 +76,7 @@ public class PrintInput
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, dataset);
+        exp.Export(mc, dataset, value);
 
         // PDF を Byte型に変換
         var b = mc.GetPDFBytes();

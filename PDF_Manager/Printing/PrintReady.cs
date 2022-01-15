@@ -29,8 +29,6 @@ namespace PDF_Manager.Printing
             notice_points,
             fix_member,
             shell,
-            loadname,
-            load,
             define,
             combine,
             pickup,
@@ -42,7 +40,9 @@ namespace PDF_Manager.Printing
             fsecPickup,
             reac,
             reacCombine,
-            reacPickup
+            reacPickup,
+            loadname,
+            load,
         }
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
@@ -131,6 +131,7 @@ namespace PDF_Manager.Printing
                 class_set[(int)class_name.load] = load_call;
             }
 
+
             // define
             if (data.ContainsKey("define"))
             {
@@ -154,6 +155,7 @@ namespace PDF_Manager.Printing
                 pickup_call.Pickup(mc, data);
                 class_set[(int)class_name.pickup] = pickup_call;
             }
+
 
             // disg
             ResultDisgAnnexing disgAnnexing_call = new ResultDisgAnnexing();
@@ -224,7 +226,6 @@ namespace PDF_Manager.Printing
                 reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
                 class_set[(int)class_name.reacPickup] = reacAnnexing_call;
             }
-
             return class_set;
         }
 

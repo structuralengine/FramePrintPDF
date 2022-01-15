@@ -19,7 +19,7 @@ namespace PDF_Manager.Printing
 {
     internal class PrintExport
     {
-        public void Export(PdfDoc mc, object[] class_set)
+        public void Export(PdfDoc mc, object[] class_set, Dictionary<string, object> value)
         {
             for (int i = 0; i < class_set.Length; i ++)
             {
@@ -86,18 +86,21 @@ namespace PDF_Manager.Printing
                 cls_shell.ShellPDF(mc);
             }
 
-            //loadname
-            if ((InputLoadName)class_set[(int)PrintReady.class_name.loadname] != null)
+            if ((bool)value["input"])
             {
-                InputLoadName cls_loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
-                cls_loadname.LoadNamePDF(mc);
-            }
+                //loadname
+                if ((InputLoadName)class_set[(int)PrintReady.class_name.loadname] != null)
+                {
+                    InputLoadName cls_loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
+                    cls_loadname.LoadNamePDF(mc);
+                }
 
-            //load
-            if ((InputLoad)class_set[(int)PrintReady.class_name.load] != null)
-            {
-                InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
-                cls_load.LoadPDF(mc);
+                //load
+                if ((InputLoad)class_set[(int)PrintReady.class_name.load] != null)
+                {
+                    InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
+                    cls_load.LoadPDF(mc);
+                }
             }
 
             //define
