@@ -50,7 +50,7 @@ namespace PDF_Manager.Printing
             {
                 // タイトルを入れる
                 var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
-                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(10));
+                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(load.Length + 2)); ;
 
                 //LLのとき
                 try
