@@ -71,7 +71,8 @@ namespace PDF_Manager.Printing
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
 
                 // タイトルを入れる．
-                title.Add("Case." + target.ElementAt(i).Key);
+                var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
+                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(10));
 
                 dataTreat(mc, Elem, key);
             }
@@ -90,13 +91,13 @@ namespace PDF_Manager.Printing
             {
                 Dictionary<string, object> elist = JObject.FromObject(Elem.ElementAt(j).Value).ToObject<Dictionary<string, object>>();
 
-                type.Add(typeList[Elem.ElementAt(j).Key]);
+                type.Add(typeList[Elem.ElementAt(j).Key] );
 
                 List<string[]> body = new List<string[]>();
 
                 for (int k = 0; k < elist.Count; k++)
                 {
-                    var item = JObject.FromObject(elist.ElementAt(k).Value); ;
+                    var item = JObject.FromObject(elist.ElementAt(k).Value); 
                     string[] line = new String[8];
 
                     line[0] = mc.TypeChange(elist.ElementAt(k).Key);

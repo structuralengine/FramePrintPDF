@@ -48,8 +48,9 @@ namespace PDF_Manager.Printing
             //LLか基本形かを判定しながら1行1行確認
             for (int i = 0; i < target.Count; i++)
             {
-                // タイトルを入れる．
-                title.Add("Case." + target.ElementAt(i).Key);
+                // タイトルを入れる
+                var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
+                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(10));
 
                 //LLのとき
                 try

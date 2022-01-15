@@ -48,7 +48,8 @@ namespace PDF_Manager.Printing
             for (int i = 0; i < target.Count; i++)
             {
                 // タイトルを入れる．
-                title.Add("Case." + target.ElementAt(i).Key);
+                var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
+                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(10));
 
                 //LLのとき
                 try
