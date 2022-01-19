@@ -44,13 +44,13 @@ namespace PDF_Manager.Printing
 
             //変位量データを取得する
             var target = JObject.FromObject(value["disg"]).ToObject<Dictionary<string, object>>();
+            var targetName = JArray.FromObject(value["disgName"]);
 
             //LLか基本形かを判定しながら1行1行確認
             for (int i = 0; i < target.Count; i++)
             {
                 // タイトルを入れる
-                // タイトルを入れる．
-                JArray load = (JArray)target["name"];
+                var load = targetName[i];
                 string[] loadNew = new String[2];
 
                 loadNew[0] = load[0].ToString();

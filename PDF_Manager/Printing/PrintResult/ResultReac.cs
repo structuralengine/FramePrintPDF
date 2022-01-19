@@ -38,12 +38,13 @@ namespace PDF_Manager.Printing
             
             //reacデータを取得する
             var target = JObject.FromObject(value["reac"]).ToObject<Dictionary<string, object>>();
+            var targetName = JArray.FromObject(value["reacName"]);
 
             //LLか基本形かを判定しながら1行1行確認
             for (int i = 0; i < target.Count; i++)
             {
                 // タイトルを入れる．
-                JArray load = (JArray)target["name"];
+                var load = targetName[i];
                 string[] loadNew = new String[2];
 
                 loadNew[0] = load[0].ToString();

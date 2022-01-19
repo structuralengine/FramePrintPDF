@@ -71,9 +71,9 @@ namespace PDF_Manager.Printing
             for (int i = 0; i < target.Count; i++)
             {
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
-
+                var targetName = JArray.FromObject(value["fsec" + key + "Name"]);
                 // タイトルを入れる．
-                JArray load = (JArray)Elem["name"];
+                var load = targetName[i];
                 string[] loadNew = new String[2];
 
                 loadNew[0] = load[0].ToString();
