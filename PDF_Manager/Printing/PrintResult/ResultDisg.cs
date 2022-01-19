@@ -49,8 +49,15 @@ namespace PDF_Manager.Printing
             for (int i = 0; i < target.Count; i++)
             {
                 // タイトルを入れる
-                var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
-                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(load.Length + 2)); ;
+                // タイトルを入れる．
+                JArray load = (JArray)target["name"];
+                string[] loadNew = new String[2];
+
+                loadNew[0] = load[0].ToString();
+                loadNew[1] = load[1].ToString();
+
+                title.Add(loadNew[0] + loadNew[1].PadLeft(loadNew[1].Length + 2));
+                target.Remove("name");
 
                 //LLのとき
                 try

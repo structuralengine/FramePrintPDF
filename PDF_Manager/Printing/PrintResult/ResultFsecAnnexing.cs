@@ -73,8 +73,14 @@ namespace PDF_Manager.Printing
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
 
                 // タイトルを入れる．
-                var load = InputLoadName.data[i][3] == null ? "" : InputLoadName.data[i][3];
-                title.Add("Case." + target.ElementAt(i).Key + load.PadLeft(load.Length + 2)); ;
+                JArray load = (JArray)Elem["name"];
+                string[] loadNew = new String[2];
+
+                loadNew[0] = load[0].ToString();
+                loadNew[1] = load[1].ToString();
+
+                title.Add(loadNew[0] + loadNew[1].PadLeft(loadNew[1].Length + 2));
+                Elem.Remove("name");
 
                 dataTreat(mc, Elem, key);
 

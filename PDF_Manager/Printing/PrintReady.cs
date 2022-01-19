@@ -29,6 +29,8 @@ namespace PDF_Manager.Printing
             notice_points,
             fix_member,
             shell,
+            loadname,
+            load,
             define,
             combine,
             pickup,
@@ -41,8 +43,6 @@ namespace PDF_Manager.Printing
             reac,
             reacCombine,
             reacPickup,
-            loadname,
-            load,
         }
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)

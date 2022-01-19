@@ -19,11 +19,11 @@ namespace PDF_Manager.Printing
 {
     internal class PrintExport
     {
-        public void Export(PdfDoc mc, object[] class_set, Dictionary<string, object> value)
+        public void Export(PdfDoc mc, object[] class_set)
         {
-            for (int i = 0; i < class_set.Length; i ++)
+            for (int i = 0; i < class_set.Length; i++)
             {
-                if(class_set[i] != null)
+                if (class_set[i] != null)
                 {
                     mc.name = Enum.GetNames(typeof(PrintReady.class_name))[i];
                     break;
@@ -86,22 +86,20 @@ namespace PDF_Manager.Printing
                 cls_shell.ShellPDF(mc);
             }
 
-            if ((bool)value["input"])
+            //loadname
+            if ((InputLoadName)class_set[(int)PrintReady.class_name.loadname] != null)
             {
-                //loadname
-                if ((InputLoadName)class_set[(int)PrintReady.class_name.loadname] != null)
-                {
-                    InputLoadName cls_loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
-                    cls_loadname.LoadNamePDF(mc);
-                }
-
-                //load
-                if ((InputLoad)class_set[(int)PrintReady.class_name.load] != null)
-                {
-                    InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
-                    cls_load.LoadPDF(mc);
-                }
+                InputLoadName cls_loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
+                cls_loadname.LoadNamePDF(mc);
             }
+
+            //load
+            if ((InputLoad)class_set[(int)PrintReady.class_name.load] != null)
+            {
+                InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
+                cls_load.LoadPDF(mc);
+            }
+
 
             //define
             if ((InputDefine)class_set[(int)PrintReady.class_name.define] != null)

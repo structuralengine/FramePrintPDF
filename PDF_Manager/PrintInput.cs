@@ -48,7 +48,7 @@ public class PrintInput
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, class_set,value);
+        exp.Export(mc, class_set);
 
 
 
@@ -76,7 +76,7 @@ public class PrintInput
         //  PDF出力のためのclassの呼び出し
         var exp = new PrintExport();
         //  整形したデータを送る
-        exp.Export(mc, dataset, value);
+        exp.Export(mc, dataset);
 
         // PDF を Byte型に変換
         var b = mc.GetPDFBytes();

@@ -20,7 +20,7 @@ namespace PDF_Manager.Printing
     internal class InputLoadName
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
-        public static List<string[]> data = new List<string[]>();
+        public List<string[]> data = new List<string[]>();
 
         public void LoadName(PdfDoc mc, Dictionary<string, object> value_)
         {
