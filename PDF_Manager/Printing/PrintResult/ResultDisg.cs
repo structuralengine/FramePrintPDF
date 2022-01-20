@@ -96,7 +96,7 @@ namespace PDF_Manager.Printing
             for (int i = 0; i < title.Count; i++)
             {
                 //LLの時
-                if (i == LL_list.IndexOf(i))
+                if (LL_list.Contains(i))
                 {
                     //  1ケースでページをまたぐかどうか
                     int count = 0;
