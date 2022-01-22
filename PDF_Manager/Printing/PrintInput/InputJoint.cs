@@ -40,7 +40,15 @@ namespace PDF_Manager.Printing
                 JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
 
                 // タイトルを入れる．
-                title.Add("タイプ" + target.ElementAt(i).Key);
+                switch (mc.language)
+                {
+                    case "ja":
+                        title.Add("タイプ" + target.ElementAt(i).Key);
+                        break;
+                    case "en":
+                        title.Add("Type" + target.ElementAt(i).Key);
+                        break;
+                }
 
                 List<string[]> table = new List<string[]>();
 
@@ -105,14 +113,31 @@ namespace PDF_Manager.Printing
                 { 17, 0, 0, 127, 0, 0, 307 }
             };
 
+            // タイトルの印刷
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("結合データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Join DATA", 0);
+                    //　ヘッダー
+                    header_content3D[0, 0] = "Member";
+                    header_content3D[0, 2] = "I-TAN";
+                    header_content3D[0, 5] = "J-TAN";
+
+                    header_content2D[0, 0] = "Member";
+                    header_content2D[0, 2] = "I-TAN";
+                    header_content2D[0, 5] = "J-TAN";
+                 
+                    break;
+            }
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
+
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
             int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
             int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
-
-            // タイトルの印刷
-            mc.PrintContent("結合データ", 0);
-            mc.CurrentRow(2);
-
 
             int k = 0;
 

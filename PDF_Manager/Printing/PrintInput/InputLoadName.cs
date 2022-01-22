@@ -57,15 +57,33 @@ namespace PDF_Manager.Printing
             //  改ページ判定
             mc.DataCountKeep(count);// 全行の取得
 
-            //  タイトルの印刷
-            mc.PrintContent("基本荷重データ", 0);
-            mc.CurrentRow(2);
-
             //　ヘッダー
             string[,] header_content = {
                 { "Case", "割増", "", "","","構造系条件","",""},
                 { "No", "係数", "記号", "荷重名称", "支点","断面","バネ","結合"}
             };
+
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("基本荷重データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Basic Load Data", 0);
+                    header_content[0, 1] = "";
+                    header_content[0, 5] = "Structural Condition";
+                    header_content[1, 1] = "C.F";
+                    header_content[1, 2] = "Symbol";
+                    header_content[1, 3] = "Name of Load";
+                    header_content[1, 4] = "Suprt";
+                    header_content[1, 5] = "Sect";
+                    header_content[1, 6] = "Sprg";
+                    header_content[1, 7] = "Joi";
+                    break;
+            }
+
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {

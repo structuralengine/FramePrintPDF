@@ -39,7 +39,7 @@ namespace PDF_Manager.Printing
                 // タイトルの表示
                 if (item.ContainsKey("load_member") || item.ContainsKey("load_node"))
                 {
-                    title.Add("case" + target.ElementAt(i).Key + ":" + item["name"]);
+                    title.Add("Case" + target.ElementAt(i).Key + ":" + item["name"]);
                 }
 
                 List<List<string[]>> compile = new List<List<string[]>>();
@@ -144,7 +144,7 @@ namespace PDF_Manager.Printing
 
             string[,] headerP_content2D = {
             {"節点荷重","","","","","","","" },
-            {"","節点番号","X","Y","","","","RZ" }
+            {"","節点番号","X","Y","","","","M" }
             };
 
             // ヘッダーのx方向の余白（部材荷重）
@@ -183,7 +183,30 @@ namespace PDF_Manager.Printing
             int[,] bodyP_Xspacing = mc.dimension == 3 ? bodyP_Xspacing3D : bodyP_Xspacing2D;
 
             // タイトルの印刷
-            mc.PrintContent("実荷重データ", 0);
+            // タイトルの印刷
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("実荷重データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Loads DATA", 0);
+                    //　ヘッダー
+                    headerM_content[0, 0] = "Member Load";
+                    headerM_content[1, 0] = "First";
+                    headerM_content[1, 1] = "Last";
+                    headerM_content[1, 2] = "Direction";
+                    headerM_content[1, 3] = "Mark";
+
+                    headerP_content3D[0, 0] = "Joint Load";
+                    headerP_content3D[1, 1] = "Joint No.";
+
+                    headerP_content2D[0, 0] = "Joint Load";
+                    headerP_content2D[1, 1] = "Joint No.";
+
+
+                    break;
+            }
             mc.CurrentRow(2);
             mc.CurrentColumn(0);
 
