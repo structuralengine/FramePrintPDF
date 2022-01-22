@@ -42,6 +42,7 @@ namespace PDF_Manager.Printing
         public string[,] header_content;
         public int[,] header_Xspacing;
         public int[,] body_Xspacing;
+        public string language;
 
         public PdfDoc()
         {
