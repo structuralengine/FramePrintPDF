@@ -89,13 +89,23 @@ namespace PDF_Manager.Printing
             // 改ページ判定
             mc.DataCountKeep(count);
 
-            //  タイトルの印刷
-            mc.PrintContent("Defineデータ", 0);
-            mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
                 { "DefineNo", "C1", "C2", "C3", "C4" , "C5", "C6", "C7", "C8", "C9", "C10"}
             };
+
+            // タイトルの印刷
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("Defineデータ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Define DATA", 0);
+                    break;
+            }
+
+            mc.CurrentRow(2);
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {

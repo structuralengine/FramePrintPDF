@@ -85,14 +85,26 @@ namespace PDF_Manager.Printing
             // 改ページ判定
             mc.DataCountKeep(count);
 
-            //  タイトルの印刷
-            mc.PrintContent("パネルデータ", 0);
-            mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
                 { "材料", "", "頂点No", "", ""},
                 { "No", "1", "2", "3", "4"}
             };
+
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("パネルデータ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Plates Data", 0);
+                    header_content[0, 0] = "Material";
+                    header_content[0, 2] = "Node No.";
+                    break;
+            }
+
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {

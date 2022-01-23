@@ -42,7 +42,16 @@ namespace PDF_Manager.Printing
                 JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
 
                 // タイトルを入れる．
-                title.Add("タイプ" + target.ElementAt(i).Key);
+                switch (mc.language)
+                {
+                    case "ja":
+                        title.Add("タイプ" + target.ElementAt(i).Key);
+                        break;
+                    case "en":
+                        title.Add("Type" + target.ElementAt(i).Key);
+                        break;
+
+                }
 
                 List<string[]> table = new List<string[]>();
 
@@ -198,10 +207,39 @@ namespace PDF_Manager.Printing
             mc.header_content = header_content;
             mc.header_Xspacing = header_Xspacing;
             mc.body_Xspacing = body_Xspacing;
-
+       
             // タイトルの印刷
-            mc.PrintContent("バネデータ", 0);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("バネデータ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("MemberSpring DATA", 0);
+                    //　ヘッダー
+                    header_content3D[0, 0] = "Member";
+                    header_content3D[0, 2] = "Displacement Restraint";
+                    header_content3D[0, 4] = "Rotational Restraint";
+     
+                    header_content3D[1, 1] = "Kv";
+                    header_content3D[1, 2] = "Ky";
+                    header_content3D[1, 3] = "Kz";
+                    header_content3D[1, 4] = "Kr";
+
+
+                    header_content2D[0, 0] = "Member";
+                    header_content2D[0, 1] = "Displacement Restraint";
+                    header_content2D[0, 3] = "Member";
+                    header_content2D[0, 4] = "Displacement Restraint";
+
+                    header_content2D[1, 1] = "Kv";
+                    header_content2D[1, 2] = "Ky";
+                    header_content2D[1, 4] = "Kv";
+                    header_content2D[1, 5] = "Ky";
+                    break;
+            }
             mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
 
             for (int i = 0; i < data.Count; i++)

@@ -89,8 +89,18 @@ namespace PDF_Manager.Printing
             int LL_count2 = 0;
 
             // タイトルの印刷
-            mc.PrintContent("断面力", 0);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("断面力データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Internal Member Forces and Momemts", 0);
+                    break;
+            }
+
             mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // 印刷
             for (int i = 0; i < title.Count; i++)

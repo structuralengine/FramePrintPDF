@@ -156,9 +156,6 @@ namespace PDF_Manager.Printing
 
         public void NodePDF(PdfDoc mc)
         {
-            //タイトルの印刷
-            mc.PrintContent("格点データ", 0);
-            mc.CurrentRow(2);
             // ヘッダー
             string[,] header_content3D = {
                 { "格点", "", "", "", "格点", "", "", "", },
@@ -181,6 +178,22 @@ namespace PDF_Manager.Printing
                 { 10, 60, 120, 120, 190, 240, 300, 420 },
                 { 10, 60, 120, 120, 190, 240, 300, 420 },
             };
+
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("格点データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Node Data", 0);
+                    header_content3D[0, 0] = "Node";
+                    header_content3D[0, 4] = "Node";
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 4] = "Node";
+                    break;
+            }
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
             int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;

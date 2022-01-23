@@ -50,6 +50,9 @@ namespace PDF_Manager.Printing
             // 2次元か3次元かを記憶
             mc.dimension = Int32.Parse(data["dimension"].ToString());
 
+            // 言語を記憶
+            mc.language = data["language"].ToString();
+
             // classをまとめてここに代入する．
             var class_set = new object[Enum.GetNames(typeof(class_name)).Length];
 

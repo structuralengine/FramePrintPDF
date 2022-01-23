@@ -22,19 +22,33 @@ namespace PDF_Manager.Printing
         private Dictionary<string, object> value = new Dictionary<string, object>();
         public List<string> title = new List<string>();
         List<string> type = new List<string>();
-        Dictionary<string, string> typeList = new Dictionary<string, string>(){
-           { "dx_max","x方向の移動量 最大"},
-           { "dx_min","x方向の移動量 最小" },
-           { "dy_max", "y方向の移動量 最大" },
-           { "dy_min","y方向の移動量 最小" },
-           { "dz_max","z方向の移動量 最大" },
-           { "dz_min", "z方向の移動量 最小" },
-           { "rx_max", "x軸回りの回転角 最大" },
-           { "rx_min", "x軸回りの回転角 最小" },
-           { "ry_max", "y軸回りの回転角 最大" },
-           { "ry_min", "y軸回りの回転角 最小" },
-           { "rz_max", "z軸回りの回転角 最大" },
-           { "rz_min", "z軸回りの回転角 最小" },
+        Dictionary<string, string> typeList_ja = new Dictionary<string, string>(){
+           { "dx_max","X方向の移動量 最大"},
+           { "dx_min","X方向の移動量 最小" },
+           { "dy_max", "Y方向の移動量 最大" },
+           { "dy_min","Y方向の移動量 最小" },
+           { "dz_max","Z方向の移動量 最大" },
+           { "dz_min", "Z方向の移動量 最小" },
+           { "rx_max", "X軸回りの回転角 最大" },
+           { "rx_min", "X軸回りの回転角 最小" },
+           { "ry_max", "Y軸回りの回転角 最大" },
+           { "ry_min", "Y軸回りの回転角 最小" },
+           { "rz_max", "Z軸回りの回転角 最大" },
+           { "rz_min", "Z軸回りの回転角 最小" },
+        };
+        Dictionary<string, string> typeList_en = new Dictionary<string, string>(){
+           { "dx_max","X Displacement Max"},
+           { "dx_min","X Displacement Min" },
+           { "dy_max", "Y Displacement Max" },
+           { "dy_min","Y Displacement Min" },
+           { "dz_max","Z Displacement Max" },
+           { "dz_min", "Z Displacement Min" },
+           { "rx_max", "X Rotation Max" },
+           { "rx_min", "X Rotation Min" },
+           { "ry_max", "Y Rotation Max" },
+           { "ry_min", "Y Rotation Min" },
+           { "rz_max", "Z Rotation Max" },
+           { "rz_min", "Z Rotation Min" },
         };
 
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
@@ -77,8 +91,8 @@ namespace PDF_Manager.Printing
 
                 loadNew[0] = load[0].ToString();
                 loadNew[1] = load[1].ToString();
-                
-                title.Add(loadNew[0] + loadNew[1].PadLeft(loadNew[1].Length + 2)); 
+
+                title.Add(loadNew[0] + loadNew[1].PadLeft(loadNew[1].Length + 2));
                 Elem.Remove("name");
 
                 dataTreat(mc, Elem, key);
@@ -98,13 +112,20 @@ namespace PDF_Manager.Printing
             {
                 Dictionary<string, object> elist = JObject.FromObject(Elem.ElementAt(j).Value).ToObject<Dictionary<string, object>>();
 
-                type.Add(typeList[Elem.ElementAt(j).Key] );
-
+                switch (mc.language)
+                {
+                    case "ja":
+                        type.Add(typeList_ja[Elem.ElementAt(j).Key]);
+                        break;
+                    case "en":
+                        type.Add(typeList_en[Elem.ElementAt(j).Key]);
+                        break;
+                }
                 List<string[]> body = new List<string[]>();
 
                 for (int k = 0; k < elist.Count; k++)
                 {
-                    var item = JObject.FromObject(elist.ElementAt(k).Value); 
+                    var item = JObject.FromObject(elist.ElementAt(k).Value);
                     string[] line = new String[8];
 
                     line[0] = mc.TypeChange(elist.ElementAt(k).Key);
@@ -147,16 +168,44 @@ namespace PDF_Manager.Printing
         {
             //　ヘッダー
             string[,] header_content3D = {
-                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの", "z軸回りの","組合せ" },
+                { "節点", "X方向の", "Y方向の", "Z方向の", "X軸回りの", "Y軸回りの", "Z軸回りの","組合せ" },
                 { "No", "移動量", "移動量", "移動量", "回転量", "回転量", "回転量","" },
                 { "", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)","" },
             };
 
             string[,] header_content2D = {
-                { "節点", "x方向の", "y方向の", "", "", "", "z軸回りの","組合せ" },
+                { "節点", "X方向の", "Y方向の", "", "", "", "","組合せ" },
                 { "No", "移動量", "移動量", "", "", "", "回転量","" },
                 { "", "(mm)", "(mm)", "", "", "", "(mmrad)","" },
             };
+
+            switch (mc.language)
+            {
+                case "en":
+                    header_content3D[0, 0] = "Node";
+                    header_content3D[0, 1] = "X";
+                    header_content3D[0, 2] = "Y";
+                    header_content3D[0, 3] = "Z";
+                    header_content3D[0, 4] = "X";
+                    header_content3D[0, 5] = "Y";
+                    header_content3D[0, 6] = "Z";
+                    header_content3D[0, 7] = "Comb.";
+                    header_content3D[1, 1] = "Displacement";
+                    header_content3D[1, 2] = "Displacement";
+                    header_content3D[1, 3] = "Displacement";
+                    header_content3D[1, 4] = "Rotation";
+                    header_content3D[1, 5] = "Rotation";
+                    header_content3D[1, 6] = "Rotation";
+
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 1] = "X";
+                    header_content2D[0, 2] = "Y";
+                    header_content2D[0, 7] = "Comb.";
+                    header_content2D[1, 1] = "Displacement";
+                    header_content2D[1, 2] = "Displacement";
+                    header_content2D[1, 6] = "Rotation";
+                    break;
+            }
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {
