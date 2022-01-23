@@ -120,15 +120,15 @@ namespace PDF_Manager.Printing
                     mc.PrintContent("結合データ", 0);
                     break;
                 case "en":
-                    mc.PrintContent("Join DATA", 0);
+                    mc.PrintContent("Fixity DATA", 0);
                     //　ヘッダー
                     header_content3D[0, 0] = "Member";
-                    header_content3D[0, 2] = "I-TAN";
-                    header_content3D[0, 5] = "J-TAN";
+                    header_content3D[0, 2] = "Node-I";
+                    header_content3D[0, 5] = "Node-J";
 
                     header_content2D[0, 0] = "Member";
-                    header_content2D[0, 2] = "I-TAN";
-                    header_content2D[0, 5] = "J-TAN";
+                    header_content2D[0, 2] = "Node-I";
+                    header_content2D[0, 5] = "Node-J";
                  
                     break;
             }

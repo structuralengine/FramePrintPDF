@@ -80,8 +80,18 @@ namespace PDF_Manager.Printing
             int LL_count2 = 0;
 
             // タイトルの印刷
-            mc.PrintContent("反力", 0);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("反力データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Reaction", 0);
+                    break;
+            }
+
             mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // 印刷
             for (int i = 0; i < title.Count; i++)

@@ -90,14 +90,26 @@ namespace PDF_Manager.Printing
             // 改ページ判定
             mc.DataCountKeep(count);
 
-            //  タイトルの印刷
-            mc.PrintContent("着目点データ", 0);
-            mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
                 { "部材", "", "", "", "", "" , "", "", "", "", "",""},
                 { "No", "部材長", "L1", "L2", "L3", "L4" , "L5", "L6", "L7", "L8", "L9", "L10"}
             };
+
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("着目点データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Location Data", 0);
+                    header_content[0, 0] = "Member";
+                    header_content[1, 1] = "Distance";
+                    break;
+            }
+
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {

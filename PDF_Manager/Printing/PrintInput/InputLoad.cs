@@ -198,11 +198,11 @@ namespace PDF_Manager.Printing
                     headerM_content[1, 2] = "Direction";
                     headerM_content[1, 3] = "Mark";
 
-                    headerP_content3D[0, 0] = "Joint Load";
-                    headerP_content3D[1, 1] = "Joint No.";
+                    headerP_content3D[0, 0] = "Node Load";
+                    headerP_content3D[1, 1] = "Node No.";
 
-                    headerP_content2D[0, 0] = "Joint Load";
-                    headerP_content2D[1, 1] = "Joint No.";
+                    headerP_content2D[0, 0] = "Node Load";
+                    headerP_content2D[1, 1] = "Node No.";
 
 
                     break;

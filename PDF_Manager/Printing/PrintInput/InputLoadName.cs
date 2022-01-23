@@ -74,11 +74,11 @@ namespace PDF_Manager.Printing
                     header_content[0, 5] = "Structural Condition";
                     header_content[1, 1] = "C.F";
                     header_content[1, 2] = "Symbol";
-                    header_content[1, 3] = "Name of Load";
+                    header_content[1, 3] = "Name";
                     header_content[1, 4] = "Suprt";
                     header_content[1, 5] = "Sect";
                     header_content[1, 6] = "Sprg";
-                    header_content[1, 7] = "Joi";
+                    header_content[1, 7] = "Fixi";
                     break;
             }
 

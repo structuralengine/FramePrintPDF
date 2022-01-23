@@ -105,13 +105,25 @@ namespace PDF_Manager.Printing
             // 改ページ判定
             mc.DataCountKeep(count);
 
-            //  タイトルの印刷
-            mc.PrintContent("Pickupデータ", 0);
-            mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content = {
                 { "No","荷重名称", "C1", "C2", "C3", "C4" , "C5", "C6", "C7", "C8","C9","C10"}
             };
+
+            switch(mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("PickUpデータ", 0);
+                break;
+                case "en":
+                    mc.PrintContent("PickUp Data", 0);
+                header_content[0, 1] = "Name of Load";
+                break;
+            }
+
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
+
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing = {

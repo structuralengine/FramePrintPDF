@@ -110,9 +110,6 @@ namespace PDF_Manager.Printing
             //  改ページ判定
             mc.DataCountKeep(count);
 
-            //  タイトルの印刷
-            mc.PrintContent("部材データ", 0);
-            mc.CurrentRow(2);
             //　ヘッダー
             string[,] header_content3D = {
                 { "", "節点", "", "L", "材料番号", "コードアングル" , "材料名称"},
@@ -124,6 +121,34 @@ namespace PDF_Manager.Printing
                 { "", "節点", "", "L", "材料番号", "" , "材料名称"},
                 { "No", "I端", "J端", "(m)", "", "" , ""}            
             };
+
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("部材データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Member Data", 0);
+                    header_content3D[0, 1] = "Node";
+                    header_content3D[0, 3] = "Distance";
+                    header_content3D[0, 4] = "Material No.";
+                    header_content3D[0, 5] = "Angle of Rotation ";
+                    header_content3D[0, 6] = "Name of Material";
+                    header_content3D[1, 1] = "Node-I";
+                    header_content3D[1, 2] = "Node-J";
+
+                    header_content2D[0, 1] = "Node";
+                    header_content2D[0, 3] = "Distance";
+                    header_content2D[0, 4] = "Material No.";
+                    header_content2D[0, 6] = "Name of Material";
+                    header_content2D[1, 1] = "Node-I";
+                    header_content2D[1, 2] = "Node-J";
+                    break;
+            }
+
+        
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {

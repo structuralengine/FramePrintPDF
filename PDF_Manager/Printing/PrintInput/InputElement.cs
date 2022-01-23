@@ -153,16 +153,16 @@ namespace PDF_Manager.Printing
                     mc.PrintContent("材料データ", 0);
                     break;
                 case "en":
-                    mc.PrintContent("Element DATA", 0);
+                    mc.PrintContent("Material DATA", 0);
                     //　ヘッダー
                     header_content3D[0, 1] = "Area";
                     header_content3D[0, 2] = "Elastic";
                     header_content3D[0, 3] = "Shear Elastic";
                     header_content3D[0, 4] = "CTE";
                     header_content3D[0, 5] = "Inertia";
-                    header_content3D[0, 7] = "Torsional Rigidity";
-                    header_content3D[1, 5] = "MY";
-                    header_content3D[1, 6] = "MZ";
+                    header_content3D[0, 7] = "Torsion Constant";
+                    header_content3D[1, 5] = "IY";
+                    header_content3D[1, 6] = "IZ";
 
                     header_content2D[0, 1] = "Area";
                     header_content2D[0, 2] = "Elastic";

@@ -22,21 +22,35 @@ namespace PDF_Manager.Printing
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<string> title = new List<string>();
         List<string> type = new List<string>();
-        Dictionary<string, string> typeList = new Dictionary<string, string>(){
+        Dictionary<string, string> typeList_ja = new Dictionary<string, string>(){
            { "fx_max", "軸方向力 最大"},
            { "fx_min", "軸方向力 最小" },
-           { "fy_max", "y方向のせん断力 最大" },
-           { "fy_min", "y方向のせん断力 最小" },
-           { "fz_max", "z方向のせん断力 最大" },
-           { "fz_min", "z方向のせん断力 最小" },
+           { "fy_max", "Y方向のせん断力 最大" },
+           { "fy_min", "Y方向のせん断力 最小" },
+           { "fz_max", "Z方向のせん断力 最大" },
+           { "fz_min", "Z方向のせん断力 最小" },
            { "mx_max", "ねじりモーメント 最大" },
            { "mx_min", "ねじりモーメント 最小" },
-           { "my_max", "y軸回りの曲げモーメント 最大" },
-           { "my_min", "y軸回りの曲げモーメント 最小" },
-           { "mz_max", "z軸回りの曲げモーメント 最大" },
-           { "mz_min", "z軸回りの曲げモーメント 最小" },
+           { "my_max", "Y軸回りの曲げモーメント 最大" },
+           { "my_min", "Y軸回りの曲げモーメント 最小" },
+           { "mz_max", "Z軸回りの曲げモーメント 最大" },
+           { "mz_min", "Z軸回りの曲げモーメント 最小" },
         };
-       
+        Dictionary<string, string> typeList_en = new Dictionary<string, string>(){
+           { "fx_max", "Axial Force Max"},
+           { "fx_min", "Axial Force Min" },
+           { "fy_max", "Y Shear Force Max" },
+           { "fy_min", "Y Shear Force Min" },
+           { "fz_max", "Z Shear Force Max" },
+           { "fz_min", "Z Shear Force Min" },
+           { "mx_max", "X Torsion Max" },
+           { "mx_min", "X Torsion Min" },
+           { "my_max", "Y Bending Moment Max" },
+           { "my_min", "Y Bending Moment Min" },
+           { "mz_max", "Z Bending Moment Max" },
+           { "mz_min", "Z Bending Moment Min" },
+        };
+
         List<List<List<string[]>>> dataCombine = new List<List<List<string[]>>>();
         List<List<List<string[]>>> dataPickup = new List<List<List<string[]>>>();
         public List<List<List<string[]>>> dataLL = new List<List<List<string[]>>>();
@@ -138,7 +152,15 @@ namespace PDF_Manager.Printing
             {
                 JArray elist = JArray.FromObject(Elem.ElementAt(j).Value);
 
-                type.Add(typeList[Elem.ElementAt(j).Key]);
+                switch (mc.language)
+                {
+                    case "ja":
+                        type.Add(typeList_ja[Elem.ElementAt(j).Key]);
+                        break;
+                    case "en":
+                        type.Add(typeList_en[Elem.ElementAt(j).Key]);
+                        break;
+                }
 
                 List<string[]> body = new List<string[]>();
 
@@ -198,8 +220,39 @@ namespace PDF_Manager.Printing
             string[,] header_content2D = {
                 { "部材", "節点", "着目位置", "軸方向力", "せん断力", "", "","","曲げﾓｰﾒﾝﾄ","組合せ" },
                 { "No","No","(m)", "(kN)", "(kN)", "", "", "", "(kN・m)","" },
-
             };
+
+            switch (mc.language)
+            {
+                case "en":
+                    header_content3D[0, 0] = "Member";
+                    header_content3D[0, 1] = "Node";
+                    header_content3D[0, 2] = "Station";
+                    header_content3D[0, 3] = "Axial";
+                    header_content3D[0, 4] = "Y";
+                    header_content3D[0, 5] = "Z";
+                    header_content3D[0, 6] = "X";
+                    header_content3D[0, 7] = "Y";
+                    header_content3D[0, 8] = "Z";
+                    header_content3D[0, 9] = "Comb.";
+                    header_content3D[1, 2] = "Location";
+                    header_content3D[1, 3] = "Force";
+                    header_content3D[1, 4] = "Shear";
+                    header_content3D[1, 5] = "Shear";
+                    header_content3D[1, 6] = "Torsion";
+                    header_content3D[1, 7] = "Moment";
+                    header_content3D[1, 8] = "Moment";
+
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 1] = "Member";
+                    header_content2D[0, 2] = "Station-Location";
+                    header_content2D[0, 3] = "Axial-Force";
+                    header_content2D[0, 4] = "Shear";
+                    header_content2D[0, 8] = "Momemt";
+                    header_content2D[0, 9] = "Comb";
+                    break;
+            }
+
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {

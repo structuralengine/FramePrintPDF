@@ -70,6 +70,35 @@ namespace PDF_Manager.Printing
                 { "No","No","(m)", "(kN)", "(kN)", "", "", "", "(kN・m)" },
             };
 
+            switch (mc.language)
+            {
+                case "en":
+                    header_content3D[0, 0] = "Member";
+                    header_content3D[0, 1] = "Node";
+                    header_content3D[0, 2] = "Station";
+                    header_content3D[0, 3] = "Axial";
+                    header_content3D[0, 4] = "Y";
+                    header_content3D[0, 5] = "Z";
+                    header_content3D[0, 6] = "X";
+                    header_content3D[0, 7] = "Y";
+                    header_content3D[0, 8] = "Z";
+                    header_content3D[1, 2] = "Location";
+                    header_content3D[1, 3] = "Force";
+                    header_content3D[1, 4] = "Shear";
+                    header_content3D[1, 5] = "Shear";
+                    header_content3D[1, 6] = "Torsion";
+                    header_content3D[1, 7] = "Moment";
+                    header_content3D[1, 8] = "Moment";
+
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 1] = "Member";
+                    header_content2D[0, 2] = "Station-Location";
+                    header_content2D[0, 3] = "Axial-Force";
+                    header_content2D[0, 4] = "Shear";
+                    header_content2D[0, 8] = "Momemt";
+                    break;
+            }
+
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {
                 { 10, 35, 77, 130, 185, 240, 295,350,415 },
