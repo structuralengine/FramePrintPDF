@@ -42,13 +42,16 @@ namespace PDF_Manager.Printing
             fsecPickup,
             reac,
             reacCombine,
-            reacPickup
+            reacPickup,
         }
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
         {
             // 2次元か3次元かを記憶
             mc.dimension = Int32.Parse(data["dimension"].ToString());
+
+            // 言語を記憶
+            mc.language = data["language"].ToString();
 
             // classをまとめてここに代入する．
             var class_set = new object[Enum.GetNames(typeof(class_name)).Length];
@@ -131,6 +134,7 @@ namespace PDF_Manager.Printing
                 class_set[(int)class_name.load] = load_call;
             }
 
+
             // define
             if (data.ContainsKey("define"))
             {
@@ -154,6 +158,7 @@ namespace PDF_Manager.Printing
                 pickup_call.Pickup(mc, data);
                 class_set[(int)class_name.pickup] = pickup_call;
             }
+
 
             // disg
             ResultDisgAnnexing disgAnnexing_call = new ResultDisgAnnexing();
@@ -224,7 +229,6 @@ namespace PDF_Manager.Printing
                 reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
                 class_set[(int)class_name.reacPickup] = reacAnnexing_call;
             }
-
             return class_set;
         }
 

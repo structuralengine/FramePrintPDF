@@ -40,7 +40,16 @@ namespace PDF_Manager.Printing
                 JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
 
                 // タイトルを入れる．
-                title.Add("タイプ" + target.ElementAt(i).Key);
+                switch (mc.language)
+                {
+                    case "ja":
+                        title.Add("タイプ" + target.ElementAt(i).Key);
+                        break;
+                    case "en":
+                        title.Add("Type" + target.ElementAt(i).Key);
+                        break;
+
+                }
 
                 List<string[]> table = new List<string[]>();
 
@@ -201,11 +210,43 @@ namespace PDF_Manager.Printing
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
             int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
             int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
-
+          
             // タイトルの印刷
-            mc.PrintContent("支点データ", 0);
-            mc.CurrentRow(2);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("支点データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Support DATA", 0);
+                    //　ヘッダー
+                    header_content3D[0, 0] = "Node";
+                    header_content3D[0, 2] = "Displacement Restraint";
+                    header_content3D[0, 5] = "Rotational Restraint";
 
+                    header_content3D[1, 1] = "TX";
+                    header_content3D[1, 2] = "TY";
+                    header_content3D[1, 3] = "TZ";
+                    header_content3D[1, 4] = "MX";
+                    header_content3D[1, 5] = "MY";
+                    header_content3D[1, 6] = "MZ";
+
+
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 1] = "Displacement Restraint";
+                    header_content2D[0, 4] = "Node";
+                    header_content2D[0, 5] = "Displacement Restraint";
+
+                    header_content2D[1, 1] = "TX";
+                    header_content2D[1, 2] = "TY";
+                    header_content2D[1, 3] = "MZ";
+                    header_content2D[1, 5] = "TX";
+                    header_content2D[1, 6] = "TY";
+                    header_content2D[1, 7] = "TZ";
+                    break;
+            }
+            mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             int k = 0;
 

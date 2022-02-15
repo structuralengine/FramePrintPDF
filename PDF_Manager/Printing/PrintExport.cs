@@ -21,9 +21,9 @@ namespace PDF_Manager.Printing
     {
         public void Export(PdfDoc mc, object[] class_set)
         {
-            for (int i = 0; i < class_set.Length; i ++)
+            for (int i = 0; i < class_set.Length; i++)
             {
-                if(class_set[i] != null)
+                if (class_set[i] != null)
                 {
                     mc.name = Enum.GetNames(typeof(PrintReady.class_name))[i];
                     break;
@@ -99,6 +99,7 @@ namespace PDF_Manager.Printing
                 InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
                 cls_load.LoadPDF(mc);
             }
+
 
             //define
             if ((InputDefine)class_set[(int)PrintReady.class_name.define] != null)

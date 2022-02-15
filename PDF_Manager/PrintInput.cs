@@ -19,7 +19,7 @@ public class PrintInput
 {
     private PdfDoc mc;
     private JObject data;
-    private Dictionary<string, object> value = new Dictionary<string, object>();
+    public Dictionary<string, object> value = new Dictionary<string, object>();
     private int bottomCell = 88;
 
 

@@ -141,16 +141,48 @@ namespace PDF_Manager.Printing
         public void DisgBasicPDF(PdfDoc mc, int LL = 0)
         {   //　ヘッダー
             string[,] header_content3D = {
-                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの", "z軸回りの" },
+                { "節点", "X方向の", "Y方向の", "Z方向の", "X軸回りの", "Y軸回りの", "Z軸回りの" },
                 { "No", "移動量", "移動量", "移動量", "回転量", "回転量", "回転量" },
                 { "", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
             };
 
             string[,] header_content2D = {
-                 { "節点", "x方向の", "y方向の", "", "節点", "x方向の", "y方向の", "" },
+                 { "節点", "X方向の", "Y方向の", "", "節点", "X方向の", "Y方向の", "" },
                 { "No", "移動量", "移動量", "回転量", "No", "移動量", "移動量", "回転量" },
                 { "", "(mm)", "(mm)", "(mmrad)", "","(mmrad)", "(mmrad)", "(mmrad)" },
             };
+
+            switch (mc.language)
+            {
+                case "en":
+                    header_content3D[0, 0] = "Node";
+                    header_content3D[0, 1] = "X";
+                    header_content3D[0, 2] = "Y";
+                    header_content3D[0, 3] = "Z";
+                    header_content3D[0, 4] = "X";
+                    header_content3D[0, 5] = "Y";
+                    header_content3D[0, 6] = "Z";
+                    header_content3D[0, 1] = "Displacement";
+                    header_content3D[0, 2] = "Displacement";
+                    header_content3D[0, 3] = "Displacement";
+                    header_content3D[0, 4] = "Rotation";
+                    header_content3D[0, 5] = "Rotation";
+                    header_content3D[0, 6] = "Rotation";
+
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 1] = "X";
+                    header_content2D[0, 2] = "Y";
+                    header_content2D[0, 4] = "Node";
+                    header_content2D[0, 5] = "X";
+                    header_content2D[0, 6] = "Y";
+                    header_content2D[0, 1] = "Displacement";
+                    header_content2D[0, 2] = "Displacement";
+                    header_content2D[0, 3] = "Rotation";
+                    header_content2D[0, 5] = "Displacement";
+                    header_content2D[0, 6] = "Displacement";
+                    header_content2D[0, 7] = "Rotation";
+                    break;
+            }
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {

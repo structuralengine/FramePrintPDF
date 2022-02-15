@@ -42,7 +42,16 @@ namespace PDF_Manager.Printing
             {
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
                 // タイトルを入れる．
-                title.Add("タイプ" + Elem.ElementAt(i).Key);
+                switch (mc.language)
+                {
+                    case "ja":
+                        title.Add("タイプ" + Elem.ElementAt(i).Key);
+                        break;
+                    case "en":
+                        title.Add("Type" + Elem.ElementAt(i).Key);
+                        break;
+
+                }
 
                 List<string[]> table1 = new List<string[]>();
                 List<string[]> table2 = new List<string[]>();
@@ -100,7 +109,6 @@ namespace PDF_Manager.Printing
             // 改ページ判定
             mc.DataCountKeep(count);
 
-            //　ヘッダー
             string[,] header_content3D = {
             {"No","断面積","弾性係数","せん断弾性係数","膨張係数","断面二次モーメント","","ねじり剛性" },
             {"","A(m2)","E(kN/m2)","G(kN/m2)","","y軸周り(m4)","z軸周り(m4)","" }
@@ -110,6 +118,7 @@ namespace PDF_Manager.Printing
             {"No","断面積","弾性係数","","膨張係数","断面二次モーメント","","" },
             {"","A(m2)","E(kN/m2)","","","","(m4)","" }
             };
+
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D ={
@@ -138,7 +147,29 @@ namespace PDF_Manager.Printing
             int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
 
             // タイトルの印刷
-            mc.PrintContent("材料データ", 0);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("材料データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Material DATA", 0);
+                    //　ヘッダー
+                    header_content3D[0, 1] = "Area";
+                    header_content3D[0, 2] = "Elastic";
+                    header_content3D[0, 3] = "Shear Elastic";
+                    header_content3D[0, 4] = "CTE";
+                    header_content3D[0, 5] = "Inertia";
+                    header_content3D[0, 7] = "Torsion Constant";
+                    header_content3D[1, 5] = "IY";
+                    header_content3D[1, 6] = "IZ";
+
+                    header_content2D[0, 1] = "Area";
+                    header_content2D[0, 2] = "Elastic";
+                    header_content2D[0, 4] = "CTE";
+                    header_content2D[0, 5] = "Inertia";
+                    break;
+            }
             mc.CurrentRow(2);
             mc.CurrentColumn(0);
 

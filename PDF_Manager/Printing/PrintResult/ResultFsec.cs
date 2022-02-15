@@ -43,12 +43,20 @@ namespace PDF_Manager.Printing
 
             //断面力データを取得する
             var target = JObject.FromObject(value["fsec"]).ToObject<Dictionary<string, object>>();
+            var targetName = JArray.FromObject(value["fsecName"]);
 
             //LLか基本形かを判定しながら1行1行確認
             for (int i = 0; i < target.Count; i++)
             {
                 // タイトルを入れる．
-                title.Add("Case." + target.ElementAt(i).Key);
+                var load = targetName[i];
+                string[] loadNew = new String[2];
+
+                loadNew[0] = load[0].ToString();
+                loadNew[1] = load[1].ToString();
+
+                title.Add(loadNew[0] + loadNew[1].PadLeft(loadNew[1].Length + 2));
+                target.Remove("name");
 
                 //LLのとき
                 try
@@ -81,14 +89,24 @@ namespace PDF_Manager.Printing
             int LL_count2 = 0;
 
             // タイトルの印刷
-            mc.PrintContent("断面力", 0);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("断面力データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Internal Member Forces and Momemts", 0);
+                    break;
+            }
+
             mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // 印刷
             for (int i = 0; i < title.Count; i++)
             {
                 //LLの時
-                if (i == LL_list.IndexOf(i))
+                if (LL_list.Contains(i))
                 {
                     //  1ケースでページをまたぐかどうか
                     int count = 0;

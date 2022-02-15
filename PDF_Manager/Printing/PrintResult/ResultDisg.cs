@@ -44,12 +44,20 @@ namespace PDF_Manager.Printing
 
             //変位量データを取得する
             var target = JObject.FromObject(value["disg"]).ToObject<Dictionary<string, object>>();
+            var targetName = JArray.FromObject(value["disgName"]);
 
             //LLか基本形かを判定しながら1行1行確認
             for (int i = 0; i < target.Count; i++)
             {
-                // タイトルを入れる．
-                title.Add("Case." + target.ElementAt(i).Key);
+                // タイトルを入れる
+                var load = targetName[i];
+                string[] loadNew = new String[2];
+
+                loadNew[0] = load[0].ToString();
+                loadNew[1] = load[1].ToString();
+
+                title.Add(loadNew[0] + loadNew[1].PadLeft(loadNew[1].Length + 2));
+                target.Remove("name");
 
                 //LLのとき
                 try
@@ -81,14 +89,24 @@ namespace PDF_Manager.Printing
             int LL_count2 = 0;
 
             // タイトルの印刷
-            mc.PrintContent("変位量", 0);
+            switch (mc.language)
+            {
+                case "ja":
+                    mc.PrintContent("変位量データ", 0);
+                    break;
+                case "en":
+                    mc.PrintContent("Displacement", 0);
+                    break;
+            }
+
             mc.CurrentRow(2);
+            mc.CurrentColumn(0);
 
             // 印刷
             for (int i = 0; i < title.Count; i++)
             {
                 //LLの時
-                if (i == LL_list.IndexOf(i))
+                if (LL_list.Contains(i))
                 {
                     //  1ケースでページをまたぐかどうか
                     int count = 0;
@@ -126,56 +144,6 @@ namespace PDF_Manager.Printing
                 }
             }
    
-            //mc.PrintResultBasic(title, data, header_content, header_Xspacing, body_Xspacing);
-
-            //// 全行の取得
-            //int count = 2;
-            //for (int i = 0; i < disgSub.title.Count; i++)
-            //{
-            //    count += (data[i].Count + 5) * mc.single_Yrow + 1;
-            //}
-            //// 改ページ判定
-            //mc.DataCountKeep(count,"disg");
-
-            ////　ヘッダー
-            //string[,] header_content3D = {
-            //    { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation" },
-            //    { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
-            //};
-
-            //string[,] header_content2D = {
-            //    { "節点", "X-Disp", "Y-Disp", "Z-Disp", "X-Rotation", "Y-Rotation", "Z-Rotation" },
-            //    { "No", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
-            //};
-
-            //// ヘッダーのx方向の余白
-            //int[,] header_Xspacing3D = {
-            //    { 10, 70, 140, 210, 280, 350, 420 },
-            //    { 10, 70, 140, 210, 280, 350, 420 },
-            //};
-
-            //int[,] header_Xspacing2D = {
-            //    { 10, 70, 140, 210, 280, 350, 420 },
-            //    { 10, 70, 140, 210, 280, 350, 420 },
-            //};
-
-            //// ボディーのx方向の余白　-1
-            //int[,] body_Xspacing3D = {
-            //    { 17, 85, 155, 225, 295, 365,435 }
-            //};
-
-            //int[,] body_Xspacing2D = {
-            //    { 17, 85, 155, 225, 295, 365,435 }
-            //};
-
-            //string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
-            //int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
-            //int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
-
-            // タイトルの印刷
-            //mc.PrintContent("変位量", 0);
-            //mc.CurrentRow(2);
-
         }
     }
 }
