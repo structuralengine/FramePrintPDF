@@ -66,6 +66,10 @@ namespace FramePrintPDF
                 {
                     gs.CopyTo(mso);
                 }
+
+                // System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance); // memo: Shift-JIS‚ðˆµ‚¤‚½‚ß‚Ì‚¨‚Ü‚¶‚È‚¢
+                // Encoding sjisEnc = Encoding.GetEncoding("Shift_JIS");
+                // return sjisEnc.GetString(mso.ToArray());
                 return Encoding.UTF8.GetString(mso.ToArray());
             }
         }

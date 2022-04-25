@@ -51,7 +51,14 @@ namespace PDF_Manager.Printing
             mc.dimension = Int32.Parse(data["dimension"].ToString());
 
             // 言語を記憶
-            mc.language = data["language"].ToString();
+            if (data.ContainsKey("language"))
+            {
+                mc.language = data["language"].ToString();
+            }
+            else
+            {
+                mc.language = "ja";
+            }
 
             // classをまとめてここに代入する．
             var class_set = new object[Enum.GetNames(typeof(class_name)).Length];

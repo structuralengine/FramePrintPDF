@@ -50,18 +50,6 @@ public class PrintInput
         //  整形したデータを送る
         exp.Export(mc, class_set);
 
-
-
-
-        //List<List<string[]>> nodeData = this.node();
-        //this.member();
-
-        //Text.GeneratePDF(mc,data);
-
-
-        //Text.PrtText(mc, "あああああああああ！");
-
-
         // PDFファイルを生成する
         mc.SavePDF();
     }

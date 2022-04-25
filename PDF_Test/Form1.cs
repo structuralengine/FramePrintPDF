@@ -17,13 +17,14 @@ namespace PDF_Test
         public Form1()
         {
             InitializeComponent();
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance); // memo: Shift-JISを扱うためのおまじない
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             // 読み込みたいテキストを開く
-            //using (StreamReader st = new StreamReader(@"C:\Users\sasaco\Documents\PDF_generate\PDF_Test\TestData\test001.json", Encoding.GetEncoding("UTF-8")))
-            using (StreamReader st = new StreamReader(@"../../../TestData/test001.json", Encoding.GetEncoding("UTF-8")))
+            // using (StreamReader st = new StreamReader(@"../../../TestData/test001.json", Encoding.GetEncoding("UTF-8")))
+            using (StreamReader st = new StreamReader(@"../../../TestData/test001.json", Encoding.GetEncoding("shift-jis")))
             {
                 // テキストファイルをString型で読み込みコンソールに表示
                 String line = st.ReadToEnd();
@@ -33,7 +34,7 @@ namespace PDF_Test
 
                 p.createPDF();
 
-                //var o = new main(line);
+                MessageBox.Show("ｵﾜﾀ＼(^o^)／");
             }
         }
     }

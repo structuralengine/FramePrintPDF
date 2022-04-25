@@ -123,11 +123,10 @@ namespace PDF_Manager.Printing
         /// PDF を保存する
         /// </summary>
         /// <param name="filename"></param>
-        public void SavePDF(string filename = "HelloWorld.pdf")
+        public void SavePDF(string filename = @"../../../TestData/Test.pdf")
         {
             // PDF保存（カレントディレクトリ）
-            //document.Save(filename);
-            document.Save("D:\\work\\sasaco\\PDF_generate\\bin\\Debug\\netcoreapp3.1\\work\\Test.pdf");
+            document.Save(filename);
 
         }
 
@@ -139,6 +138,10 @@ namespace PDF_Manager.Printing
         // 3:右詰め　明朝
         public void PrintContent(string data, int dataHandle = 3)
         {
+            if(data == null)
+            {
+                return;
+            }
             if (dataHandle == 0)
             {
                 gfx.DrawString(data, font_got, XBrushes.Black, CurrentPos, XStringFormats.BottomLeft);
