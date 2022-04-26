@@ -6,11 +6,8 @@
 
   <ItemGroup>
     <Compile Remove="Printing\新しいフォルダー1\**" />
-    <Compile Remove="Printing\新しいフォルダー\**" />
     <EmbeddedResource Remove="Printing\新しいフォルダー1\**" />
-    <EmbeddedResource Remove="Printing\新しいフォルダー\**" />
     <None Remove="Printing\新しいフォルダー1\**" />
-    <None Remove="Printing\新しいフォルダー\**" />
   </ItemGroup>
 
   <ItemGroup>
