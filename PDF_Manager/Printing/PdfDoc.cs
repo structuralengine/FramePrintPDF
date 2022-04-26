@@ -400,14 +400,20 @@ namespace PDF_Manager.Printing
                     count += data[i][m].Count;
                 }
 
-                TypeCount(i, 8, count, title[i]);
+                string _title = "";
+                if(title.Count > i)
+                {
+                    _title = title[i];
+                }
+
+                TypeCount(i, 8, count, _title);
 
                 // タイトルの印刷
                 CurrentColumn(0);
-                PrintContent(title[i], 0);
+                PrintContent(_title, 0);
                 CurrentRow(2);
 
-                PrintResultAnnexing(title[i], type, data[i], textLen, result);
+                PrintResultAnnexing(_title, type, data[i], textLen, result);
             }
         }
 
@@ -425,7 +431,16 @@ namespace PDF_Manager.Printing
             {
                 //組み合わせの文字数のカウント
                 //textLen:切り替わりの文字数の閾値
-                int numFullWidth = data[j][0][data[j][0].Length - 1].Length > textLen ? 2 : 1;
+                var d1 = data[j];
+                if(d1.Count < 1)
+                {
+                    continue;
+                }
+                var d2 = d1.First();
+                var d3 = d2.Last();
+                var d4 = d3.Length;
+                int numFullWidth = d4 > textLen ? 2 : 1;
+                int _numFullWidth = data[j][0][data[j][0].Length - 1].Length > textLen ? 2 : 1;
 
                 //  1タイプ内でページをまたぐかどうか
                 TypeCount(j, 6, data[j].Count * numFullWidth, title);
