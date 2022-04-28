@@ -31,7 +31,7 @@ namespace PDF_Manager.Printing
         /// <param name="mc">PdfDoc</param>
         /// <param name="value_">全データが入っている</param>
         /// <param name="disgAnnex_">基本データ以外の断面力読み取り，書き込みを行う</param>
-        public void Fsec(PdfDoc mc, Dictionary<string, object> value_, ResultFsecAnnexing fsecAnnex_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_, ResultFsecAnnexing fsecAnnex_)
         {
             value = value_;
             fsecAnnex = fsecAnnex_;

@@ -30,6 +30,35 @@ namespace PDF_Manager.Printing
                 }
             }
 
+
+            // 荷重図
+            if (class_set[(int)PrintReady.class_name.diagramLoad] != null)
+            {
+                // node
+                InputNode cls_node = (InputNode)class_set[(int)PrintReady.class_name.node];
+                // member
+                InputMember cls_member = (InputMember)class_set[(int)PrintReady.class_name.member];
+                // element
+                InputElement cls_element = (InputElement)class_set[(int)PrintReady.class_name.elememt];
+                // fixnode
+                InputFixNode cls_fixnode = (InputFixNode)class_set[(int)PrintReady.class_name.fix_node];
+                // joint
+                InputJoint cls_joint = (InputJoint)class_set[(int)PrintReady.class_name.joint];
+                // fixmember
+                InputFixMember cls_fixmember = (InputFixMember)class_set[(int)PrintReady.class_name.fix_member];
+                //loadname
+                InputLoadName cls_loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
+                //load
+                InputLoad cls_load = (InputLoad)class_set[(int)PrintReady.class_name.load];
+
+                // 荷重図
+                InputDiagramLoad cls_diagram = (InputDiagramLoad)class_set[(int)PrintReady.class_name.diagramLoad];
+                cls_diagram.DiagramOfLoadPDF(mc, cls_node, cls_member, cls_element, cls_fixnode, cls_joint, cls_fixmember, cls_loadname, cls_load);
+
+
+                return; // 荷重図の指定があったらその他の出力はしない
+            }
+
             // node
             if ((InputNode)class_set[(int)PrintReady.class_name.node] != null)
             {

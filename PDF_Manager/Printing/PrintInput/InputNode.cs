@@ -24,7 +24,7 @@ namespace PDF_Manager.Printing
         public List<List<string[]>> data = new List<List<string[]>>();
 
 
-        public void Node(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_)
         {
             int bottomCell = mc.bottomCell * 2;
 

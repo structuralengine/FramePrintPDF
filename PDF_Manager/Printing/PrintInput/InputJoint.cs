@@ -24,7 +24,7 @@ namespace PDF_Manager.Printing
         List<string> title = new List<string>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void Joint(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             // elementデータを取得する．

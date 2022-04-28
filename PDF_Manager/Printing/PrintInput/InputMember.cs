@@ -28,7 +28,7 @@ namespace PDF_Manager.Printing
         List<string[]> data = new List<string[]>();
 
 
-        public void Member(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
         {
             value = value_;
             //nodeデータを取得する

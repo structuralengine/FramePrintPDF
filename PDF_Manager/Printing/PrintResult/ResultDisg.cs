@@ -32,7 +32,7 @@ namespace PDF_Manager.Printing
         /// <param name="mc">PdfDoc</param>
         /// <param name="value_">全データが入っている</param>
         /// <param name="disgAnnex_">基本データ以外の変位量読み取り，書き込みを行う</param>
-        public void Disg(PdfDoc mc, Dictionary<string, object> value_,ResultDisgAnnexing disgAnnex_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_,ResultDisgAnnexing disgAnnex_)
         {
             value = value_;
             disgAnnex = disgAnnex_;

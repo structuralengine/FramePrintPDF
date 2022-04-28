@@ -26,7 +26,7 @@ namespace PDF_Manager.Printing
         List<string> title = new List<string>();
 
 
-        public void Element(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             // elementデータを取得する．

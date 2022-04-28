@@ -22,7 +22,7 @@ namespace PDF_Manager.Printing
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void Shell(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
 

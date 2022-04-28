@@ -62,7 +62,7 @@ namespace PDF_Manager.Printing
         /// <param name="mc">PdfDoc</param>
         /// <param name="value_">全データ</param>
         /// <param name="key">combine,pickupのいずれか</param>
-        public void FsecAnnexing(PdfDoc mc, Dictionary<string, object> value_, string key)
+        public void init(PdfDoc mc, Dictionary<string, object> value_, string key)
         {
             value = value_;
             //nodeデータを取得する

@@ -26,7 +26,7 @@ namespace PDF_Manager.Printing
         List<List<string[]>> data = new List<List<string[]>>();
 
 
-        public void FixMember(PdfDoc mc ,Dictionary<string, object> value_)
+        public void init(PdfDoc mc ,Dictionary<string, object> value_)
         {
             value = value_;
             // elementデータを取得する．

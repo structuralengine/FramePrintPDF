@@ -26,7 +26,7 @@ namespace PDF_Manager.Printing
         public List<int> LL_list = new List<int>();
 
 
-        public void Reac(PdfDoc mc, Dictionary<string, object> value_, ResultReacAnnexing reacAnnex_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_, ResultReacAnnexing reacAnnex_)
         {
             value = value_;
             reacAnnex = reacAnnex_;

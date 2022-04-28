@@ -34,7 +34,7 @@ public class PrintInput
         mc = new PdfDoc();
     }
 
-
+   
     /// <summary>
     /// インプットデータの印刷PDFを生成する
     /// </summary>

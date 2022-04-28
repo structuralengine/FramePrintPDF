@@ -23,7 +23,7 @@ namespace PDF_Manager.Printing
         List<string> title = new List<string>();
         List<List<List<string[]>>> data = new List<List<List<string[]>>>();
 
-        public void Load(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, Dictionary<string, object> value_)
         {
             value = value_;
             var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();

@@ -24,7 +24,7 @@ namespace PDF_Manager.Printing
         List<string> title = new List<string>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void FixNode(PdfDoc mc,Dictionary<string, object> value_)
+        public void init(PdfDoc mc,Dictionary<string, object> value_)
         {
             value = value_;
             // データを取得する．

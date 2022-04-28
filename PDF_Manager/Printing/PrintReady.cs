@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Printing.PrintInput;
 
 namespace PDF_Manager.Printing
 {
@@ -43,6 +44,7 @@ namespace PDF_Manager.Printing
             reac,
             reacCombine,
             reacPickup,
+            diagramLoad,
         }
 
         public object[] Ready(PdfDoc mc, Dictionary<string, object> data)
@@ -64,178 +66,188 @@ namespace PDF_Manager.Printing
             var class_set = new object[Enum.GetNames(typeof(class_name)).Length];
 
             // node
-            InputNode node_call = new InputNode();
+            InputNode node = new InputNode();
             if (data.ContainsKey("node"))
             {
-                node_call.Node(mc, data);
-                class_set[(int)class_name.node] = node_call;
+                node.init(mc, data);
+                class_set[(int)class_name.node] = node;
             }
 
             // element
-            InputElement element_call = new InputElement();
+            InputElement element = new InputElement();
             if (data.ContainsKey("element"))
             {
-                element_call.Element(mc, data);
-                class_set[(int)class_name.elememt] = element_call;
+                element.init(mc, data);
+                class_set[(int)class_name.elememt] = element;
             }
 
             // member
-            InputMember member_call = new InputMember();
+            InputMember member = new InputMember();
             if (data.ContainsKey("member"))
             {
-                member_call.Member(mc,element_call, data);
-                class_set[(int)class_name.member] = member_call;
+                member.init(mc,element, data);
+                class_set[(int)class_name.member] = member;
             }
 
             // fixnode
             if (data.ContainsKey("fix_node"))
             {
-                InputFixNode fixnode_call = new InputFixNode();
-                fixnode_call.FixNode(mc, data);
-                class_set[(int)class_name.fix_node] = fixnode_call;
+                InputFixNode fixnode = new InputFixNode();
+                fixnode.init(mc, data);
+                class_set[(int)class_name.fix_node] = fixnode;
             }
 
             // joint
             if (data.ContainsKey("joint"))
             {
-                InputJoint joint_call = new InputJoint();
-                joint_call.Joint(mc, data); 
-                class_set[(int)class_name.joint] = joint_call;
+                InputJoint joint = new InputJoint();
+                joint.init(mc, data); 
+                class_set[(int)class_name.joint] = joint;
             }
 
             // notice_points
             if (data.ContainsKey("notice_points"))
             {
-                InputNoticePoints noticepoints_call = new InputNoticePoints();
-                noticepoints_call.NoticePoints(mc, member_call,data);
-                class_set[(int)class_name.notice_points] = noticepoints_call;
+                InputNoticePoints noticepoints = new InputNoticePoints();
+                noticepoints.init(mc, member,data);
+                class_set[(int)class_name.notice_points] = noticepoints;
             }
 
             // fixmember
             if (data.ContainsKey("fix_member"))
             {
-                InputFixMember fixmember_call = new InputFixMember();
-                fixmember_call.FixMember(mc, data);
-                class_set[(int)class_name.fix_member] = fixmember_call;
+                InputFixMember fixmember = new InputFixMember();
+                fixmember.init(mc, data);
+                class_set[(int)class_name.fix_member] = fixmember;
             }
 
             // shell
             if (data.ContainsKey("shell"))
             {
-                InputShell shell_call = new InputShell();
-                shell_call.Shell(mc, data); 
-                class_set[(int)class_name.shell] = shell_call;
+                InputShell shell = new InputShell();
+                shell.init(mc, data); 
+                class_set[(int)class_name.shell] = shell;
             }
 
             // load
             if (data.ContainsKey("load"))
             {
                 //基本荷重
-                InputLoadName loadname_call = new InputLoadName();
-                loadname_call.LoadName(mc, data);
-                class_set[(int)class_name.loadname] = loadname_call;
+                InputLoadName loadname = new InputLoadName();
+                loadname.init(mc, data);
+                class_set[(int)class_name.loadname] = loadname;
 
                 //実荷重
-                InputLoad load_call = new InputLoad();
-                load_call.Load(mc, data);
-                class_set[(int)class_name.load] = load_call;
+                InputLoad load = new InputLoad();
+                load.init(mc, data);
+                class_set[(int)class_name.load] = load;
             }
 
 
             // define
             if (data.ContainsKey("define"))
             {
-                InputDefine define_call = new InputDefine();
-                define_call.Define(mc, data);
-                class_set[(int)class_name.define] = define_call;
+                InputDefine define = new InputDefine();
+                define.init(mc, data);
+                class_set[(int)class_name.define] = define;
             }
 
             // combine 
             if (data.ContainsKey("combine"))
             {
-                InputCombine combine_call = new InputCombine();
-                combine_call.Combine(mc, data);     
-                class_set[(int)class_name.combine] = combine_call;
+                InputCombine combine = new InputCombine();
+                combine.init(mc, data);     
+                class_set[(int)class_name.combine] = combine;
             }
 
             // pickup
             if (data.ContainsKey("pickup"))
             {
-                InputPickup pickup_call = new InputPickup();
-                pickup_call.Pickup(mc, data);
-                class_set[(int)class_name.pickup] = pickup_call;
+                InputPickup pickup = new InputPickup();
+                pickup.init(mc, data);
+                class_set[(int)class_name.pickup] = pickup;
             }
 
 
             // disg
-            ResultDisgAnnexing disgAnnexing_call = new ResultDisgAnnexing();
+            ResultDisgAnnexing disgAnnexing = new ResultDisgAnnexing();
             if (data.ContainsKey("disg"))
             {
-                ResultDisg disg_call = new ResultDisg();
-                disg_call.Disg(mc, data,disgAnnexing_call);
-                class_set[(int)class_name.disg] = disg_call;
+                ResultDisg disg = new ResultDisg();
+                disg.init(mc, data,disgAnnexing);
+                class_set[(int)class_name.disg] = disg;
             }
 
             // disgcombine
             if (data.ContainsKey("disgCombine"))
             {
-                disgAnnexing_call.DisgAnnexing(mc, data, "Combine");
-                class_set[(int)class_name.disgCombine] = disgAnnexing_call;
+                disgAnnexing.init(mc, data, "Combine");
+                class_set[(int)class_name.disgCombine] = disgAnnexing;
             }
 
             // disgPickup
             if (data.ContainsKey("disgPickup"))
             {
-                disgAnnexing_call.DisgAnnexing(mc, data, "Pickup");
-                class_set[(int)class_name.disgPickup] = disgAnnexing_call;
+                disgAnnexing.init(mc, data, "Pickup");
+                class_set[(int)class_name.disgPickup] = disgAnnexing;
             }
 
             // fsec
-            ResultFsecAnnexing fsecAnnexing_call = new ResultFsecAnnexing();
+            ResultFsecAnnexing fsecAnnexing = new ResultFsecAnnexing();
             if (data.ContainsKey("fsec"))
             {
-                ResultFsec fsec_call = new ResultFsec();
-                fsec_call.Fsec(mc, data, fsecAnnexing_call);
-                class_set[(int)class_name.fsec] = fsec_call;
+                ResultFsec fsec = new ResultFsec();
+                fsec.init(mc, data, fsecAnnexing);
+                class_set[(int)class_name.fsec] = fsec;
             }
 
             // fseccombine
             if (data.ContainsKey("fsecCombine"))
             {
-                fsecAnnexing_call.FsecAnnexing(mc, data, "Combine");
-                class_set[(int)class_name.fsecCombine] = fsecAnnexing_call;
+                fsecAnnexing.init(mc, data, "Combine");
+                class_set[(int)class_name.fsecCombine] = fsecAnnexing;
             }
 
             // fsecPickup
             if (data.ContainsKey("fsecPickup"))
             {
-                fsecAnnexing_call.FsecAnnexing(mc, data, "Pickup");
-                class_set[(int)class_name.fsecPickup] = fsecAnnexing_call;
+                fsecAnnexing.init(mc, data, "Pickup");
+                class_set[(int)class_name.fsecPickup] = fsecAnnexing;
             }
 
 
-            ResultReacAnnexing reacAnnexing_call = new ResultReacAnnexing();
+            ResultReacAnnexing reacAnnexing = new ResultReacAnnexing();
             // reac
             if (data.ContainsKey("reac"))
             {
-                ResultReac reac_call = new ResultReac();
-                reac_call.Reac(mc, data, reacAnnexing_call);
-                class_set[(int)class_name.reac] = reac_call;
+                ResultReac reac = new ResultReac();
+                reac.init(mc, data, reacAnnexing);
+                class_set[(int)class_name.reac] = reac;
             }
 
             // reaccombine
             if (data.ContainsKey("reacCombine"))
             {
-                reacAnnexing_call.ReacAnnexing(mc, data, "Combine");
-                class_set[(int)class_name.reacCombine] = reacAnnexing_call;
+                reacAnnexing.init(mc, data, "Combine");
+                class_set[(int)class_name.reacCombine] = reacAnnexing;
             }
 
             // reacPickup
             if (data.ContainsKey("reacPickup"))
             {
-                reacAnnexing_call.ReacAnnexing(mc, data, "Pickup");
-                class_set[(int)class_name.reacPickup] = reacAnnexing_call;
+                reacAnnexing.init(mc, data, "Pickup");
+                class_set[(int)class_name.reacPickup] = reacAnnexing;
             }
+
+            // 荷重図
+            if (data.ContainsKey("diagramLoad"))
+            {
+                InputDiagramLoad diagram_load = new InputDiagramLoad();
+                diagram_load.init(mc, data);
+                class_set[(int)class_name.diagramLoad] = diagram_load;
+            }
+
+
             return class_set;
         }
 
