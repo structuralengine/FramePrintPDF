@@ -3267,7 +3267,7 @@ private void SET_ShiTenData(int CASEn, double[] TX, double[] TY, double[] TZ()){
             // F7R = 0
             // this.RESET_07
 
-            this.FRUD06_BBB(F7MAX_R, F7ML1(), F7ML2(), F7ML3(), F7ML(), F7ML31(), F7ML4(), F7ML5(), F7ML6(), F7R);
+            // this.FRUD06_BBB(F7MAX_R, F7ML1(), F7ML2(), F7ML3(), F7ML(), F7ML31(), F7ML4(), F7ML5(), F7ML6(), F7R);
 
             /*
              this.ReadData147
