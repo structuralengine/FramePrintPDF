@@ -48,6 +48,9 @@ namespace PDF_Manager.Printing
             // 文字サイズ
             double fontSize = target.ContainsKey("fontSize") ? (double)target["fontSize"] : 9;
 
+            //
+            this.mc.xpen = new XPen(XBrushes.Black, 1);
+
             #region
             /* 
             public void K荷重図INIT_Frame_23(ByRef fname1 As String, ByRef fname2 As String, Optional fKozo As Integer)
@@ -573,6 +576,8 @@ namespace PDF_Manager.Printing
             */
             #endregion
 
+
+
         }
 
         /// <summary>
@@ -599,8 +604,6 @@ namespace PDF_Manager.Printing
             this.loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
             // 荷重強度
             this.load = (InputLoad)class_set[(int)PrintReady.class_name.load];
-            // キャンパス
-            this.mc = _mc;
 
             this.printNode();
 
@@ -612,8 +615,8 @@ namespace PDF_Manager.Printing
         /// </summary>
         private void printNode()
         {
-            XPoint p = new XPoint(1200,1300);
-            XSize z = new XSize(1, 1);
+            XPoint p = new XPoint(200,300);
+            XSize z = new XSize(10, 10);
 
             Shape.Drawcircle(this.mc, p, z);
         }
