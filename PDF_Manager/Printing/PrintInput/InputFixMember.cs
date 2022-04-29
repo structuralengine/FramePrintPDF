@@ -63,11 +63,11 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[5];
 
-                        line[0] = mc.TypeChange(item["m"]);
-                        line[1] = mc.TypeChange(item["tx"]);
-                        line[2] = mc.TypeChange(item["ty"]);
-                        line[3] = mc.TypeChange(item["tz"]);
-                        line[4] = mc.TypeChange(item["tr"]);
+                        line[0] = InputDataManager.TypeChange(item["m"]);
+                        line[1] = InputDataManager.TypeChange(item["tx"]);
+                        line[2] = InputDataManager.TypeChange(item["ty"]);
+                        line[3] = InputDataManager.TypeChange(item["tz"]);
+                        line[4] = InputDataManager.TypeChange(item["tr"]);
 
                         table.Add(line);
                     }
@@ -98,14 +98,14 @@ namespace PDF_Manager.Printing
                                 var targetValue_l = Elem[j];
 
                                 string[] line = new String[6];
-                                line[0] = mc.TypeChange(targetValue_l["m"]);
-                                line[1] = mc.TypeChange(targetValue_l["tx"], 3);
-                                line[2] = mc.TypeChange(targetValue_l["ty"], 3);                
+                                line[0] = InputDataManager.TypeChange(targetValue_l["m"]);
+                                line[1] = InputDataManager.TypeChange(targetValue_l["tx"], 3);
+                                line[2] = InputDataManager.TypeChange(targetValue_l["ty"], 3);                
 
                                 var targetValue_r = Elem[k];
-                                line[3] = mc.TypeChange(targetValue_r["m"]);
-                                line[4] = mc.TypeChange(targetValue_r["tx"], 3);
-                                line[5] = mc.TypeChange(targetValue_r["ty"], 3);
+                                line[3] = InputDataManager.TypeChange(targetValue_r["m"]);
+                                line[4] = InputDataManager.TypeChange(targetValue_r["tx"], 3);
+                                line[5] = InputDataManager.TypeChange(targetValue_r["ty"], 3);
                           
                                 body.Add(line);
                             }
@@ -128,17 +128,17 @@ namespace PDF_Manager.Printing
                                 var targetValue_l = Elem[j];
 
                                 string[] line = new String[6];
-                                line[0] = mc.TypeChange(targetValue_l["m"]);
-                                line[1] = mc.TypeChange(targetValue_l["tx"], 3);
-                                line[2] = mc.TypeChange(targetValue_l["ty"], 3);
+                                line[0] = InputDataManager.TypeChange(targetValue_l["m"]);
+                                line[1] = InputDataManager.TypeChange(targetValue_l["tx"], 3);
+                                line[2] = InputDataManager.TypeChange(targetValue_l["ty"], 3);
 
                                 try
                                 {
                                     //　各行のデータを取得する（右段)
                                     var targetValue_r = Elem[k];
-                                    line[3] = mc.TypeChange(targetValue_r["m"]);
-                                    line[4] = mc.TypeChange(targetValue_r["tx"], 3);
-                                    line[5] = mc.TypeChange(targetValue_r["ty"], 3);
+                                    line[3] = InputDataManager.TypeChange(targetValue_r["m"]);
+                                    line[4] = InputDataManager.TypeChange(targetValue_r["tx"], 3);
+                                    line[5] = InputDataManager.TypeChange(targetValue_r["ty"], 3);
 
                                     body.Add(line);
                                 }

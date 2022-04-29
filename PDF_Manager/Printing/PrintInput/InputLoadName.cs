@@ -37,13 +37,13 @@ namespace PDF_Manager.Printing
 
                 string[] line = new String[8];
                 line[0] = target.ElementAt(i).Key;
-                line[1] = mc.TypeChange(item["rate"]);
-                line[2] = mc.TypeChange(item["symbol"]);
-                line[3] = mc.TypeChange(item["name"]);
-                line[4] = mc.TypeChange(item["fix_node"]);
-                line[5] = mc.TypeChange(item["element"]);
-                line[6] = mc.TypeChange(item["fix_member"]);
-                line[7] = mc.TypeChange(item["joint"]);
+                line[1] = InputDataManager.TypeChange(item["rate"]);
+                line[2] = InputDataManager.TypeChange(item["symbol"]);
+                line[3] = InputDataManager.TypeChange(item["name"]);
+                line[4] = InputDataManager.TypeChange(item["fix_node"]);
+                line[5] = InputDataManager.TypeChange(item["element"]);
+                line[6] = InputDataManager.TypeChange(item["fix_member"]);
+                line[7] = InputDataManager.TypeChange(item["joint"]);
                 data.Add(line);
             }
         }

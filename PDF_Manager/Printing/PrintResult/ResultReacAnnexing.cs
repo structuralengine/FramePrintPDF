@@ -130,14 +130,14 @@ namespace PDF_Manager.Printing
                     var item = JObject.FromObject(elist.ElementAt(k).Value); ;
                     string[] line = new String[8];
 
-                    line[0] = mc.TypeChange(elist.ElementAt(k).Key);
-                    line[1] = mc.TypeChange(item["tx"], 2);
-                    line[2] = mc.TypeChange(item["ty"], 2);
-                    line[3] = mc.Dimension(mc.TypeChange(item["tz"], 2));
-                    line[4] = mc.Dimension(mc.TypeChange(item["mx"], 2));
-                    line[5] = mc.Dimension(mc.TypeChange(item["my"], 2));
-                    line[6] = mc.TypeChange(item["mz"], 2);
-                    line[7] = mc.TypeChange(item["case"]);
+                    line[0] = InputDataManager.TypeChange(elist.ElementAt(k).Key);
+                    line[1] = InputDataManager.TypeChange(item["tx"], 2);
+                    line[2] = InputDataManager.TypeChange(item["ty"], 2);
+                    line[3] = mc.Dimension(InputDataManager.TypeChange(item["tz"], 2));
+                    line[4] = mc.Dimension(InputDataManager.TypeChange(item["mx"], 2));
+                    line[5] = mc.Dimension(InputDataManager.TypeChange(item["my"], 2));
+                    line[6] = InputDataManager.TypeChange(item["mz"], 2);
+                    line[7] = InputDataManager.TypeChange(item["case"]);
 
                     body.Add(line);
                 }

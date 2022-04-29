@@ -1,46 +1,39 @@
 ﻿using Newtonsoft.Json.Linq;
-using PDF_Manager.Printing;
-using PdfSharpCore;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Fonts;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Utils;
+using PDF_Manager.Comon;
 using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PDF_Manager.Printing
 {
     internal class InputNode
     {
-        private PdfDoc mc;
-        private Dictionary<string, object> value = new Dictionary<string, object>();
+        private Dictionary<string, Vector3> nodes = new Dictionary<string, Vector3>();
         public List<List<string[]>> data = new List<List<string[]>>();
 
-
-        public void init(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(PdfDoc mc, Dictionary<string, object> value)
         {
             int bottomCell = mc.bottomCell * 2;
 
-            value = value_;
             //nodeデータを取得する
             var target = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
 
-            // 集まったデータはここに格納する
-            //ArrayList node_data = new ArrayList();
+            // データを抽出する
+            for(var i=0; i< target.Count; i++)
+            {
+                var key = target.ElementAt(i).Key;
+                var targetValue = JObject.FromObject(target.ElementAt(i).Value);
+                var x = InputDataManager.getNumeric(targetValue["x"]);
+                var y = InputDataManager.getNumeric(targetValue["x"]);
+                var z = InputDataManager.getNumeric(targetValue["x"]);
+                var pos = new Vector3(x, y, z);
+                this.nodes.Add(key, pos);
+            }
 
             // 全部の行数
             var row = target.Count;
-
             var page = 0;
-            //var body = new ArrayList()
-
+            
             while (true)
             {
                 if (row > bottomCell)
@@ -57,15 +50,15 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = mc.TypeChange(targetValue_l["x"], 3);
-                        line[2] = mc.TypeChange(targetValue_l["y"], 3);
-                        line[3] = mc.Dimension(mc.TypeChange(targetValue_l["z"], 3));
+                        line[1] = InputDataManager.TypeChange(targetValue_l["x"], 3);
+                        line[2] = InputDataManager.TypeChange(targetValue_l["y"], 3);
+                        line[3] = mc.Dimension(InputDataManager.TypeChange(targetValue_l["z"], 3));
 
                         var targetValue_r = JObject.FromObject(target.ElementAt(k).Value);
                         line[4] = target.ElementAt(k).Key;
-                        line[5] = mc.TypeChange(targetValue_r["x"], 3);
-                        line[6] = mc.TypeChange(targetValue_r["y"], 3);
-                        line[7] = mc.Dimension(mc.TypeChange(targetValue_r["z"], 3));
+                        line[5] = InputDataManager.TypeChange(targetValue_r["x"], 3);
+                        line[6] = InputDataManager.TypeChange(targetValue_r["y"], 3);
+                        line[7] = mc.Dimension(InputDataManager.TypeChange(targetValue_r["z"], 3));
                         body.Add(line);
                     }
                     data.Add(body);
@@ -88,18 +81,18 @@ namespace PDF_Manager.Printing
 
                         string[] line = new String[8];
                         line[0] = target.ElementAt(j).Key;
-                        line[1] = mc.TypeChange(targetValue_l["x"], 3);
-                        line[2] = mc.TypeChange(targetValue_l["y"], 3);
-                        line[3] = mc.Dimension(mc.TypeChange(targetValue_l["z"], 3));
+                        line[1] = InputDataManager.TypeChange(targetValue_l["x"], 3);
+                        line[2] = InputDataManager.TypeChange(targetValue_l["y"], 3);
+                        line[3] = mc.Dimension(InputDataManager.TypeChange(targetValue_l["z"], 3));
 
                         try
                         {
                             //　各行のデータを取得する（右段)
                             var targetValue_r = JObject.FromObject(target.ElementAtOrDefault(k).Value);
                             line[4] = target.ElementAtOrDefault(k).Key;
-                            line[5] = mc.TypeChange(targetValue_r["x"], 3);
-                            line[6] = mc.TypeChange(targetValue_r["y"], 3);
-                            line[7] = mc.Dimension(mc.TypeChange(targetValue_r["z"], 3));
+                            line[5] = InputDataManager.TypeChange(targetValue_r["x"], 3);
+                            line[6] = InputDataManager.TypeChange(targetValue_r["y"], 3);
+                            line[7] = mc.Dimension(InputDataManager.TypeChange(targetValue_r["z"], 3));
                             body.Add(line);
                         }
                         catch
@@ -115,43 +108,6 @@ namespace PDF_Manager.Printing
                     break;
                 }
             }
-        }
-
-        public double[] GetNodePos(PdfDoc mc, string nodeNo, Dictionary<string, object> value)
-        {
-            var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
-
-            if (nodeList.Count <= 0)
-            {
-                return null;
-            }
-
-            if (nodeList.ContainsValue(nodeNo))
-            {
-                return null;
-            }
-
-            var targetValue = JObject.FromObject(nodeList[nodeNo]);
-
-            string[] node_st = new string[3];
-            node_st[0] = mc.TypeChange(targetValue["x"], 3);
-            node_st[1] = mc.TypeChange(targetValue["y"], 3);
-            node_st[2] = mc.TypeChange(targetValue["z"], 3);
-
-            double[] node = new double[3];
-            for (int i = 0; i < 3; i++)
-            {
-                if (node_st[i] == "")
-                {
-                    node[i] = 0;
-                }
-                else
-                {
-                    node[i] = double.Parse(node_st[i]);
-                }
-            }
-
-            return node;
         }
 
         public void NodePDF(PdfDoc mc)
@@ -223,6 +179,46 @@ namespace PDF_Manager.Printing
 
             }
         }
+
+
+        public double[] GetNodePos(PdfDoc mc, string nodeNo, Dictionary<string, object> value)
+        {
+            var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
+
+            if (nodeList.Count <= 0)
+            {
+                return null;
+            }
+
+            if (nodeList.ContainsValue(nodeNo))
+            {
+                return null;
+            }
+
+            var targetValue = JObject.FromObject(nodeList[nodeNo]);
+
+            string[] node_st = new string[3];
+            node_st[0] = InputDataManager.TypeChange(targetValue["x"], 3);
+            node_st[1] = InputDataManager.TypeChange(targetValue["y"], 3);
+            node_st[2] = InputDataManager.TypeChange(targetValue["z"], 3);
+
+            double[] node = new double[3];
+            for (int i = 0; i < 3; i++)
+            {
+                if (node_st[i] == "")
+                {
+                    node[i] = 0;
+                }
+                else
+                {
+                    node[i] = double.Parse(node_st[i]);
+                }
+            }
+
+            return node;
+        }
+
+
     }
 }
 

@@ -1,19 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
-using PDF_Manager.Printing;
-using PdfSharpCore;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Fonts;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Utils;
+using PDF_Manager.Comon;
 using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PDF_Manager.Printing
 {
@@ -53,11 +42,11 @@ namespace PDF_Manager.Printing
 
                 string[] line = new String[7];
                 line[0] = index;
-                line[1] = mc.TypeChange(item["ni"]);
-                line[2] = mc.TypeChange(item["nj"]);
-                line[3] = mc.TypeChange(len, 3);
-                line[4] = mc.TypeChange(item["e"]);
-                line[5] = mc.Dimension(mc.TypeChange(item["cg"]));
+                line[1] = InputDataManager.TypeChange(item["ni"]);
+                line[2] = InputDataManager.TypeChange(item["nj"]);
+                line[3] = InputDataManager.TypeChange(len, 3);
+                line[4] = InputDataManager.TypeChange(item["e"]);
+                line[5] = mc.Dimension(InputDataManager.TypeChange(item["cg"]));
                 line[6] = name;
                 data.Add(line);
             }

@@ -58,13 +58,13 @@ namespace PDF_Manager.Printing
 
                     string[] line = new String[7];
 
-                    line[0] = mc.TypeChange(item["m"]);
-                    line[1] = mc.Dimension(mc.TypeChange(item["xi"]));
-                    line[2] = mc.Dimension(mc.TypeChange(item["yi"]));
-                    line[3] = mc.TypeChange(item["zi"]);
-                    line[4] = mc.Dimension(mc.TypeChange(item["xj"]));
-                    line[5] = mc.Dimension(mc.TypeChange(item["yj"]));
-                    line[6] = mc.TypeChange(item["zj"]);
+                    line[0] = InputDataManager.TypeChange(item["m"]);
+                    line[1] = mc.Dimension(InputDataManager.TypeChange(item["xi"]));
+                    line[2] = mc.Dimension(InputDataManager.TypeChange(item["yi"]));
+                    line[3] = InputDataManager.TypeChange(item["zi"]);
+                    line[4] = mc.Dimension(InputDataManager.TypeChange(item["xj"]));
+                    line[5] = mc.Dimension(InputDataManager.TypeChange(item["yj"]));
+                    line[6] = InputDataManager.TypeChange(item["zj"]);
 
                     table.Add(line);
                 }

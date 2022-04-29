@@ -111,16 +111,16 @@ namespace PDF_Manager.Printing
                 //        var item = elist[k]; 
                 //        string[] line = new String[10];
 
-                //        line[0] = mc.TypeChange(item["m"]);
-                //        line[1] = mc.TypeChange(item["n"]);
-                //        line[2] = mc.TypeChange(item["l"], 3);
-                //        line[3] = mc.TypeChange(item["fx"], 2);
-                //        line[4] = mc.TypeChange(item["fy"], 2);
-                //        line[5] = mc.TypeChange(item["fz"], 2);
-                //        line[6] = mc.TypeChange(item["mx"], 2);
-                //        line[7] = mc.TypeChange(item["my"], 2);
-                //        line[8] = mc.TypeChange(item["mz"], 2);
-                //        line[9] = mc.TypeChange(item["case"]);
+                //        line[0] = InputDataManager.TypeChange(item["m"]);
+                //        line[1] = InputDataManager.TypeChange(item["n"]);
+                //        line[2] = InputDataManager.TypeChange(item["l"], 3);
+                //        line[3] = InputDataManager.TypeChange(item["fx"], 2);
+                //        line[4] = InputDataManager.TypeChange(item["fy"], 2);
+                //        line[5] = InputDataManager.TypeChange(item["fz"], 2);
+                //        line[6] = InputDataManager.TypeChange(item["mx"], 2);
+                //        line[7] = InputDataManager.TypeChange(item["my"], 2);
+                //        line[8] = InputDataManager.TypeChange(item["mz"], 2);
+                //        line[9] = InputDataManager.TypeChange(item["case"]);
 
                 //        body.Add(line);
                 //    }
@@ -169,16 +169,16 @@ namespace PDF_Manager.Printing
                     var item = elist[k];
                     string[] line = new String[10];
 
-                    line[0] = mc.TypeChange(item["m"]);
-                    line[1] = mc.TypeChange(item["n"]);
-                    line[2] = mc.TypeChange(item["l"], 3);
-                    line[3] = mc.TypeChange(item["fx"], 2);
-                    line[4] = mc.TypeChange(item["fy"], 2);
-                    line[5] = mc.Dimension(mc.TypeChange(item["fz"], 2));
-                    line[6] = mc.Dimension(mc.TypeChange(item["mx"], 2));
-                    line[7] = mc.Dimension(mc.TypeChange(item["my"], 2));
-                    line[8] = mc.TypeChange(item["mz"], 2);
-                    line[9] = mc.TypeChange(item["case"]);
+                    line[0] = InputDataManager.TypeChange(item["m"]);
+                    line[1] = InputDataManager.TypeChange(item["n"]);
+                    line[2] = InputDataManager.TypeChange(item["l"], 3);
+                    line[3] = InputDataManager.TypeChange(item["fx"], 2);
+                    line[4] = InputDataManager.TypeChange(item["fy"], 2);
+                    line[5] = mc.Dimension(InputDataManager.TypeChange(item["fz"], 2));
+                    line[6] = mc.Dimension(InputDataManager.TypeChange(item["mx"], 2));
+                    line[7] = mc.Dimension(InputDataManager.TypeChange(item["my"], 2));
+                    line[8] = InputDataManager.TypeChange(item["mz"], 2);
+                    line[9] = InputDataManager.TypeChange(item["case"]);
 
 
                     body.Add(line);

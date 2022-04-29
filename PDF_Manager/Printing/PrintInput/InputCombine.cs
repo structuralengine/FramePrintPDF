@@ -45,7 +45,7 @@ namespace PDF_Manager.Printing
                 // 荷重名称
                 if (item.ContainsKey("name"))
                 {
-                    line1[1] = mc.TypeChange(item["name"]);
+                    line1[1] = InputDataManager.TypeChange(item["name"]);
                 }
                 else
                 {
@@ -63,7 +63,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < kk.Length - 2; j++)
                 {
                     line1[count + 2] = kk[j].Replace("C", "");
-                    line2[count + 2] = mc.TypeChange(item[kk[j]], 2);
+                    line2[count + 2] = InputDataManager.TypeChange(item[kk[j]], 2);
                     count++;
 
                     if (count == 8)

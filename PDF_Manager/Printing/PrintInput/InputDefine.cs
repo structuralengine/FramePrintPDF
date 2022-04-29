@@ -49,7 +49,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < kk.Length - 1; j++)
                 {
                     string key = kk[j];
-                    line[count + 1] = mc.TypeChange(item[key]);
+                    line[count + 1] = InputDataManager.TypeChange(item[key]);
                     count++;
                     if (count == 10)
                     {
