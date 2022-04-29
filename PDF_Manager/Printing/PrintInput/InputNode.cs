@@ -25,6 +25,11 @@ namespace PDF_Manager.Printing
         private Dictionary<string, Vector3> nodes = new Dictionary<string, Vector3>();
         private dataManager helper;
 
+        /// <summary>
+        /// データを読み込む
+        /// </summary>
+        /// <param name="dataManager"></param>
+        /// <param name="value"></param>
         public void init(dataManager dataManager, Dictionary<string, object> value)
         {
             this.helper = dataManager;
@@ -45,6 +50,10 @@ namespace PDF_Manager.Printing
             }
         }
 
+        /// <summary>
+        /// 印刷する
+        /// </summary>
+        /// <param name="mc"></param>
         public void NodePDF(PdfDoc mc)
         {
             #region 印刷設定
@@ -116,6 +125,7 @@ namespace PDF_Manager.Printing
             #endregion
 
             #region 印刷する内容を集計する
+
             List<List<string[]>> data = new List<List<string[]>>();
 
             int bottomCell = mc.bottomCell * 2;

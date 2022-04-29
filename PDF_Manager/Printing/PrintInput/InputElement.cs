@@ -35,6 +35,11 @@ namespace PDF_Manager.Printing
         private Dictionary<string, Dictionary<string, Element>> elements = new Dictionary<string, Dictionary<string, Element>>();
         private dataManager helper;
 
+        /// <summary>
+        /// データを読み込む
+        /// </summary>
+        /// <param name="dataManager"></param>
+        /// <param name="value"></param>
         public void init(dataManager dataManager, Dictionary<string, object> value)
         {
             this.helper = dataManager;
@@ -73,7 +78,10 @@ namespace PDF_Manager.Printing
             }
         }
 
-
+        /// <summary>
+        /// 印刷する
+        /// </summary>
+        /// <param name="mc"></param>
         public void ElementPDF(PdfDoc mc)
         {
             #region 印刷設定

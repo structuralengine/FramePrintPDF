@@ -19,6 +19,78 @@ namespace PDF_Manager.Printing
 
     internal class InputMember
     {
+        private Dictionary<string, Member> members = new Dictionary<string, Member>();
+        private dataManager helper;
+
+        public void init(dataManager dataManager, Dictionary<string, object> value)
+        {
+            this.helper = dataManager;
+
+            //nodeデータを取得する
+            var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = target.ElementAt(i).Key;
+
+                var item = JObject.FromObject(target.ElementAt(i).Value);
+
+                double len = this.GetMemberLength(index, value); // 部材長さ
+
+                string name = item["e"].Type == JTokenType.Null ? "" : element.GetElementName(item["e"].ToString());
+
+                string[] line = new String[7];
+                line[0] = index;
+                line[1] = dataManager.TypeChange(item["ni"]);
+                line[2] = dataManager.TypeChange(item["nj"]);
+                line[3] = dataManager.TypeChange(len, 3);
+                line[4] = dataManager.TypeChange(item["e"]);
+                line[5] = mc.Dimension(dataManager.TypeChange(item["cg"]));
+                line[6] = name;
+
+
+                var pos = new Vector3(x, y, z);
+                this.nodes.Add(key, pos);
+            }
+        }
+
+        public double GetMemberLength(PdfDoc mc, string memberNo, Dictionary<string, object> value)
+        {
+            JToken memb = this.GetMember(memberNo);
+
+            string ni = memb["ni"].ToString();
+            string nj = memb["nj"].ToString();
+            if (ni == null || nj == null)
+            {
+                return 0;
+            }
+
+            InputNode node = new InputNode();
+            double[] iPos = node.GetNodePos(ni, value);
+            double[] jPos = node.GetNodePos(nj, value);
+            if (iPos == null || jPos == null)
+            {
+                return 0;
+            }
+
+            double xi = iPos[0];
+            double yi = iPos[1];
+            double zi = iPos[2];
+            double xj = jPos[0];
+            double yj = jPos[1];
+            double zj = jPos[2];
+
+            double result = Math.Sqrt(Math.Pow(xi - xj, 2) + Math.Pow(yi - yj, 2) + Math.Pow(zi - zj, 2));
+            return result;
+        }
+
+
+
+
+
+
+
         private Dictionary<string, object> value = new Dictionary<string, object>();
         private JObject targetLen;
         private JToken mem;
@@ -63,35 +135,6 @@ namespace PDF_Manager.Printing
             }
         }
 
-        public double GetMemberLength(PdfDoc mc, string memberNo, Dictionary<string, object> value)
-        {
-            JToken memb = this.GetMember(memberNo);
-
-            string ni = memb["ni"].ToString();
-            string nj = memb["nj"].ToString();
-            if (ni == null || nj == null)
-            {
-                return 0;
-            }
-
-            InputNode node = new InputNode();
-            double[] iPos = node.GetNodePos( ni, value);
-            double[] jPos = node.GetNodePos( nj, value);
-            if (iPos == null || jPos == null)
-            {
-                return 0;
-            }
-
-            double xi = iPos[0];
-            double yi = iPos[1];
-            double zi = iPos[2];
-            double xj = jPos[0];
-            double yj = jPos[1];
-            double zj = jPos[2];
-
-            double result = Math.Sqrt(Math.Pow(xi - xj, 2) + Math.Pow(yi - yj, 2) + Math.Pow(zi - zj, 2));
-            return result;
-        }
 
         public JToken GetMember(string memberNo)
         {
