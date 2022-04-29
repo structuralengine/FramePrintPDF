@@ -6,6 +6,17 @@ using System.Linq;
 
 namespace PDF_Manager.Printing
 {
+    public class Member
+    {
+        public double L;
+        public double cg;
+        public int ni;
+        public int nj;
+        public int e;
+        public string n;
+    }
+
+
     internal class InputMember
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
@@ -42,11 +53,11 @@ namespace PDF_Manager.Printing
 
                 string[] line = new String[7];
                 line[0] = index;
-                line[1] = InputDataManager.TypeChange(item["ni"]);
-                line[2] = InputDataManager.TypeChange(item["nj"]);
-                line[3] = InputDataManager.TypeChange(len, 3);
-                line[4] = InputDataManager.TypeChange(item["e"]);
-                line[5] = mc.Dimension(InputDataManager.TypeChange(item["cg"]));
+                line[1] = dataManager.TypeChange(item["ni"]);
+                line[2] = dataManager.TypeChange(item["nj"]);
+                line[3] = dataManager.TypeChange(len, 3);
+                line[4] = dataManager.TypeChange(item["e"]);
+                line[5] = mc.Dimension(dataManager.TypeChange(item["cg"]));
                 line[6] = name;
                 data.Add(line);
             }
@@ -64,8 +75,8 @@ namespace PDF_Manager.Printing
             }
 
             InputNode node = new InputNode();
-            double[] iPos = node.GetNodePos(mc, ni, value);
-            double[] jPos = node.GetNodePos(mc, nj, value);
+            double[] iPos = node.GetNodePos( ni, value);
+            double[] jPos = node.GetNodePos( nj, value);
             if (iPos == null || jPos == null)
             {
                 return 0;

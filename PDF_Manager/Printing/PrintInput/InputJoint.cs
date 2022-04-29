@@ -14,7 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -58,13 +58,13 @@ namespace PDF_Manager.Printing
 
                     string[] line = new String[7];
 
-                    line[0] = InputDataManager.TypeChange(item["m"]);
-                    line[1] = mc.Dimension(InputDataManager.TypeChange(item["xi"]));
-                    line[2] = mc.Dimension(InputDataManager.TypeChange(item["yi"]));
-                    line[3] = InputDataManager.TypeChange(item["zi"]);
-                    line[4] = mc.Dimension(InputDataManager.TypeChange(item["xj"]));
-                    line[5] = mc.Dimension(InputDataManager.TypeChange(item["yj"]));
-                    line[6] = InputDataManager.TypeChange(item["zj"]);
+                    line[0] = dataManager.TypeChange(item["m"]);
+                    line[1] = mc.Dimension(dataManager.TypeChange(item["xi"]));
+                    line[2] = mc.Dimension(dataManager.TypeChange(item["yi"]));
+                    line[3] = dataManager.TypeChange(item["zi"]);
+                    line[4] = mc.Dimension(dataManager.TypeChange(item["xj"]));
+                    line[5] = mc.Dimension(dataManager.TypeChange(item["yj"]));
+                    line[6] = dataManager.TypeChange(item["zj"]);
 
                     table.Add(line);
                 }

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -53,12 +54,12 @@ namespace PDF_Manager.Printing
                         if (member.SelectToken("m1") != null)
                         {
                             string[] line = new string[8];
-                            line[0] = InputDataManager.TypeChange(member["m1"]);
-                            line[1] = InputDataManager.TypeChange(member["m2"]);
-                            line[2] = InputDataManager.TypeChange(member["direction"]);
-                            line[3] = InputDataManager.TypeChange(member["mark"]);
+                            line[0] = dataManager.TypeChange(member["m1"]);
+                            line[1] = dataManager.TypeChange(member["m2"]);
+                            line[2] = dataManager.TypeChange(member["direction"]);
+                            line[3] = dataManager.TypeChange(member["mark"]);
 
-                            // line[4] = member["L1"].ToString().StartsWith("-0") ? "-0.000" : InputDataManager.TypeChange(double.Parse(member["L1"].ToString()), 3);
+                            // line[4] = member["L1"].ToString().StartsWith("-0") ? "-0.000" : dataManager.TypeChange(double.Parse(member["L1"].ToString()), 3);
                             var a4 = member["L1"].ToString();
                             if(a4.Trim().Length == 0)
                             {
@@ -71,13 +72,13 @@ namespace PDF_Manager.Printing
                                 }
                                 else
                                 {
-                                    line[4] = InputDataManager.TypeChange(b4, 3);
+                                    line[4] = dataManager.TypeChange(b4, 3);
                                 }
                             }
 
-                            line[5] = InputDataManager.TypeChange(member["L2"], 3);
-                            line[6] = InputDataManager.TypeChange(member["P1"], 2);
-                            line[7] = InputDataManager.TypeChange(member["P2"], 2);
+                            line[5] = dataManager.TypeChange(member["L2"], 3);
+                            line[6] = dataManager.TypeChange(member["P1"], 2);
+                            line[7] = dataManager.TypeChange(member["P2"], 2);
                             table1.Add(line);
                         }
                     }
@@ -96,13 +97,13 @@ namespace PDF_Manager.Printing
                         string[] line = new string[8];
                         JToken node = item["load_node"][j];
                         line[0] = "";
-                        line[1] = InputDataManager.TypeChange(node["n"]);
-                        line[2] = InputDataManager.TypeChange(node["tx"], 2);
-                        line[3] = InputDataManager.TypeChange(node["ty"], 2);
-                        line[4] = mc.Dimension(InputDataManager.TypeChange(node["tz"], 2));
-                        line[5] = mc.Dimension(InputDataManager.TypeChange(node["rx"], 2));
-                        line[6] = mc.Dimension(InputDataManager.TypeChange(node["ry"], 2));
-                        line[7] = InputDataManager.TypeChange(node["rz"], 2);
+                        line[1] = dataManager.TypeChange(node["n"]);
+                        line[2] = dataManager.TypeChange(node["tx"], 2);
+                        line[3] = dataManager.TypeChange(node["ty"], 2);
+                        line[4] = mc.Dimension(dataManager.TypeChange(node["tz"], 2));
+                        line[5] = mc.Dimension(dataManager.TypeChange(node["rx"], 2));
+                        line[6] = mc.Dimension(dataManager.TypeChange(node["ry"], 2));
+                        line[7] = dataManager.TypeChange(node["rz"], 2);
                         table2.Add(line);
                     }
                     compile.Add(table2);

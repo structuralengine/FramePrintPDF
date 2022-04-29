@@ -14,92 +14,209 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class Element
+    {
+        public double E;
+        public double G;
+        public double Xp;
+        public double A;
+        public double J;
+        public double Iy;
+        public double Iz;
+        public string n;
+    }
+
     internal class InputElement
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
-        private List<List<string[]>> element_data = new List<List<string[]>>();
-        List<List<string[]>> data = new List<List<string[]>>();
-        List<string> title = new List<string>();
+        private Dictionary<string, Dictionary<string, Element>> elements = new Dictionary<string, Dictionary<string, Element>>();
+        private dataManager helper;
 
-
-        public void init(PdfDoc mc, Dictionary<string, object> value_)
+        public void init(dataManager dataManager, Dictionary<string, object> value)
         {
-            value = value_;
+            this.helper = dataManager;
+
             // elementデータを取得する．
             var target = JObject.FromObject(value["element"]).ToObject<Dictionary<string, object>>();
 
-            // 集まったデータはすべてここに格納する
-            title = new List<string>();
-            element_data = new List<List<string[]>>();
-            data = new List<List<string[]>>();
-
-
-            for (int i = 0; i < target.Count; i++)
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
             {
+                var key = target.ElementAt(i).Key;
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
-                // タイトルを入れる．
-                switch (mc.language)
+
+                var _element = new Dictionary<string, Element>();
+
+                for (int j = 0; j < Elem.Count; j++)
                 {
-                    case "ja":
-                        title.Add("タイプ" + Elem.ElementAt(i).Key);
-                        break;
-                    case "en":
-                        title.Add("Type" + Elem.ElementAt(i).Key);
-                        break;
+                    var id = Elem.ElementAt(j).Key;
+                    var item = JObject.FromObject(Elem.ElementAt(j).Value);
+
+                    var e = new Element();
+
+                    e.n = dataManager.TypeChange(item["n"]);
+                    e.E = dataManager.getNumeric(item["E"]);
+                    e.G = dataManager.getNumeric(item["G"]);
+                    e.Xp = dataManager.getNumeric(item["Xp"]);
+                    e.A = dataManager.getNumeric(item["A"]);
+                    e.J = dataManager.getNumeric(item["J"]);
+                    e.Iy = dataManager.getNumeric(item["Iy"]);
+                    e.Iz = dataManager.getNumeric(item["Iz"]);
+
+                    _element.Add(id, e);
 
                 }
+                this.elements.Add(key, _element);
+            }
+        }
+
+
+        public void ElementPDF(PdfDoc mc)
+        {
+            #region 印刷設定
+
+            // ヘッダーのx方向の余白
+            var header_Xspacing = (this.helper.dimension == 3) ?
+                new int[,] {
+                    { 10, 60, 120, 180, 240, 330, 330, 415 },
+                    { 10, 60, 120, 180, 240, 300, 360, 415 }
+                } :
+                new int[,] {
+                    { 10, 85, 180, 0, 260, 360, 0, 0 },
+                    { 10, 85, 180, 0, 260, 0, 360, 0 }
+                };
+
+            // ボディーのx方向の余白
+            var body_Xspacing = (this.helper.dimension == 3) ?
+                new int[,] {
+                    { 17, 40, 143, 203, 263, 320, 380, 440 },
+                    { 17, 75, 143, 203, 263, 320, 380, 440 }
+                } :
+                new int[,] {
+                    { 17, 60, 203, 0, 283, 0, 380, 0 },
+                    { 17, 105, 203, 0, 283, 0, 380, 0 }
+                };
+
+            //　ヘッダー
+            string title;
+            string[,] header_content;
+
+            switch (this.helper.language)
+            {
+                case "en":
+                    title = "Material DATA";
+                    header_content = (this.helper.dimension == 3) ?
+                        new string[,] {
+                            {"No","Area","Elastic","Shear Elastic","CTE","Inertia","","Torsion Constant" },
+                            {"","A(m2)","E(kN/m2)","G(kN/m2)","","IY(m4)","IZ(m4)","" }
+                        } :
+                        new string[,] {
+                            {"No","Area","Elastic","","CTE","Inertia","","" },
+                            {"","A(m2)","E(kN/m2)","","","","(m4)","" }
+                        };
+                    break;
+
+                case "cn":
+                    title = "材料";
+                    header_content = (this.helper.dimension == 3) ?
+                        new string[,] {
+                            {"No","截面面积","弹性系数","剪力弹性系数","膨胀系数","截面二次力矩","","扭转常数" },
+                            {"","A(m2)","E(kN/m2)","G(kN/m2)","","IY(m4)","IZ(m4)","" }
+                        } :
+                        new string[,] {
+                            {"No","截面面积","弹性系数","","膨胀系数","截面二次力矩","","" },
+                            {"","A(m2)","E(kN/m2)","","","","(m4)","" }
+                        };
+                    break;
+
+                default:
+                    title = "材料データ";
+                    header_content = (this.helper.dimension == 3) ? 
+                        new string[,] {
+                            {"No","断面積","弾性係数","せん断弾性係数","膨張係数","断面二次モーメント","","ねじり剛性" },
+                            {"","A(m2)","E(kN/m2)","G(kN/m2)","","y軸周り(m4)","z軸周り(m4)","" }
+                        }:
+                        new string[,] {
+                            {"No","断面積","弾性係数","","膨張係数","断面二次モーメント","","" },
+                            {"","A(m2)","E(kN/m2)","","","","(m4)","" }
+                        };
+                    break;
+            }
+
+            #endregion
+
+            #region 印刷する内容を集計する
+
+            List<List<string[]>> element_data = new List<List<string[]>>();
+            List<List<string[]>> data = new List<List<string[]>>();
+
+            for (var i = 0; i < elements.Count; i++)
+            {
+                var key = this.elements.ElementAt(i).Key;
+                var Elem = this.elements.ElementAt(i).Value;
 
                 List<string[]> table1 = new List<string[]>();
                 List<string[]> table2 = new List<string[]>();
 
-                for (int j = 0; j < Elem.Count; j++)
+                for (var j = 0; j < Elem.Count; j++)
                 {
-                    var item = JObject.FromObject(Elem.ElementAt(j).Value);
+                    var id = Elem.ElementAt(j).Key;
+                    var item = Elem.ElementAt(j).Value;
 
-                    string[] line = new String[2];
-                    string[] line1 = new String[8];
-                    string[] line2 = new String[8];
+                    string[] line = Enumerable.Repeat<String>("", 2).ToArray();
+                    string[] line1 = Enumerable.Repeat<String>("", 8).ToArray();
+                    string[] line2 = Enumerable.Repeat<String>("", 8).ToArray();
 
-                    line[0] = Elem.ElementAt(j).Key.ToString();
-                    line[1] = InputDataManager.TypeChange(item["n"]);
+                    string name = dataManager.TypeChange(item.n);
+
+                    line[0] = id;
+                    line[1] = name;
                     table1.Add(line);
 
-                    var name = InputDataManager.TypeChange(item["n"]);
+                    line1[0] = id;
 
-                    line1[0] = Elem.ElementAt(j).Key.ToString();
-                    line1[1] = name == "" ? InputDataManager.TypeChange(item["A"], 4) : InputDataManager.TypeChange(item["n"]);
-                    line1[2] = name == "" ? InputDataManager.TypeChange(item["E"], 0, "E") : "";
-                    line1[3] = mc.Dimension(name == "" ? InputDataManager.TypeChange(item["G"], 0, "E") : "");
-                    line1[4] = name == "" ? InputDataManager.TypeChange(item["Xp"], 0, "E") : "";
-                    line1[5] = mc.Dimension(name == "" ? InputDataManager.TypeChange(item["Iy"], 6) : "");
-                    line1[6] = name == "" ? InputDataManager.TypeChange(item["Iz"], 6) : "";
-                    line1[7] = mc.Dimension(name == "" ? InputDataManager.TypeChange(item["J"], 6) : "");
-                    table2.Add(line1);
-
-                    if (name != "")
+                    if (name == "")
                     {
+                        line1[1] = dataManager.TypeChange(item.A, 4);
+                        line1[2] = dataManager.TypeChange(item.E, 0, "E");
+                        if (this.helper.dimension == 3)
+                            line1[3] = dataManager.TypeChange(item.G, 0, "E");
+                        line1[4] = dataManager.TypeChange(item.Xp, 0, "E");
+                        if (this.helper.dimension == 3)
+                            line1[5] = dataManager.TypeChange(item.Iy, 6);
+                        line1[6] = dataManager.TypeChange(item.Iz, 6);
+                        if (this.helper.dimension == 3)
+                            line1[7] = dataManager.TypeChange(item.J, 6);
+                        table2.Add(line1);
+
+                    } else {
+                        line1[1] = dataManager.TypeChange(item.n);
+                        table2.Add(line1);
+
                         line2[0] = "";
-                        line2[1] = InputDataManager.TypeChange(item["A"], 4);
-                        line2[2] = InputDataManager.TypeChange(item["E"], 0, "E");
-                        line2[3] = mc.Dimension(InputDataManager.TypeChange(item["G"], 0, "E"));
-                        line2[4] = InputDataManager.TypeChange(item["Xp"], 0, "E");
-                        line2[5] = mc.Dimension(InputDataManager.TypeChange(item["Iy"], 6));
-                        line2[6] = InputDataManager.TypeChange(item["Iz"], 6);
-                        line2[7] = mc.Dimension(InputDataManager.TypeChange(item["J"], 6));
+                        line2[1] = dataManager.TypeChange(item.A, 4);
+                        line2[2] = dataManager.TypeChange(item.E, 0, "E");
+                        if (this.helper.dimension == 3)
+                            line2[3] = dataManager.TypeChange(item.G, 0, "E");
+                        line2[4] = dataManager.TypeChange(item.Xp, 0, "E");
+                        if (this.helper.dimension == 3)
+                            line2[5] = dataManager.TypeChange(item.Iy, 6);
+                        line2[6] = dataManager.TypeChange(item.Iz, 6);
+                        if (this.helper.dimension == 3)
+                            line2[7] = dataManager.TypeChange(item.J, 6);
                         table2.Add(line2);
                     }
-                }
-                element_data.Add(table1);
-                data.Add(table2);
-            }
-        }
 
-        public void ElementPDF(PdfDoc mc)
-        {
+                    element_data.Add(table1);
+                    data.Add(table2);
+
+                }
+            }
+
+            /*
             // 全行の取得
             int count = 20;
             for (int i = 0; i < title.Count; i++)
@@ -108,68 +225,13 @@ namespace PDF_Manager.Printing
             }
             // 改ページ判定
             mc.DataCountKeep(count);
+            */
 
-            string[,] header_content3D = {
-            {"No","断面積","弾性係数","せん断弾性係数","膨張係数","断面二次モーメント","","ねじり剛性" },
-            {"","A(m2)","E(kN/m2)","G(kN/m2)","","y軸周り(m4)","z軸周り(m4)","" }
-            };
+            #endregion
 
-            string[,] header_content2D = {
-            {"No","断面積","弾性係数","","膨張係数","断面二次モーメント","","" },
-            {"","A(m2)","E(kN/m2)","","","","(m4)","" }
-            };
+            #region 印刷する
 
-
-            // ヘッダーのx方向の余白
-            int[,] header_Xspacing3D ={
-                { 10, 60, 120, 180, 240, 330, 330, 415 },
-                { 10, 60, 120, 180, 240, 300, 360, 415 }
-            };
-
-            int[,] header_Xspacing2D ={
-                { 10, 85, 180, 0, 260, 360, 0, 0 },
-                { 10, 85, 180, 0, 260, 0, 360, 0 }
-            };
-
-            // ボディーのx方向の余白　
-            int[,] body_Xspacing3D = {
-                { 17, 40, 143, 203, 263, 320, 380, 440 },
-                { 17, 75, 143, 203, 263, 320, 380, 440 }
-            };
-
-            int[,] body_Xspacing2D = {
-                { 17, 60, 203, 0, 283, 0, 380, 0 },
-                { 17, 105, 203, 0, 283, 0, 380, 0 }
-            };
-
-            string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
-            int[,] header_Xspacing = mc.dimension == 3 ? header_Xspacing3D : header_Xspacing2D;
-            int[,] body_Xspacing = mc.dimension == 3 ? body_Xspacing3D : body_Xspacing2D;
-
-            // タイトルの印刷
-            switch (mc.language)
-            {
-                case "ja":
-                    mc.PrintContent("材料データ", 0);
-                    break;
-                case "en":
-                    mc.PrintContent("Material DATA", 0);
-                    //　ヘッダー
-                    header_content3D[0, 1] = "Area";
-                    header_content3D[0, 2] = "Elastic";
-                    header_content3D[0, 3] = "Shear Elastic";
-                    header_content3D[0, 4] = "CTE";
-                    header_content3D[0, 5] = "Inertia";
-                    header_content3D[0, 7] = "Torsion Constant";
-                    header_content3D[1, 5] = "IY";
-                    header_content3D[1, 6] = "IZ";
-
-                    header_content2D[0, 1] = "Area";
-                    header_content2D[0, 2] = "Elastic";
-                    header_content2D[0, 4] = "CTE";
-                    header_content2D[0, 5] = "Inertia";
-                    break;
-            }
+            mc.PrintContent(title, 0);
             mc.CurrentRow(2);
             mc.CurrentColumn(0);
 
@@ -177,14 +239,14 @@ namespace PDF_Manager.Printing
 
             for (int i = 0; i < data.Count; i++)
             {
+
                 //  1タイプ内でページをまたぐかどうか
-                mc.TypeCount(i, 5, data[i].Count, title[i]);
+                mc.TypeCount(i, 5, data[i].Count, title);
 
                 // タイプの印刷
                 mc.CurrentColumn(0);
-                mc.PrintContent(title[i], 0);
+                mc.PrintContent(title, 0);
                 mc.CurrentRow(2);
-
 
                 // ヘッダーの印刷
                 mc.Header(header_content, header_Xspacing);
@@ -236,32 +298,33 @@ namespace PDF_Manager.Printing
                     }
                 }
             }
-
+            #endregion
         }
 
+        /// <summary>
+        /// 材料名を取得する
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
         public string GetElementName(string e)
         {
+            string name = "";
+
             if (e == "" || e == null)
             {
-                return "";
+                return name;
             }
 
-            var row = element_data[0];
-            string[] target = row.Find(n =>
-            {
-                return n[0].ToString() == e;
-            }
+            var Elem = this.elements.First().Value;
 
-            );
-            string name = "";
-            if (target != null)
+            if (Elem.ContainsKey(e))
             {
-                name = target[1].ToString() != null ? target[1] : "";
+                var item = Elem[e];
+                name = item.n;
             }
 
             return name;
         }
-
 
     }
 

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -37,13 +38,13 @@ namespace PDF_Manager.Printing
 
                 string[] line = new String[8];
                 line[0] = target.ElementAt(i).Key;
-                line[1] = InputDataManager.TypeChange(item["rate"]);
-                line[2] = InputDataManager.TypeChange(item["symbol"]);
-                line[3] = InputDataManager.TypeChange(item["name"]);
-                line[4] = InputDataManager.TypeChange(item["fix_node"]);
-                line[5] = InputDataManager.TypeChange(item["element"]);
-                line[6] = InputDataManager.TypeChange(item["fix_member"]);
-                line[7] = InputDataManager.TypeChange(item["joint"]);
+                line[1] = dataManager.TypeChange(item["rate"]);
+                line[2] = dataManager.TypeChange(item["symbol"]);
+                line[3] = dataManager.TypeChange(item["name"]);
+                line[4] = dataManager.TypeChange(item["fix_node"]);
+                line[5] = dataManager.TypeChange(item["element"]);
+                line[6] = dataManager.TypeChange(item["fix_member"]);
+                line[7] = dataManager.TypeChange(item["joint"]);
                 data.Add(line);
             }
         }

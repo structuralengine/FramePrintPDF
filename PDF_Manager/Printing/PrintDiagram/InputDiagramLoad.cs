@@ -589,21 +589,21 @@ namespace PDF_Manager.Printing
         {
             // 入力データの取得
             // 節点
-            this.node = (InputNode)class_set[(int)PrintReady.class_name.node];
+            this.node = (InputNode)class_set[(int)class_name.node];
             // 部材
-            this.member = (InputMember)class_set[(int)PrintReady.class_name.member];
+            this.member = (InputMember)class_set[(int)class_name.member];
             // 材料
-            this.element = (InputElement)class_set[(int)PrintReady.class_name.elememt];
+            this.element = (InputElement)class_set[(int)class_name.elememt];
             // 支点
-            this.fixnode = (InputFixNode)class_set[(int)PrintReady.class_name.fix_node];
+            this.fixnode = (InputFixNode)class_set[(int)class_name.fix_node];
             // 結合
-            this.joint = (InputJoint)class_set[(int)PrintReady.class_name.joint];
+            this.joint = (InputJoint)class_set[(int)class_name.joint];
             // バネ
-            this.fixmember = (InputFixMember)class_set[(int)PrintReady.class_name.fix_member];
+            this.fixmember = (InputFixMember)class_set[(int)class_name.fix_member];
             // 荷重名
-            this.loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
+            this.loadname = (InputLoadName)class_set[(int)class_name.loadname];
             // 荷重強度
-            this.load = (InputLoad)class_set[(int)PrintReady.class_name.load];
+            this.load = (InputLoad)class_set[(int)class_name.load];
 
             this.printNode();
 

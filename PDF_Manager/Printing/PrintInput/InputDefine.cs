@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -49,7 +50,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < kk.Length - 1; j++)
                 {
                     string key = kk[j];
-                    line[count + 1] = InputDataManager.TypeChange(item[key]);
+                    line[count + 1] = dataManager.TypeChange(item[key]);
                     count++;
                     if (count == 10)
                     {

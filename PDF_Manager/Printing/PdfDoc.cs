@@ -37,12 +37,12 @@ namespace PDF_Manager.Printing
         public string[,] current_header;
         public int[,] currentHeader_Xspacing;
         CultureInfo ci = new CultureInfo("en-us");
-        public int dimension;
+        //public int dimension;
         public string name;
         public string[,] header_content;
         public int[,] header_Xspacing;
         public int[,] body_Xspacing;
-        public string language;
+        //public string language;
 
         public PdfDoc()
         {
@@ -229,16 +229,6 @@ namespace PDF_Manager.Printing
             {
                 if (index != 0) CurrentPos.Y += single_Yrow;
             }
-        }
-
-        /// <summary>
-        /// 次元によって表示するか否かを判定
-        /// </summary>
-        /// <param name="data">精査するデータ</param>
-        /// <returns>3次元ならデータ保持，2次元なら放棄</returns>
-        public string Dimension(string data)
-        {
-            return dimension == 3 ? data : "";
         }
 
         //　countの値を超える文字数ならば，先頭から指定の文字数を取ったものを返す．

@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -128,14 +129,14 @@ namespace PDF_Manager.Printing
                     var item = JObject.FromObject(elist.ElementAt(k).Value);
                     string[] line = new String[8];
 
-                    line[0] = InputDataManager.TypeChange(elist.ElementAt(k).Key);
-                    line[1] = InputDataManager.TypeChange(item["dx"], 4);
-                    line[2] = InputDataManager.TypeChange(item["dy"], 4);
-                    line[3] = mc.Dimension(InputDataManager.TypeChange(item["dz"], 4));
-                    line[4] = mc.Dimension(InputDataManager.TypeChange(item["rx"], 4));
-                    line[5] = mc.Dimension(InputDataManager.TypeChange(item["ry"], 4));
-                    line[6] = InputDataManager.TypeChange(item["rz"], 4);
-                    line[7] = InputDataManager.TypeChange(item["case"]);
+                    line[0] = dataManager.TypeChange(elist.ElementAt(k).Key);
+                    line[1] = dataManager.TypeChange(item["dx"], 4);
+                    line[2] = dataManager.TypeChange(item["dy"], 4);
+                    line[3] = mc.Dimension(dataManager.TypeChange(item["dz"], 4));
+                    line[4] = mc.Dimension(dataManager.TypeChange(item["rx"], 4));
+                    line[5] = mc.Dimension(dataManager.TypeChange(item["ry"], 4));
+                    line[6] = dataManager.TypeChange(item["rz"], 4);
+                    line[7] = dataManager.TypeChange(item["case"]);
 
                     body.Add(line);
                 }

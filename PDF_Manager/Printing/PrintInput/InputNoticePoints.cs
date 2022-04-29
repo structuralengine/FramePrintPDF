@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -37,20 +38,20 @@ namespace PDF_Manager.Printing
             {
                 JToken item = target[i];
 
-                string m = InputDataManager.TypeChange(item["m"]);
+                string m = dataManager.TypeChange(item["m"]);
 
                 double len = member.GetMemberLength(mc,m, value); // 部材長さ
 
                 string[] line = new String[12];
                 line[0] = m;
-                line[1] = len == 0 ? "" : InputDataManager.TypeChange(len, 3);
+                line[1] = len == 0 ? "" : dataManager.TypeChange(len, 3);
 
                 int count = 0;
                 var itemPoints = item["Points"];
 
                 for (int j = 0; j < item["Points"].Count(); j++)
                 {
-                    line[count + 2] = InputDataManager.TypeChange(itemPoints[count], 3);
+                    line[count + 2] = dataManager.TypeChange(itemPoints[count], 3);
                     count++;
                     if (count == 10)
                     {

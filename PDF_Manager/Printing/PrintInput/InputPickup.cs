@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -42,7 +43,7 @@ namespace PDF_Manager.Printing
                 // 荷重名称
                 if (item.ContainsKey("name"))
                 {
-                    line[1] = InputDataManager.TypeChange(item["name"]);
+                    line[1] = dataManager.TypeChange(item["name"]);
                 }
                 else
                 {
@@ -62,7 +63,7 @@ namespace PDF_Manager.Printing
                     {
                         continue;   
                     }
-                    line[count + 2] = InputDataManager.TypeChange(item[key]);
+                    line[count + 2] = dataManager.TypeChange(item[key]);
                     count++;
 
                     if (count == 8)
