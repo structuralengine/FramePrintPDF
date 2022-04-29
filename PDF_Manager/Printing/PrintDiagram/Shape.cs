@@ -67,7 +67,7 @@ namespace PDF_Manager.Printing.PrintDiagram
         /// <param name="_pt0"></param>
         /// <param name="_size"></param>
         /// <param name="_PenWidth"></param>
-        static public void Drawcircle(PdfDoc _myCanvas, XPoint _pt0, SizeF _size, double _PenWidth)
+        static public void Drawcircle(PdfDoc _myCanvas, XPoint _pt0, XSize _size)
         {
             _myCanvas.gfx.DrawEllipse(_myCanvas.xpen, _pt0.X, _pt0.Y, _size.Width, _size.Height);
         }

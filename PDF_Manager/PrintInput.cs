@@ -229,7 +229,7 @@ public class main
         gfx = XGraphics.FromPdfPage(page);
         currentYposition_values = 53;
 
-        bool firstpage = true;
+        //bool firstpage = true;
 
         for (int i = 0; i < users.Count; i++)
         {

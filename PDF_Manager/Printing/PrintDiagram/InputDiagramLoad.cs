@@ -1,4 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
+using PDF_Manager.Printing.PrintDiagram;
+using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,6 +10,19 @@ namespace PDF_Manager.Printing
     class InputDiagramLoad
     {
         private PdfDoc mc;
+
+        // 入力データ
+        private InputNode node;
+        private InputMember member;
+        private InputElement element;
+        private InputFixNode fixnode;
+        private InputJoint joint;
+        private InputFixMember fixmember;
+        private InputLoadName loadname;
+        private InputLoad load;
+
+        // ページの設定
+
 
         public void init(PdfDoc _mc, Dictionary<string, object> value)
         {
@@ -560,24 +575,49 @@ namespace PDF_Manager.Printing
 
         }
 
-
         /// <summary>
         /// 荷重図の作成
         /// </summary>
         /// <param name="_mc">キャンパス</param>
-        /// <param name="cls_node"></param>
-        /// <param name="cls_member"></param>
-        /// <param name="cls_element"></param>
-        /// <param name="cls_fixnode"></param>
-        /// <param name="cls_joint"></param>
-        /// <param name="cls_fixmember"></param>
-        /// <param name="cls_loadname"></param>
-        /// <param name="cls_load"></param>
-        internal void DiagramOfLoadPDF(PdfDoc _mc, InputNode cls_node, InputMember cls_member, InputElement cls_element, InputFixNode cls_fixnode, InputJoint cls_joint, InputFixMember cls_fixmember, InputLoadName cls_loadname, InputLoad cls_load)
+        /// <param name="class_set">入力データ</param>
+        internal void DiagramOfLoadPDF(PdfDoc _mc, object[] class_set)
         {
+            // 入力データの取得
+            // 節点
+            this.node = (InputNode)class_set[(int)PrintReady.class_name.node];
+            // 部材
+            this.member = (InputMember)class_set[(int)PrintReady.class_name.member];
+            // 材料
+            this.element = (InputElement)class_set[(int)PrintReady.class_name.elememt];
+            // 支点
+            this.fixnode = (InputFixNode)class_set[(int)PrintReady.class_name.fix_node];
+            // 結合
+            this.joint = (InputJoint)class_set[(int)PrintReady.class_name.joint];
+            // バネ
+            this.fixmember = (InputFixMember)class_set[(int)PrintReady.class_name.fix_member];
+            // 荷重名
+            this.loadname = (InputLoadName)class_set[(int)PrintReady.class_name.loadname];
+            // 荷重強度
+            this.load = (InputLoad)class_set[(int)PrintReady.class_name.load];
+            // キャンパス
             this.mc = _mc;
 
-            
+            this.printNode();
+
+
         }
+
+        /// <summary>
+        /// 節点の印字
+        /// </summary>
+        private void printNode()
+        {
+            XPoint p = new XPoint(1200,1300);
+            XSize z = new XSize(1, 1);
+
+            Shape.Drawcircle(this.mc, p, z);
+        }
+
+
     }
 }

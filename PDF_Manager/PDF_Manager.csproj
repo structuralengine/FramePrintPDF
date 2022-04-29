@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Printing\PrintDiagram\KAJYU_ZU23.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="fonts\MS Gothic.ttf" />
     <None Remove="fonts\MS Mincho.ttf" />
   </ItemGroup>
