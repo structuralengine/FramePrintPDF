@@ -8,12 +8,10 @@ namespace PDF_Manager.Printing
 {
     public class Member
     {
-        public double L;
         public double cg;
         public int ni;
         public int nj;
         public int e;
-        public string n;
     }
 
 
@@ -21,76 +19,39 @@ namespace PDF_Manager.Printing
     {
         private Dictionary<string, Member> members = new Dictionary<string, Member>();
         private dataManager helper;
+        private InputNode node;
+        private InputElement element;
 
-        public void init(dataManager dataManager, Dictionary<string, object> value)
+
+        public void init(
+            dataManager dataManager,
+            InputNode node,
+            InputElement element,
+            Dictionary<string, object> value)
         {
             this.helper = dataManager;
+            this.node = node;
+            this.element = element;
 
-            //nodeデータを取得する
+            // memberデータを取得する
             var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)
             {
                 var key = target.ElementAt(i).Key;
-
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
-                double len = this.GetMemberLength(index, value); // 部材長さ
-
-                string name = item["e"].Type == JTokenType.Null ? "" : element.GetElementName(item["e"].ToString());
-
-                string[] line = new String[7];
-                line[0] = index;
-                line[1] = dataManager.TypeChange(item["ni"]);
-                line[2] = dataManager.TypeChange(item["nj"]);
-                line[3] = dataManager.TypeChange(len, 3);
-                line[4] = dataManager.TypeChange(item["e"]);
-                line[5] = mc.Dimension(dataManager.TypeChange(item["cg"]));
-                line[6] = name;
-
-
-                var pos = new Vector3(x, y, z);
-                this.nodes.Add(key, pos);
+                var m = new Member();
+                m.ni = dataManager.parseInt(item["ni"]);
+                m.nj = dataManager.parseInt(item["nj"]);
+                m.e = dataManager.parseInt(item["e"]);
+                m.cg = dataManager.parseInt(item["cg"]);
+                this.members.Add(key, m);
             }
         }
 
-        public double GetMemberLength(PdfDoc mc, string memberNo, Dictionary<string, object> value)
-        {
-            JToken memb = this.GetMember(memberNo);
-
-            string ni = memb["ni"].ToString();
-            string nj = memb["nj"].ToString();
-            if (ni == null || nj == null)
-            {
-                return 0;
-            }
-
-            InputNode node = new InputNode();
-            double[] iPos = node.GetNodePos(ni, value);
-            double[] jPos = node.GetNodePos(nj, value);
-            if (iPos == null || jPos == null)
-            {
-                return 0;
-            }
-
-            double xi = iPos[0];
-            double yi = iPos[1];
-            double zi = iPos[2];
-            double xj = jPos[0];
-            double yj = jPos[1];
-            double zj = jPos[2];
-
-            double result = Math.Sqrt(Math.Pow(xi - xj, 2) + Math.Pow(yi - yj, 2) + Math.Pow(zi - zj, 2));
-            return result;
-        }
-
-
-
-
-
-
-
+        /*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         private JObject targetLen;
         private JToken mem;
@@ -98,7 +59,6 @@ namespace PDF_Manager.Printing
 
         // 集まったデータはここに格納する
         List<string[]> data = new List<string[]>();
-
 
         public void init(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
         {
@@ -135,13 +95,60 @@ namespace PDF_Manager.Printing
             }
         }
 
+        */
 
-        public JToken GetMember(string memberNo)
+
+        /// <summary>
+        /// 部材にの長さを取得する
+        /// </summary>
+        /// <param name="mc"></param>
+        /// <param name="memberNo"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public double GetMemberLength(string memberNo)
         {
-            JToken member = targetLen[memberNo];
+            var memb = this.GetMember(memberNo);
 
-            return member;
+            string ni = memb.ni.ToString();
+            string nj = memb.nj.ToString();
+            if (ni == null || nj == null)
+            {
+                return 0;
+            }
+
+            InputNode node = new InputNode();
+            double[] iPos = node.GetNodePos(ni, value);
+            double[] jPos = node.GetNodePos(nj, value);
+            if (iPos == null || jPos == null)
+            {
+                return 0;
+            }
+
+            double xi = iPos[0];
+            double yi = iPos[1];
+            double zi = iPos[2];
+            double xj = jPos[0];
+            double yj = jPos[1];
+            double zj = jPos[2];
+
+            double result = Math.Sqrt(Math.Pow(xi - xj, 2) + Math.Pow(yi - yj, 2) + Math.Pow(zi - zj, 2));
+            return result;
         }
+
+        /// <summary>
+        /// 部材情報を取得する
+        /// </summary>
+        /// <param name="No">部材番号</param>
+        /// <returns></returns>
+        public Member GetMember(string No)
+        {
+            if (!this.members.ContainsKey(No))
+            {
+                return null;
+            }
+            return this.members[No];
+        }
+
 
         public void MemberPDF(PdfDoc mc)
         {

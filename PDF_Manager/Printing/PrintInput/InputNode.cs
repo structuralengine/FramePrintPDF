@@ -42,9 +42,9 @@ namespace PDF_Manager.Printing
             {
                 var key = target.ElementAt(i).Key;
                 var targetValue = JObject.FromObject(target.ElementAt(i).Value);
-                var x = dataManager.getNumeric(targetValue["x"]);
-                var y = dataManager.getNumeric(targetValue["x"]);
-                var z = dataManager.getNumeric(targetValue["x"]);
+                var x = dataManager.parseDouble(targetValue["x"]);
+                var y = dataManager.parseDouble(targetValue["x"]);
+                var z = dataManager.parseDouble(targetValue["x"]);
                 var pos = new Vector3(x, y, z);
                 this.nodes.Add(key, pos);
             }

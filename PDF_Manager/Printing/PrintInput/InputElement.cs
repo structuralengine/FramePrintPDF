@@ -63,13 +63,13 @@ namespace PDF_Manager.Printing
                     var e = new Element();
 
                     e.n = dataManager.TypeChange(item["n"]);
-                    e.E = dataManager.getNumeric(item["E"]);
-                    e.G = dataManager.getNumeric(item["G"]);
-                    e.Xp = dataManager.getNumeric(item["Xp"]);
-                    e.A = dataManager.getNumeric(item["A"]);
-                    e.J = dataManager.getNumeric(item["J"]);
-                    e.Iy = dataManager.getNumeric(item["Iy"]);
-                    e.Iz = dataManager.getNumeric(item["Iz"]);
+                    e.E = dataManager.parseDouble(item["E"]);
+                    e.G = dataManager.parseDouble(item["G"]);
+                    e.Xp = dataManager.parseDouble(item["Xp"]);
+                    e.A = dataManager.parseDouble(item["A"]);
+                    e.J = dataManager.parseDouble(item["J"]);
+                    e.Iy = dataManager.parseDouble(item["Iy"]);
+                    e.Iz = dataManager.parseDouble(item["Iz"]);
 
                     _element.Add(id, e);
 

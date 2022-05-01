@@ -46,9 +46,9 @@ namespace FramePrintPDF
                 b[i] = Convert.ToByte(stArrayData[i]);
 
             // gzip‰ð“€
-            String line = Unzip(b);
+            String jsonString = Unzip(b);
 
-            var myPrintInput = new PrintInput(line);
+            var myPrintInput = new PrintInput(jsonString);
             string base64str = myPrintInput.getPdfSource();
 
             return new OkObjectResult(base64str);
