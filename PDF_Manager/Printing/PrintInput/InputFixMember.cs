@@ -18,16 +18,56 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class FixMember
+    {
+        public string m;   // 部材番号
+        public double tx;
+        public double ty;
+        public double tz;
+        public double tr;
+    }
 
     internal class InputFixMember
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
-        List<string> title = new List<string>();
-        List<List<string[]>> data = new List<List<string[]>>();
+        private Dictionary<int, List<FixMember>> fixmembers = new Dictionary<int, List<FixMember>>();
 
-
-        public void init(PdfDoc mc ,Dictionary<string, object> value_)
+        public InputFixMember(PrintData pd, Dictionary<string, object> value)
         {
+            // データを取得する．
+            var target = JObject.FromObject(value["fix_member"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = dataManager.parseInt(target.ElementAt(i).Key);  // タイプ番号
+                JArray FixM = JArray.FromObject(target.ElementAt(i).Value);
+
+                var _fixnode = new List<FixMember>();
+
+                for (int j = 0; j < FixM.Count; j++)
+                {
+                    JToken item = FixM[j];
+
+                    var fm = new FixMember();
+
+                    fm.m = dataManager.TypeChange(item["m"]);
+                    fm.tx = dataManager.parseDouble(item["tx"]);
+                    fm.ty = dataManager.parseDouble(item["ty"]);
+                    fm.tz = dataManager.parseDouble(item["tz"]);
+                    fm.tr = dataManager.parseDouble(item["tr"]);
+
+                    _fixnode.Add(fm);
+
+                }
+                this.fixmembers.Add(key, _fixnode);
+            }
+        }
+        /*
+            private Dictionary<string, object> value = new Dictionary<string, object>();
+            List<string> title = new List<string>();
+            List<List<string[]>> data = new List<List<string[]>>();
+
+
             value = value_;
             // elementデータを取得する．
             var target = JObject.FromObject(value["fix_member"]).ToObject<Dictionary<string, object>>();
@@ -156,7 +196,7 @@ namespace PDF_Manager.Printing
                     }
                 }
             }
-        }
+                */
 
         public void FixMemberPDF(PdfDoc mc)
         {

@@ -18,8 +18,52 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class Shell
+    {
+        public string e;   // 材料
+        public double[] Points;
+    }
+
+
     internal class InputShell
     {
+        private Dictionary<string, Shell> shells = new Dictionary<string, Shell>();
+
+        private InputNode node;
+        private InputElement element;
+
+        public InputShell(PrintData pd, Dictionary<string, object> value)
+        {
+            this.node = (InputNode)pd.printDatas["node"];
+            this.element = (InputElement)pd.printDatas["element"];
+
+            // memberデータを取得する
+            var target = JObject.FromObject(value["shell"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = target.ElementAt(i).Key;
+                var item = JObject.FromObject(target.ElementAt(i).Value);
+
+                var s = new Shell();
+                s.e = dataManager.TypeChange(item["e"]);
+
+                // nodeデータを取得する
+                var itemPoints = item["Points"];
+                var _points = new List<double>();
+                for (int j = 0; j < itemPoints.Count(); j++)
+                {
+                    var d = dataManager.parseDouble(itemPoints[j]);
+                    _points.Add(d);
+                }
+                s.Points = _points.ToArray();
+
+                this.shells.Add(key, s);
+            }
+        }
+
+        /*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
@@ -40,7 +84,7 @@ namespace PDF_Manager.Printing
 
                 string[] line = new String[5];
                 line[0] = dataManager.TypeChange(item["e"]);
-                
+
                 int count = 0;
                 var itemPoints = item["nodes"];
 
@@ -62,7 +106,7 @@ namespace PDF_Manager.Printing
                     {
                         line[k] = line[k] == null ? "" : line[k];
                     }
-                   
+
                     body.Add(line);
                 }
                 if (body.Count > 0)
@@ -72,8 +116,9 @@ namespace PDF_Manager.Printing
             }
             data.Add(body);
         }
+        */
 
-        public void ShellPDF(PdfDoc mc)
+            public void ShellPDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 

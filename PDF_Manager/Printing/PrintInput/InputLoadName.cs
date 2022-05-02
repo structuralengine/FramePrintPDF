@@ -18,9 +18,23 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class LoadName
+    {
+        public double rate;
+        public string symbol;
+        public string name;
+        public int fix_node;
+        public int element;
+        public int fix_member;
+        public int joint;
+    }
+
     internal class InputLoadName
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
+
+    }
+    /*
+    private Dictionary<string, object> value = new Dictionary<string, object>();
         public List<string[]> data = new List<string[]>();
 
         public void init(PdfDoc mc, Dictionary<string, object> value_)
@@ -120,6 +134,7 @@ namespace PDF_Manager.Printing
             }
 
         }
-    }
+
+        */
 }
 

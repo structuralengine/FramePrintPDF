@@ -7,14 +7,12 @@ using System.Text;
 
 namespace PDF_Manager.Comon
 {
-
-
-    internal class dataManager
+    internal static class dataManager
     {
 
         // データの精査と変換
         // (data,四捨五入する時の桁数,指数形式の表示など)
-        static public string TypeChange(JToken data, int round = 0, string style = "none")
+        public static string TypeChange(JToken data, int round = 0, string style = "none")
         {
             string newDataString = "";
 
@@ -33,7 +31,7 @@ namespace PDF_Manager.Comon
             else
             {
                 double newDataDouble = dataManager.parseDouble(data);
-                if (Double.IsNaN(newDataDouble))
+                if (double.IsNaN(newDataDouble))
                 {
                     newDataString = "";
                 }
@@ -55,7 +53,7 @@ namespace PDF_Manager.Comon
         }
 
         /// <summary>
-        /// 数値に変換する
+        /// double型に変換する
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
@@ -70,6 +68,12 @@ namespace PDF_Manager.Comon
 
             return result;
         }
+
+        /// <summary>
+        /// int型に変換する
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         static public int parseInt(JToken data)
         {
             int result = 0;

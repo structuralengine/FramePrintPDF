@@ -18,91 +18,171 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class FixNode
+    {
+        public string n;   // 節点番号
+        public double tx;
+        public double ty;
+        public double tz;
+        public double rx;
+        public double ry;
+        public double rz;
+    }
+
     internal class InputFixNode
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
-        List<string> title = new List<string>();
-        List<List<string[]>> data = new List<List<string[]>>();
+        private Dictionary<string, List<FixNode>> fixnodes = new Dictionary<string, List<FixNode>>();
 
-        public void init(PdfDoc mc,Dictionary<string, object> value_)
+        public InputFixNode(PrintData pd, Dictionary<string, object> value)
         {
-            value = value_;
             // データを取得する．
             var target = JObject.FromObject(value["fix_node"]).ToObject<Dictionary<string, object>>();
 
-            // 集まったデータはすべてここに格納する
-            title = new List<string>();
-            data = new List<List<string[]>>();
-
-
-            for (int i = 0; i < target.Count; i++)
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
             {
-                JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
+                var key = target.ElementAt(i).Key;  // タイプ番号
+                JArray FixN = JArray.FromObject(target.ElementAt(i).Value);
 
-                // タイトルを入れる．
-                switch (mc.language)
+                var _fixnode = new List<FixNode>();
+
+                for (int j = 0; j < FixN.Count; j++)
                 {
-                    case "ja":
-                        title.Add("タイプ" + target.ElementAt(i).Key);
-                        break;
-                    case "en":
-                        title.Add("Type" + target.ElementAt(i).Key);
-                        break;
+                    JToken item = FixN[j]; 
+
+                    var fn = new FixNode();
+
+                    fn.n = dataManager.TypeChange(item["n"]);
+                    fn.tx = dataManager.parseDouble(item["tx"]);
+                    fn.ty = dataManager.parseDouble(item["ty"]);
+                    fn.tz = dataManager.parseDouble(item["tz"]);
+                    fn.rx = dataManager.parseDouble(item["rx"]);
+                    fn.ry = dataManager.parseDouble(item["ry"]);
+                    fn.rz = dataManager.parseDouble(item["rz"]);
+
+                    _fixnode.Add(fn);
 
                 }
+                this.fixnodes.Add(key, _fixnode);
+            }
+        }
 
-                List<string[]> table = new List<string[]>();
 
-                if (mc.dimension == 3)
+    /*
+    private Dictionary<string, object> value = new Dictionary<string, object>();
+    List<string> title = new List<string>();
+    List<List<string[]>> data = new List<List<string[]>>();
+
+
+        string language = (string)pd.printDatas["language"];
+
+        // 集まったデータはすべてここに格納する
+        title = new List<string>();
+        data = new List<List<string[]>>();
+
+
+        for (int i = 0; i < target.Count; i++)
+        {
+            JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
+
+            // タイトルを入れる．
+            switch (language)
+            {
+                case "ja":
+                    title.Add("タイプ" + target.ElementAt(i).Key);
+                    break;
+                case "en":
+                    title.Add("Type" + target.ElementAt(i).Key);
+                    break;
+
+            }
+
+            List<string[]> table = new List<string[]>();
+
+            if (mc.dimension == 3)
+            {
+                for (int j = 0; j < Elem.Count; j++)
                 {
-                    for (int j = 0; j < Elem.Count; j++)
-                    {
-                        JToken item = Elem[j];
+                    JToken item = Elem[j];
 
-                        string[] line = new String[7];
+                    string[] line = new String[7];
 
-                        line[0] = dataManager.TypeChange(item["n"]);
-                        line[1] = dataManager.TypeChange(item["tx"]);
-                        line[2] = dataManager.TypeChange(item["ty"]); ;
-                        line[3] = dataManager.TypeChange(item["tz"]);
-                        line[4] = dataManager.TypeChange(item["rx"]);
-                        line[5] = dataManager.TypeChange(item["ry"]);
-                        line[6] = dataManager.TypeChange(item["rz"]); ;
+                    line[0] = dataManager.TypeChange(item["n"]);
+                    line[1] = dataManager.TypeChange(item["tx"]);
+                    line[2] = dataManager.TypeChange(item["ty"]); ;
+                    line[3] = dataManager.TypeChange(item["tz"]);
+                    line[4] = dataManager.TypeChange(item["rx"]);
+                    line[5] = dataManager.TypeChange(item["ry"]);
+                    line[6] = dataManager.TypeChange(item["rz"]); ;
 
-                        table.Add(line);
-                    }
-                    data.Add(table);
+                    table.Add(line);
                 }
-                else if(mc.dimension == 2)
+                data.Add(table);
+            }
+            else if(mc.dimension == 2)
+            {
+                int bottomCell = mc.bottomCell * 2;
+
+                // 全部の行数
+                var row = Elem.Count;
+
+                var page = 0;
+                //var body = new ArrayList()
+
+                while (true)
                 {
-                    int bottomCell = mc.bottomCell * 2;
-
-                    // 全部の行数
-                    var row = Elem.Count;
-
-                    var page = 0;
-                    //var body = new ArrayList()
-
-                    while (true)
+                    if (row > bottomCell)
                     {
-                        if (row > bottomCell)
+                        List<string[]> body = new List<string[]>();
+                        var half = bottomCell / 2;
+                        for (var l = 0; l < half; l++)
                         {
-                            List<string[]> body = new List<string[]>();
-                            var half = bottomCell / 2;
-                            for (var l = 0; l < half; l++)
+                            //　各行の配列開始位置を取得する（左段/右段)
+                            var j = bottomCell * page + l;
+                            var k = bottomCell * page + bottomCell / 2 + l;
+                            //　各行のデータを取得する（左段/右段)
+                            var targetValue_l = Elem[j];
+
+                            string[] line = new String[8];
+                            line[0] = dataManager.TypeChange(targetValue_l["n"]);
+                            line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
+                            line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
+                            line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
+
+                            var targetValue_r = Elem[k];
+                            line[4] = dataManager.TypeChange(targetValue_r["n"]);
+                            line[5] = dataManager.TypeChange(targetValue_r["tx"], 3);
+                            line[6] = dataManager.TypeChange(targetValue_r["ty"], 3);
+                            line[7] = dataManager.TypeChange(targetValue_r["rz"], 3);
+                            body.Add(line);
+                        }
+                        data.Add(body);
+                        row -= bottomCell;
+                        page++;
+                    }
+                    else
+                    {
+                        List<string[]> body = new List<string[]>();
+
+                        row = row % 2 == 0 ? row / 2 : row / 2 + 1;
+
+                        for (var l = 0; l < row; l++)
+                        {
+                            //　各行の配列開始位置を取得する（左段/右段)
+                            var j = bottomCell * page + l;
+                            var k = j + row;
+                            //　各行のデータを取得する（左段)
+                            var targetValue_l = Elem[j];
+
+                            string[] line = new String[8];
+                            line[0] = dataManager.TypeChange(targetValue_l["n"]);
+                            line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
+                            line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
+                            line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
+
+                            try
                             {
-                                //　各行の配列開始位置を取得する（左段/右段)
-                                var j = bottomCell * page + l;
-                                var k = bottomCell * page + bottomCell / 2 + l;
-                                //　各行のデータを取得する（左段/右段)
-                                var targetValue_l = Elem[j];
-
-                                string[] line = new String[8];
-                                line[0] = dataManager.TypeChange(targetValue_l["n"]);
-                                line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
-                                line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
-                                line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
-
+                                //　各行のデータを取得する（右段)
                                 var targetValue_r = Elem[k];
                                 line[4] = dataManager.TypeChange(targetValue_r["n"]);
                                 line[5] = dataManager.TypeChange(targetValue_r["tx"], 3);
@@ -110,58 +190,25 @@ namespace PDF_Manager.Printing
                                 line[7] = dataManager.TypeChange(targetValue_r["rz"], 3);
                                 body.Add(line);
                             }
-                            data.Add(body);
-                            row -= bottomCell;
-                            page++;
-                        }
-                        else
-                        {
-                            List<string[]> body = new List<string[]>();
-
-                            row = row % 2 == 0 ? row / 2 : row / 2 + 1;
-
-                            for (var l = 0; l < row; l++)
+                            catch
                             {
-                                //　各行の配列開始位置を取得する（左段/右段)
-                                var j = bottomCell * page + l;
-                                var k = j + row;
-                                //　各行のデータを取得する（左段)
-                                var targetValue_l = Elem[j];
-
-                                string[] line = new String[8];
-                                line[0] = dataManager.TypeChange(targetValue_l["n"]);
-                                line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
-                                line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
-                                line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
-
-                                try
-                                {
-                                    //　各行のデータを取得する（右段)
-                                    var targetValue_r = Elem[k];
-                                    line[4] = dataManager.TypeChange(targetValue_r["n"]);
-                                    line[5] = dataManager.TypeChange(targetValue_r["tx"], 3);
-                                    line[6] = dataManager.TypeChange(targetValue_r["ty"], 3);
-                                    line[7] = dataManager.TypeChange(targetValue_r["rz"], 3);
-                                    body.Add(line);
-                                }
-                                catch
-                                {
-                                    line[4] = "";
-                                    line[5] = "";
-                                    line[6] = "";
-                                    line[7] = "";
-                                    body.Add(line);
-                                }
+                                line[4] = "";
+                                line[5] = "";
+                                line[6] = "";
+                                line[7] = "";
+                                body.Add(line);
                             }
-                            data.Add(body);
-                            break;
                         }
+                        data.Add(body);
+                        break;
                     }
                 }
             }
         }
+        */
 
-        public void FixNodePDF(PdfDoc mc)
+
+        public void printPDF(PdfDoc mc)
         {
             // 全行の取得
             int count = 20;

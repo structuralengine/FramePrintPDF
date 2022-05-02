@@ -1,36 +1,53 @@
 ﻿using Newtonsoft.Json.Linq;
-using PDF_Manager.Printing;
-using PdfSharpCore;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Fonts;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Utils;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using PDF_Manager.Comon;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PDF_Manager.Printing
 {
+    public class NoticePoint
+    {
+        public string m;   // 要素番号
+        public double[] Points;
+    }
+
     internal class InputNoticePoints
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
-        List<List<string[]>> data = new List<List<string[]>>();
+        private List<NoticePoint> noticepoints = new List<NoticePoint>();
+        private InputMember member;
 
-        public void init(PdfDoc mc, InputMember member, Dictionary<string, object> value_)
+        public InputNoticePoints(PrintData pd, Dictionary<string, object> value)
         {
-            value = value_;
+            this.member = (InputMember)pd.printDatas["member"];
+
             //nodeデータを取得する
             JArray target = JArray.FromObject(value["notice_points"]);
 
-            // 集まったデータはここに格納する
-            data = new List<List<string[]>>();
+            for (int i = 0; i < target.Count; i++)
+            {
+                JToken item = target[i];
+
+                var np = new NoticePoint();
+
+                np.m = dataManager.TypeChange(item["m"]);
+
+                var itemPoints = item["Points"];
+                var _points = new List<double>();
+                for (int j = 0; j < itemPoints.Count(); j++)
+                {
+                    var d = dataManager.parseDouble(itemPoints[j]);
+                    _points.Add(d);
+                }
+                np.Points = _points.ToArray();
+
+                this.noticepoints.Add(np);
+            }
+        }
+
+        /*
+        // 集まったデータはここに格納する
+        data = new List<List<string[]>>();
             List<string[]> body = new List<string[]>();
 
 
@@ -76,7 +93,7 @@ namespace PDF_Manager.Printing
             {
                 data.Add(body);
             }
-        }
+            */
 
         public void NoticePointsPDF(PdfDoc mc)
         {

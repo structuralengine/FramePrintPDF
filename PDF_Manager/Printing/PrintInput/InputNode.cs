@@ -23,16 +23,14 @@ namespace PDF_Manager.Printing
     internal class InputNode
     {
         private Dictionary<string, Vector3> nodes = new Dictionary<string, Vector3>();
-        private dataManager helper;
 
         /// <summary>
         /// データを読み込む
         /// </summary>
         /// <param name="dataManager"></param>
         /// <param name="value"></param>
-        public void init(dataManager dataManager, Dictionary<string, object> value)
+        public InputNode(PrintData pd, Dictionary<string, object> value)
         {
-            this.helper = dataManager;
 
             //nodeデータを取得する
             var target = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
@@ -54,7 +52,7 @@ namespace PDF_Manager.Printing
         /// 印刷する
         /// </summary>
         /// <param name="mc"></param>
-        public void NodePDF(PdfDoc mc)
+        public static void printPDF(PdfDoc mc)
         {
             #region 印刷設定
             // ヘッダーのx方向の余白

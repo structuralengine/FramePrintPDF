@@ -1,20 +1,8 @@
 ﻿using Newtonsoft.Json.Linq;
-using PDF_Manager.Printing;
-using PdfSharpCore;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Fonts;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Utils;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using PDF_Manager.Comon;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PDF_Manager.Printing
 {
@@ -27,23 +15,20 @@ namespace PDF_Manager.Printing
         public double J;
         public double Iy;
         public double Iz;
-        public string n;
+        public string name;
     }
 
     internal class InputElement
     {
         private Dictionary<string, Dictionary<string, Element>> elements = new Dictionary<string, Dictionary<string, Element>>();
-        private dataManager helper;
 
         /// <summary>
         /// データを読み込む
         /// </summary>
         /// <param name="dataManager"></param>
         /// <param name="value"></param>
-        public void init(dataManager dataManager, Dictionary<string, object> value)
+        public InputElement(PrintData pd, Dictionary<string, object> value)
         {
-            this.helper = dataManager;
-
             // elementデータを取得する．
             var target = JObject.FromObject(value["element"]).ToObject<Dictionary<string, object>>();
 
@@ -62,7 +47,7 @@ namespace PDF_Manager.Printing
 
                     var e = new Element();
 
-                    e.n = dataManager.TypeChange(item["n"]);
+                    e.name = dataManager.TypeChange(item["n"]);
                     e.E = dataManager.parseDouble(item["E"]);
                     e.G = dataManager.parseDouble(item["G"]);
                     e.Xp = dataManager.parseDouble(item["Xp"]);
@@ -82,7 +67,7 @@ namespace PDF_Manager.Printing
         /// 印刷する
         /// </summary>
         /// <param name="mc"></param>
-        public void ElementPDF(PdfDoc mc)
+        public void printPDF(PdfDoc mc)
         {
             #region 印刷設定
 
@@ -178,7 +163,7 @@ namespace PDF_Manager.Printing
                     string[] line1 = Enumerable.Repeat<String>("", 8).ToArray();
                     string[] line2 = Enumerable.Repeat<String>("", 8).ToArray();
 
-                    string name = dataManager.TypeChange(item.n);
+                    string name = dataManager.TypeChange(item.name);
 
                     line[0] = id;
                     line[1] = name;
@@ -201,7 +186,7 @@ namespace PDF_Manager.Printing
                         table2.Add(line1);
 
                     } else {
-                        line1[1] = dataManager.TypeChange(item.n);
+                        line1[1] = dataManager.TypeChange(item.name);
                         table2.Add(line1);
 
                         line2[0] = "";
@@ -328,7 +313,7 @@ namespace PDF_Manager.Printing
             if (Elem.ContainsKey(e))
             {
                 var item = Elem[e];
-                name = item.n;
+                name = item.name;
             }
 
             return name;

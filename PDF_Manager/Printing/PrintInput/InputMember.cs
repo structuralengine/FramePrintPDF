@@ -8,30 +8,24 @@ namespace PDF_Manager.Printing
 {
     public class Member
     {
-        public double cg;
-        public int ni;
-        public int nj;
-        public int e;
+        public string ni; // 節点番号
+        public string nj;
+        public string e;  // 材料番号
+        public double cg; // コードアングル
+
     }
 
 
     internal class InputMember
     {
         private Dictionary<string, Member> members = new Dictionary<string, Member>();
-        private dataManager helper;
         private InputNode node;
         private InputElement element;
 
-
-        public void init(
-            dataManager dataManager,
-            InputNode node,
-            InputElement element,
-            Dictionary<string, object> value)
+        public InputMember(PrintData pd, Dictionary<string, object> value){
         {
-            this.helper = dataManager;
-            this.node = node;
-            this.element = element;
+            this.node = (InputNode)pd.printDatas["node"];
+            this.element = (InputElement)pd.printDatas["element"];
 
             // memberデータを取得する
             var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
@@ -43,60 +37,13 @@ namespace PDF_Manager.Printing
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
                 var m = new Member();
-                m.ni = dataManager.parseInt(item["ni"]);
-                m.nj = dataManager.parseInt(item["nj"]);
-                m.e = dataManager.parseInt(item["e"]);
+                m.ni = dataManager.TypeChange(item["ni"]);
+                m.nj = dataManager.TypeChange(item["nj"]);
+                m.e = dataManager.TypeChange(item["e"]);
                 m.cg = dataManager.parseInt(item["cg"]);
                 this.members.Add(key, m);
             }
         }
-
-        /*
-        private Dictionary<string, object> value = new Dictionary<string, object>();
-        private JObject targetLen;
-        private JToken mem;
-        private InputElement element;
-
-        // 集まったデータはここに格納する
-        List<string[]> data = new List<string[]>();
-
-        public void init(PdfDoc mc, InputElement element, Dictionary<string, object> value_)
-        {
-            value = value_;
-            //nodeデータを取得する
-            //var target_ = JObject.FromObject(value["member"]).ToObject<List<string[]>>();
-            //targetLen = target_;
-
-            var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
-            targetLen = JObject.FromObject(value["member"]);
-
-            // 全部の行数
-            var row = target.Count;
-
-            for (int i = 0; i < row; i++)
-            {
-                string index = target.ElementAt(i).Key;
-
-                var item = JObject.FromObject(target.ElementAt(i).Value);
-
-                double len = this.GetMemberLength(mc, index, value); // 部材長さ
-
-                string name = item["e"].Type == JTokenType.Null ? "" : element.GetElementName(item["e"].ToString());
-
-                string[] line = new String[7];
-                line[0] = index;
-                line[1] = dataManager.TypeChange(item["ni"]);
-                line[2] = dataManager.TypeChange(item["nj"]);
-                line[3] = dataManager.TypeChange(len, 3);
-                line[4] = dataManager.TypeChange(item["e"]);
-                line[5] = mc.Dimension(dataManager.TypeChange(item["cg"]));
-                line[6] = name;
-                data.Add(line);
-            }
-        }
-
-        */
-
 
         /// <summary>
         /// 部材にの長さを取得する
@@ -150,7 +97,7 @@ namespace PDF_Manager.Printing
         }
 
 
-        public void MemberPDF(PdfDoc mc)
+        public void printPDF(PdfDoc mc)
         {
 
             int bottomCell = mc.bottomCell;

@@ -18,59 +18,103 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class Joint
+    {
+        public string m;   // 部材番号
+        public int xi;
+        public int yi;
+        public int zi;
+        public int xj;
+        public int yj;
+        public int zj;
+    }
+
+
     internal class InputJoint
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
+        private Dictionary<string, List<Joint>> joints = new Dictionary<string, List<Joint>>();
+
+        public InputJoint(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["joint"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = target.ElementAt(i).Key;  // タイプ番号
+                JArray Joi = JArray.FromObject(target.ElementAt(i).Value);
+
+                var _joint = new List<Joint>();
+
+                for (int j = 0; j < Joi.Count; j++)
+                {
+                    JToken item = Joi[j];
+
+                    var jo = new Joint();
+
+                    jo.m = dataManager.TypeChange(item["m"]);
+                    jo.xi = dataManager.parseInt(item["xi"]);
+                    jo.yi = dataManager.parseInt(item["yi"]);
+                    jo.zi = dataManager.parseInt(item["zi"]);
+                    jo.xj = dataManager.parseInt(item["xj"]);
+                    jo.yj = dataManager.parseInt(item["yj"]);
+                    jo.zj = dataManager.parseInt(item["zj"]);
+
+                    _joint.Add(jo);
+
+                }
+                this.joints.Add(key, _joint);
+            }
+
+        }
+
+
+        /*
+        // 集まったデータはすべてここに格納する
         List<string> title = new List<string>();
         List<List<string[]>> data = new List<List<string[]>>();
 
-        public void init(PdfDoc mc, Dictionary<string, object> value_)
+        title = new List<string>();
+        data = new List<List<string[]>>();
+
+
+        for (int i = 0; i < target.Count; i++)
         {
-            value = value_;
-            // elementデータを取得する．
-            var target = JObject.FromObject(value["joint"]).ToObject<Dictionary<string, object>>();
+            JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
 
-            // 集まったデータはすべてここに格納する
-            title = new List<string>();
-            data = new List<List<string[]>>();
-
-
-            for (int i = 0; i < target.Count; i++)
+            // タイトルを入れる．
+            switch (mc.language)
             {
-                JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
-
-                // タイトルを入れる．
-                switch (mc.language)
-                {
-                    case "ja":
-                        title.Add("タイプ" + target.ElementAt(i).Key);
-                        break;
-                    case "en":
-                        title.Add("Type" + target.ElementAt(i).Key);
-                        break;
-                }
-
-                List<string[]> table = new List<string[]>();
-
-                for (int j = 0; j < Elem.Count; j++)
-                {
-                    JToken item = Elem[j];
-
-                    string[] line = new String[7];
-
-                    line[0] = dataManager.TypeChange(item["m"]);
-                    line[1] = mc.Dimension(dataManager.TypeChange(item["xi"]));
-                    line[2] = mc.Dimension(dataManager.TypeChange(item["yi"]));
-                    line[3] = dataManager.TypeChange(item["zi"]);
-                    line[4] = mc.Dimension(dataManager.TypeChange(item["xj"]));
-                    line[5] = mc.Dimension(dataManager.TypeChange(item["yj"]));
-                    line[6] = dataManager.TypeChange(item["zj"]);
-
-                    table.Add(line);
-                }
-                data.Add(table);
+                case "ja":
+                    title.Add("タイプ" + target.ElementAt(i).Key);
+                    break;
+                case "en":
+                    title.Add("Type" + target.ElementAt(i).Key);
+                    break;
             }
+
+            List<string[]> table = new List<string[]>();
+
+            for (int j = 0; j < Elem.Count; j++)
+            {
+                JToken item = Elem[j];
+
+                string[] line = new String[7];
+
+                line[0] = dataManager.TypeChange(item["m"]);
+                line[1] = mc.Dimension(dataManager.TypeChange(item["xi"]));
+                line[2] = mc.Dimension(dataManager.TypeChange(item["yi"]));
+                line[3] = dataManager.TypeChange(item["zi"]);
+                line[4] = mc.Dimension(dataManager.TypeChange(item["xj"]));
+                line[5] = mc.Dimension(dataManager.TypeChange(item["yj"]));
+                line[6] = dataManager.TypeChange(item["zj"]);
+
+                table.Add(line);
+            }
+            data.Add(table);
         }
+        */
 
         public void JointPDF(PdfDoc mc)
         {
