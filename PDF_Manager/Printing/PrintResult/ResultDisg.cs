@@ -1,24 +1,100 @@
 ﻿using Newtonsoft.Json.Linq;
-using PDF_Manager.Printing;
-using PdfSharpCore;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Fonts;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Utils;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Collections;
+using PDF_Manager.Comon;
+using PDF_Manager.Printing.PrintResult;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PDF_Manager.Printing
 {
+    public class Disg
+    {
+        public string n;    // 節点番号
+        public double dx;
+        public double dy;
+        public double dz;
+        public double rx;
+        public double ry;
+        public double rz;
+
+        // 組み合わせで使う
+        public string caseStr = null;
+        public string comb = null;
+    }
+
+
     internal class ResultDisg
     {
+        private Dictionary<string, object> disgs = new Dictionary<string, object>();
+
+        public ResultDisg(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["disg"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = dataManager.TypeChange(target.ElementAt(i).Key);  // ケース番号
+                var val = JToken.FromObject(target.ElementAt(i).Value);
+
+                if(val.Type == JTokenType.Array)
+                {
+                    JArray Dis = (JArray)val;
+                    var _disg = new List<Disg>();
+                    for (int j = 0; j < Dis.Count; j++)
+                    {
+                        JToken item = Dis[j];
+
+                        var ds = new Disg();
+
+                        ds.n = dataManager.TypeChange(item["n"]);
+                        ds.dx = dataManager.parseDouble(item["dx"]);
+                        ds.dy = dataManager.parseDouble(item["dy"]);
+                        ds.dz = dataManager.parseDouble(item["dz"]);
+                        ds.rx = dataManager.parseDouble(item["rx"]);
+                        ds.ry = dataManager.parseDouble(item["ry"]);
+                        ds.rz = dataManager.parseDouble(item["rz"]);
+
+                        _disg.Add(ds);
+
+                    }
+                    this.disgs.Add(key, _disg.ToArray());
+
+                } 
+                else if (val.Type == JTokenType.Object)
+                {   // LL：連行荷重の時
+                    var Dis = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
+                    var _disg = new DisgCombine();
+                    for (int j = 0; j < Dis.Count; j++)
+                    {
+                        var item = JToken.FromObject(Dis.ElementAt(j).Value);
+
+                        var ds = new Disg();
+
+                        ds.n = Dis.ElementAt(j).Key;
+                        ds.dx = dataManager.parseDouble(item["dx"]);
+                        ds.dy = dataManager.parseDouble(item["dy"]);
+                        ds.dz = dataManager.parseDouble(item["dz"]);
+                        ds.rx = dataManager.parseDouble(item["rx"]);
+                        ds.ry = dataManager.parseDouble(item["ry"]);
+                        ds.rz = dataManager.parseDouble(item["rz"]);
+                        ds.caseStr = dataManager.TypeChange(item["case"]);
+                        ds.comb = dataManager.TypeChange(item["comb"]);
+
+                        _disg.dx_max.Add(ds);
+
+                    }
+                    this.disgs.Add(key, _disg);
+
+                }
+
+
+
+            }
+        }
+    }
+}
+/*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         public ResultDisgBasic disgBasic;
         public ResultDisgAnnexing disgAnnex;
@@ -148,3 +224,4 @@ namespace PDF_Manager.Printing
     }
 }
 
+*/

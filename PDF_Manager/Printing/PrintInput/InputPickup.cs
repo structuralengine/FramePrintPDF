@@ -18,8 +18,56 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class PickUp
+    {
+        public string name;
+        public Dictionary<string, double> no = new Dictionary<string, double>();
+    }
+
+
+
     internal class InputPickup
     {
+        private Dictionary<int, PickUp> conbines = new Dictionary<int, PickUp>();
+
+        public InputPickup(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["pickup"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                // conbineNo
+                var key = target.ElementAt(i).Key;
+                int index = dataManager.parseInt(key);
+
+                // define を構成する 基本荷重No群
+                var item = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+
+                var _pickup = new PickUp();
+                for (int j = 0; j < item.Count; j++)
+                {
+                    var id = item.ElementAt(j).Key;  // "C1", "C2"...
+                    var val = (double)item.ElementAt(j).Value;
+
+                    if (id.Contains("name"))
+                    {
+                        _pickup.name = val.ToString();
+                    }
+                    else if (id.Contains("C"))
+                    {
+                        double coef = (double)val;
+                        _pickup.no.Add(id, coef);
+                    }
+                }
+                this.conbines.Add(index, _pickup);
+            }
+        }
+
+    }
+}
+    /*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
@@ -165,3 +213,4 @@ namespace PDF_Manager.Printing
     }
 }
 
+    */

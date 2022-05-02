@@ -22,13 +22,11 @@ namespace PDF_Manager
             else
                 this.printDatas.Add("dimension", 3);
 
-
             // 言語を記憶
             if (data.ContainsKey("language"))
                 this.printDatas.Add("language", data["language"].ToString());
             else
                 this.printDatas.Add("language", "ja");
-
 
             // node
             this.printDatas.Add("node", new InputNode(this, data));
@@ -58,6 +56,7 @@ namespace PDF_Manager
             this.printDatas.Add("combine", new InputCombine(this, data));
             // pickup
             this.printDatas.Add("pickup", new InputPickup(this, data));
+
             // disg
             this.printDatas.Add("disg", new ResultDisg(this, data));
             // disgcombine

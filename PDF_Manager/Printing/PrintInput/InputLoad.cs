@@ -51,7 +51,7 @@ namespace PDF_Manager.Printing
 
     internal class InputLoad
     {
-        private Dictionary<string, Load> loads = new Dictionary<string, Load>();
+        private Dictionary<int, Load> loads = new Dictionary<int, Load>();
         private InputLoadName loadname;
 
         public InputLoad(PrintData pd, Dictionary<string, object> value)
@@ -59,7 +59,64 @@ namespace PDF_Manager.Printing
             this.loadname = (InputLoadName)pd.printDatas["LoadName"];
 
 
+            //nodeデータを取得する
+            var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
 
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = target.ElementAt(i).Key;
+                int index = dataManager.parseInt(key);
+
+                var lo = new Load();
+
+                var item = JObject.FromObject(target.ElementAt(i).Value);
+                
+                if (item.ContainsKey("load_member") )
+                {   // 要素荷重
+                    var _loadMember = item["load_member"];
+                    var LoadM = new List<LoadMember>();
+                    foreach(JToken member in _loadMember)
+                    {
+                        var lm = new LoadMember();
+
+                        lm.m1 = dataManager.TypeChange(member["m1"]);
+                        lm.m2 = dataManager.TypeChange(member["m2"]);
+                        lm.direction = dataManager.TypeChange(member["direction"]);
+                        lm.mark = dataManager.TypeChange(member["mark"]);
+                        lm.L1 = dataManager.TypeChange(member["L1"]);
+                        lm.L2 = dataManager.parseDouble(member["L2"]);
+                        lm.P1 = dataManager.parseDouble(member["P1"]);
+                        lm.P2 = dataManager.parseDouble(member["P2"]);
+
+                        LoadM.Add(lm);
+                    }
+                    lo.load_member = LoadM.ToArray();
+                }
+
+                if (item.ContainsKey("load_node"))
+                {   // 節点荷重
+                    var _loadNode = item["load_node"];
+                    var LoadN = new List<LoadNode>();
+                    foreach (JToken node in _loadNode)
+                    {
+                        var ln = new LoadNode();
+
+                        ln.n = dataManager.TypeChange(node["n"]);
+                        ln.tx = dataManager.parseDouble(node["tx"]);
+                        ln.ty = dataManager.parseDouble(node["ty"]);
+                        ln.tz = dataManager.parseDouble(node["tz"]);
+                        ln.rx = dataManager.parseDouble(node["rx"]);
+                        ln.ry = dataManager.parseDouble(node["ry"]);
+                        ln.rz = dataManager.parseDouble(node["rz"]);
+
+                        LoadN.Add(ln);
+                    }
+                    lo.load_node = LoadN.ToArray();
+                }
+
+                this.loads.Add(index, lo);
+            }
         }
     }
     /*

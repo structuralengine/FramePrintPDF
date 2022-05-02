@@ -1,26 +1,56 @@
 ﻿using Newtonsoft.Json.Linq;
-using PDF_Manager.Printing;
-using PdfSharpCore;
-using PdfSharpCore.Drawing;
-using PdfSharpCore.Fonts;
-using PdfSharpCore.Pdf;
-using PdfSharpCore.Utils;
-using System;
-using System.IO;
-using System.Reflection;
-using System.Runtime.Serialization.Json;
-using System.Text.Json;
-using Newtonsoft.Json;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 using PDF_Manager.Comon;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PDF_Manager.Printing
 {
+    public class Define
+    {
+        public Dictionary<string, int> no = new Dictionary<string, int>();
+    }
+
     internal class InputDefine
     {
-        private Dictionary<string, object> value = new Dictionary<string, object>();
+
+        private Dictionary<int, Define> defines = new Dictionary<int, Define>();
+
+        public InputDefine(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["define"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                // defineNo
+                var key = target.ElementAt(i).Key; 
+                int index = dataManager.parseInt(key);
+
+                // define を構成する 基本荷重No群
+                var item = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+
+                var _define = new Define();
+                for (int j = 0; j < item.Count; j++)
+                {
+                    var id = item.ElementAt(j).Key;  // "C1", "C2"...
+                    if (!id.Contains("C"))
+                        continue;
+
+                    int no = (int)item.ElementAt(j).Value;
+
+                    _define.no.Add(id, no);
+                }
+                this.defines.Add(index, _define);
+            }
+        }
+
+
+
+    }
+
+    /*
+    private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
         public void init(PdfDoc mc, Dictionary<string, object> value_)
@@ -75,7 +105,6 @@ namespace PDF_Manager.Printing
                 data.Add(body);
             }
 
-        }
 
         public void DefinePDF(PdfDoc mc)
         {
@@ -136,5 +165,7 @@ namespace PDF_Manager.Printing
 
         }
     }
+            */
+
 }
 

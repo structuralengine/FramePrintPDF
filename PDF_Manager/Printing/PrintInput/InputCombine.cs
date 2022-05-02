@@ -18,8 +18,54 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class Combine
+    {
+        public string name;
+        public Dictionary<string, double> coef = new Dictionary<string, double>();
+    }
+
     internal class InputCombine
     {
+        private Dictionary<int, Combine> conbines = new Dictionary<int, Combine>();
+
+        public InputCombine(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["combine"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                // conbineNo
+                var key = target.ElementAt(i).Key;
+                int index = dataManager.parseInt(key);
+
+                // define を構成する 基本荷重No群
+                var item = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+
+                var _combine = new Combine();
+                for (int j = 0; j < item.Count; j++)
+                {
+                    var id = item.ElementAt(j).Key;  // "C1", "C2"...
+                    var val = (double)item.ElementAt(j).Value;
+
+                    if (id.Contains("name"))
+                    {
+                        _combine.name = val.ToString();
+                    }
+                    else if (id.Contains("C"))
+                    {
+                        double coef = (double)val;
+                        _combine.coef.Add(id, coef);
+                    }
+                }
+                this.conbines.Add(index, _combine);
+            }
+        }
+
+    }
+}
+    /*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<List<string[]>> data = new List<List<string[]>>();
 
@@ -169,3 +215,4 @@ namespace PDF_Manager.Printing
     }
 }
 
+    */
