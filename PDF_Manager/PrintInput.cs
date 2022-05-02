@@ -7,8 +7,7 @@ using System.Collections.Generic;
 public class PrintInput
 {
     private PdfDoc mc;
-    private PrintData red;
-    //private int bottomCell = 88;
+    private PrintData data;
 
     public PrintInput(string jsonString)
     {
@@ -16,7 +15,7 @@ public class PrintInput
         JObject data = (JObject.Parse(jsonString));
         var value = data.ToObject<Dictionary<string, object>>(); // JObject.FromObject(data).ToObject<Dictionary<string, object>>();
         //　準備のためのclassの呼び出し
-        this.red = new PrintData(value);
+        this.data = new PrintData(value);
     }
 
     /// <summary>
@@ -26,10 +25,10 @@ public class PrintInput
     {
         //  PDF出力のためのclassの呼び出し
         //  整形したデータを送る
-        this.Export(this.red);
+        this.Export(this.data);
 
         // PDFファイルを生成する
-        mc.SavePDF();
+        this.mc.SavePDF();
     }
 
     /// <summary>
@@ -40,10 +39,10 @@ public class PrintInput
     {
         //  PDF出力のためのclassの呼び出し
         //  整形したデータを送る
-        this.Export(this.red);
+        this.Export(this.data);
 
         // PDF を Byte型に変換
-        var b = mc.GetPDFBytes();
+        var b = this.mc.GetPDFBytes();
 
         // Byte型配列をBase64文字列に変換
         string str = Convert.ToBase64String(b);
@@ -58,29 +57,13 @@ public class PrintInput
     /// <param name="red"></param>
     private void Export(PrintData red)
     {
-        //　jsonから取り出した生データを送る
-        object[] class_set = red.Ready(this.value);
-
         // PDF ページを準備する
-        var mc = new PdfDoc();
-
-        for (int i = 0; i < class_set.Length; i++)
-        {
-            if (class_set[i] != null)
-            {
-                mc.name = Enum.GetNames(typeof(class_name))[i];
-                break;
-            }
-        }
-
+        this.mc = new PdfDoc();
 
         // 荷重図
-        if (class_set[(int)class_name.diagramLoad] != null)
+        if (this.data.class_set["diagramLoad"] != null)
         {
-            InputDiagramLoad cls_diagram = (InputDiagramLoad)class_set[(int)class_name.diagramLoad];
-            cls_diagram.DiagramOfLoadPDF(mc, class_set);
-
-
+            InputDiagramLoad.DiagramOfLoadPDF(this.mc, this.data);
             return; // 荷重図の指定があったらその他の出力はしない
         }
 
@@ -88,70 +71,70 @@ public class PrintInput
         if ((InputNode)class_set[(int)class_name.node] != null)
         {
             InputNode cls_node = (InputNode)class_set[(int)class_name.node];
-            cls_node.NodePDF(mc);
+            cls_node.NodePDF(this.mc);
         }
 
         // member
         if ((InputMember)class_set[(int)class_name.member] != null)
         {
             InputMember cls_member = (InputMember)class_set[(int)class_name.member];
-            cls_member.MemberPDF(mc);
+            cls_member.MemberPDF(this.mc);
         }
 
         // element
         if ((InputElement)class_set[(int)class_name.elememt] != null)
         {
             InputElement cls_element = (InputElement)class_set[(int)class_name.elememt];
-            cls_element.ElementPDF(mc);
+            cls_element.ElementPDF(this.mc);
         }
 
         // fixnode
         if ((InputFixNode)class_set[(int)class_name.fix_node] != null)
         {
             InputFixNode cls_fixnode = (InputFixNode)class_set[(int)class_name.fix_node];
-            cls_fixnode.FixNodePDF(mc);
+            cls_fixnode.FixNodePDF(this.mc);
         }
 
         // joint
         if ((InputJoint)class_set[(int)class_name.joint] != null)
         {
             InputJoint cls_joint = (InputJoint)class_set[(int)class_name.joint];
-            cls_joint.JointPDF(mc);
+            cls_joint.JointPDF(this.mc);
         }
 
         // noticepoints
         if ((InputNoticePoints)class_set[(int)class_name.notice_points] != null)
         {
             InputNoticePoints cls_noticepoints = (InputNoticePoints)class_set[(int)class_name.notice_points];
-            cls_noticepoints.NoticePointsPDF(mc);
+            cls_noticepoints.NoticePointsPDF(this.mc);
         }
 
         // fixmember
         if ((InputFixMember)class_set[(int)class_name.fix_member] != null)
         {
             InputFixMember cls_fixmember = (InputFixMember)class_set[(int)class_name.fix_member];
-            cls_fixmember.FixMemberPDF(mc);
+            cls_fixmember.FixMemberPDF(this.mc);
         }
 
         // shell
         if ((InputShell)class_set[(int)class_name.shell] != null)
         {
             InputShell cls_shell = (InputShell)class_set[(int)class_name.shell];
-            cls_shell.ShellPDF(mc);
+            cls_shell.ShellPDF(this.mc);
         }
 
         //loadname
         if ((InputLoadName)class_set[(int)class_name.loadname] != null)
         {
             InputLoadName cls_loadname = (InputLoadName)class_set[(int)class_name.loadname];
-            cls_loadname.LoadNamePDF(mc);
+            cls_loadname.LoadNamePDF(this.mc);
         }
 
         //load
         if ((InputLoad)class_set[(int)class_name.load] != null)
         {
             InputLoad cls_load = (InputLoad)class_set[(int)class_name.load];
-            cls_load.LoadPDF(mc);
+            cls_load.LoadPDF(this.mc);
         }
 
 
@@ -159,84 +142,84 @@ public class PrintInput
         if ((InputDefine)class_set[(int)class_name.define] != null)
         {
             InputDefine cls_define = (InputDefine)class_set[(int)class_name.define];
-            cls_define.DefinePDF(mc);
+            cls_define.DefinePDF(this.mc);
         }
 
         //combine
         if ((InputCombine)class_set[(int)class_name.combine] != null)
         {
             InputCombine cls_combine = (InputCombine)class_set[(int)class_name.combine];
-            cls_combine.CombinePDF(mc);
+            cls_combine.CombinePDF(this.mc);
         }
 
         //pickup
         if ((InputPickup)class_set[(int)class_name.pickup] != null)
         {
             InputPickup cls_pickup = (InputPickup)class_set[(int)class_name.pickup];
-            cls_pickup.PickupPDF(mc);
+            cls_pickup.PickupPDF(this.mc);
         }
 
         //disg
         if ((ResultDisg)class_set[(int)class_name.disg] != null)
         {
             ResultDisg cls_disg = (ResultDisg)class_set[(int)class_name.disg];
-            cls_disg.DisgPDF(mc);
+            cls_disg.DisgPDF(this.mc);
         }
 
         //disgCombine
         if ((ResultDisgAnnexing)class_set[(int)class_name.disgCombine] != null)
         {
             ResultDisgAnnexing cls_disgAnnexing = (ResultDisgAnnexing)class_set[(int)class_name.disgCombine];
-            cls_disgAnnexing.DisgAnnexingPDF(mc, "Combine");
+            cls_disgAnnexing.DisgAnnexingPDF(this.mc, "Combine");
         }
 
         //disgPickup
         if ((ResultDisgAnnexing)class_set[(int)class_name.disgPickup] != null)
         {
             ResultDisgAnnexing cls_disgAnnexing = (ResultDisgAnnexing)class_set[(int)class_name.disgPickup];
-            cls_disgAnnexing.DisgAnnexingPDF(mc, "Pickup");
+            cls_disgAnnexing.DisgAnnexingPDF(this.mc, "Pickup");
         }
 
         //fsec
         if ((ResultFsec)class_set[(int)class_name.fsec] != null)
         {
             ResultFsec cls_fsec = (ResultFsec)class_set[(int)class_name.fsec];
-            cls_fsec.FsecPDF(mc);
+            cls_fsec.FsecPDF(this.mc);
         }
 
         //fsecCombine
         if ((ResultFsecAnnexing)class_set[(int)class_name.fsecCombine] != null)
         {
             ResultFsecAnnexing cls_fsecAnnexing = (ResultFsecAnnexing)class_set[(int)class_name.fsecCombine];
-            cls_fsecAnnexing.FsecAnnexingPDF(mc, "Combine");
+            cls_fsecAnnexing.FsecAnnexingPDF(this.mc, "Combine");
         }
 
         //fsecPickup
         if ((ResultFsecAnnexing)class_set[(int)class_name.fsecPickup] != null)
         {
             ResultFsecAnnexing cls_fsecAnnexing = (ResultFsecAnnexing)class_set[(int)class_name.fsecPickup];
-            cls_fsecAnnexing.FsecAnnexingPDF(mc, "Pickup");
+            cls_fsecAnnexing.FsecAnnexingPDF(this.mc, "Pickup");
         }
 
         //reac
         if ((ResultReac)class_set[(int)class_name.reac] != null)
         {
             ResultReac cls_reac = (ResultReac)class_set[(int)class_name.reac];
-            cls_reac.ReacPDF(mc);
+            cls_reac.ReacPDF(this.mc);
         }
 
         //reacCombine
         if ((ResultReacAnnexing)class_set[(int)class_name.reacCombine] != null)
         {
             ResultReacAnnexing cls_reacAnnexing = (ResultReacAnnexing)class_set[(int)class_name.reacCombine];
-            cls_reacAnnexing.ReacAnnexingPDF(mc, "Combine");
+            cls_reacAnnexing.ReacAnnexingPDF(this.mc, "Combine");
         }
 
         //reacPickup
         if ((ResultReacAnnexing)class_set[(int)class_name.reacPickup] != null)
         {
             ResultReacAnnexing cls_reacAnnexing = (ResultReacAnnexing)class_set[(int)class_name.reacPickup];
-            cls_reacAnnexing.ReacAnnexingPDF(mc, "Pickup");
+            cls_reacAnnexing.ReacAnnexingPDF(this.mc, "Pickup");
         }
     }
 

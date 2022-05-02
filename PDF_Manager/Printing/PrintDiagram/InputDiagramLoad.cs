@@ -9,22 +9,8 @@ namespace PDF_Manager.Printing
 {
     class InputDiagramLoad
     {
-        private PdfDoc mc;
 
-        // 入力データ
-        private InputNode node;
-        private InputMember member;
-        private InputElement element;
-        private InputFixNode fixnode;
-        private InputJoint joint;
-        private InputFixMember fixmember;
-        private InputLoadName loadname;
-        private InputLoad load;
-
-        // ページの設定
-
-
-        public void init(PdfDoc _mc, Dictionary<string, object> value)
+        public InputDiagramLoad( Dictionary<string, object> value)
         {
             this.mc = _mc;
 
@@ -585,8 +571,9 @@ namespace PDF_Manager.Printing
         /// </summary>
         /// <param name="_mc">キャンパス</param>
         /// <param name="class_set">入力データ</param>
-        internal void DiagramOfLoadPDF(PdfDoc _mc, object[] class_set)
+        public static void DiagramOfLoadPDF(PdfDoc _mc, object[] class_set)
         {
+
             // 入力データの取得
             // 節点
             this.node = (InputNode)class_set[(int)class_name.node];
