@@ -20,7 +20,7 @@ namespace PDF_Manager.Printing
 
     internal class InputElement
     {
-        private Dictionary<string, Dictionary<string, Element>> elements = new Dictionary<string, Dictionary<string, Element>>();
+        private Dictionary<int, Dictionary<string, Element>> elements = new Dictionary<int, Dictionary<string, Element>>();
 
         /// <summary>
         /// データを読み込む
@@ -35,7 +35,7 @@ namespace PDF_Manager.Printing
             // データを抽出する
             for (var i = 0; i < target.Count; i++)
             {
-                var key = target.ElementAt(i).Key;
+                var key = dataManager.parseInt(target.ElementAt(i).Key);
                 var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
 
                 var _element = new Dictionary<string, Element>();

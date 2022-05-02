@@ -32,7 +32,7 @@ namespace PDF_Manager.Printing
 
     internal class InputJoint
     {
-        private Dictionary<string, List<Joint>> joints = new Dictionary<string, List<Joint>>();
+        private Dictionary<int, List<Joint>> joints = new Dictionary<int, List<Joint>>();
 
         public InputJoint(PrintData pd, Dictionary<string, object> value)
         {
@@ -42,7 +42,7 @@ namespace PDF_Manager.Printing
             // データを抽出する
             for (var i = 0; i < target.Count; i++)
             {
-                var key = target.ElementAt(i).Key;  // タイプ番号
+                var key = dataManager.parseInt(target.ElementAt(i).Key);  // タイプ番号
                 JArray Joi = JArray.FromObject(target.ElementAt(i).Value);
 
                 var _joint = new List<Joint>();

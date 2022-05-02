@@ -31,8 +31,35 @@ namespace PDF_Manager.Printing
 
     internal class InputLoadName
     {
+        private Dictionary<int, LoadName> loadnames = new Dictionary<int, LoadName>);
 
+        public InputLoadName(PrintData pd, Dictionary<string, object> value)
+        {
+            //nodeデータを取得する
+            var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = target.ElementAt(i).Key;
+                int index = dataManager.parseInt(key);
+                var item = JObject.FromObject(target.ElementAt(i).Value);
+                var ln = new LoadName();
+
+
+                ln.rate = dataManager.parseDouble(item["rate"]);
+                ln.symbol = dataManager.TypeChange(item["symbol"]);
+                ln.name = dataManager.TypeChange(item["name"]);
+                ln.fix_node = dataManager.parseInt(item["fix_node"]);
+                ln.element = dataManager.parseInt(item["element"]);
+                ln.fix_member = dataManager.parseInt(item["fix_member"]);
+                ln.joint = dataManager.parseInt(item["joint"]);
+
+                this.loadnames.Add(index, ln);
+            }
+        }
     }
+
     /*
     private Dictionary<string, object> value = new Dictionary<string, object>();
         public List<string[]> data = new List<string[]>();

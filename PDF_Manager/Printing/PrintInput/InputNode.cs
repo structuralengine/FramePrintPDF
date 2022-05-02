@@ -11,13 +11,6 @@ namespace PDF_Manager.Printing
         public double x;
         public double y;
         public double z;
-
-        public Vector3(double _x, double _y, double _z)
-        {
-            this.x = _x;
-            this.y = _y;
-            this.z = _z;
-        }
     }
 
     internal class InputNode
@@ -39,11 +32,12 @@ namespace PDF_Manager.Printing
             for(var i=0; i< target.Count; i++)
             {
                 var key = target.ElementAt(i).Key;
-                var targetValue = JObject.FromObject(target.ElementAt(i).Value);
-                var x = dataManager.parseDouble(targetValue["x"]);
-                var y = dataManager.parseDouble(targetValue["x"]);
-                var z = dataManager.parseDouble(targetValue["x"]);
-                var pos = new Vector3(x, y, z);
+                var item = JObject.FromObject(target.ElementAt(i).Value);
+
+                var pos = new Vector3();
+                pos.x = dataManager.parseDouble(item["x"]);
+                pos.y = dataManager.parseDouble(item["x"]);
+                pos.z = dataManager.parseDouble(item["x"]);
                 this.nodes.Add(key, pos);
             }
         }

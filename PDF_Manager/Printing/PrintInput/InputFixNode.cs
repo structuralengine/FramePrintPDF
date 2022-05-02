@@ -31,7 +31,7 @@ namespace PDF_Manager.Printing
 
     internal class InputFixNode
     {
-        private Dictionary<string, List<FixNode>> fixnodes = new Dictionary<string, List<FixNode>>();
+        private Dictionary<int, List<FixNode>> fixnodes = new Dictionary<int, List<FixNode>>();
 
         public InputFixNode(PrintData pd, Dictionary<string, object> value)
         {
@@ -41,7 +41,7 @@ namespace PDF_Manager.Printing
             // データを抽出する
             for (var i = 0; i < target.Count; i++)
             {
-                var key = target.ElementAt(i).Key;  // タイプ番号
+                var key = dataManager.parseInt(target.ElementAt(i).Key);  // タイプ番号
                 JArray FixN = JArray.FromObject(target.ElementAt(i).Value);
 
                 var _fixnode = new List<FixNode>();

@@ -18,8 +18,51 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class LoadMember
+    {
+        public string m1;
+        public string m2;
+        public string direction;
+        public string mark;
+
+        public string L1;
+        public double L2;
+        public double P1;
+        public double P2;
+    }
+
+    public class LoadNode
+    {
+        public string n;
+        public double tx;
+        public double ty;
+        public double tz;
+        public double rx;
+        public double ry;
+        public double rz;
+    }
+
+    public class Load
+    {
+        public LoadMember[] load_member;
+        public LoadNode[] load_node;
+    }
+
+
     internal class InputLoad
     {
+        private Dictionary<string, Load> loads = new Dictionary<string, Load>();
+        private InputLoadName loadname;
+
+        public InputLoad(PrintData pd, Dictionary<string, object> value)
+        {
+            this.loadname = (InputLoadName)pd.printDatas["LoadName"];
+
+
+
+        }
+    }
+    /*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<string> title = new List<string>();
         List<List<List<string[]>>> data = new List<List<List<string[]>>>();
@@ -115,7 +158,8 @@ namespace PDF_Manager.Printing
 
                 data.Add(compile);
             }
-        }
+
+        */
 
         public void LoadPDF(PdfDoc mc)
         {
