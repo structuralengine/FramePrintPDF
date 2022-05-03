@@ -93,7 +93,10 @@ namespace PDF_Manager
             this.printDatas.Add(ResultReacPickup.KEY, new ResultReacPickup(data));
 
             // 荷重図
-            this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(data));
+            if (data.ContainsKey(InputDiagramLoad.KEY))
+                this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(data));
+            else
+                this.printDatas.Add(InputDiagramLoad.KEY, null);
 
         }
 

@@ -156,13 +156,20 @@ namespace PDF_Manager.Printing
             // タイトルの印字高さ + 改行高
             double H1 = printManager.FontHeight + printManager.LineSpacing1;
             // 表題の印字高さ + 改行高
-            double H2 = this.header_content.Length * printManager.FontHeight + printManager.LineSpacing2;
+            double H2 = this.header_content.GetLength(0) * printManager.FontHeight + printManager.LineSpacing2;
+            // 1行当りの高さ + 改行高
+            double H3 = printManager.FontHeight + printManager.LineSpacing3;
 
-            // 1ページ目に入る（現在位置から）行数
+            // 2ページ目以降（ページ全体を使ってよい場合）の行数
             double Hx = mc.currentPageSize.Height;
-            Hx -= mc.currentY;
             Hx -= H1;
             Hx -= H2;
+            int rows2 = (int)(Hx / H3); // 切り捨て
+
+            // 1ページ目に入る（現在位置から）行数
+            Hx -= mc.currentY;
+            int rows1 = (int)(Hx / H3); // 切り捨て
+
 
             /*
             // 2ページ目以降（ページ全体を使ってよい場合）の行数
