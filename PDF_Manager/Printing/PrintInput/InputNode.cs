@@ -42,6 +42,7 @@ namespace PDF_Manager.Printing
             }
         }
 
+        /*
         /// <summary>
         /// 印刷する
         /// </summary>
@@ -260,6 +261,8 @@ namespace PDF_Manager.Printing
 
             return node;
         }
+        */
+
     }
 
 }

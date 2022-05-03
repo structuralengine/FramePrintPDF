@@ -44,7 +44,7 @@ namespace PDF_Manager.Printing
         public int[,] body_Xspacing;
         //public string language;
 
-        public PdfDoc()
+        public PdfDoc(PrintData red)
         {
             //　新規ドキュメントの作成
             document = new PdfDocument();

@@ -118,7 +118,8 @@ namespace PDF_Manager.Printing
         }
         */
 
-            public void ShellPDF(PdfDoc mc)
+        /*
+        public void ShellPDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
 
@@ -180,6 +181,7 @@ namespace PDF_Manager.Printing
             }
 
         }
+        */
     }
 }
 

@@ -3,9 +3,10 @@ using PDF_Manager.Comon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 
-namespace PDF_Manager.Printing.PrintResult
+namespace PDF_Manager.Printing
 {
     public class DisgCombine
     {
@@ -21,8 +22,25 @@ namespace PDF_Manager.Printing.PrintResult
         public List<Disg> ry_min = new List<Disg>();
         public List<Disg> rz_max = new List<Disg>();
         public List<Disg> rz_min = new List<Disg>();
-    }
 
+        public void Add(string key, Disg value)
+        {
+            // key と同じ名前の変数を取得する
+            Type type = this.GetType();
+            FieldInfo field = type.GetField(key);
+            if(field == null)
+            {
+                throw new Exception(String.Format("DisgCombineクラスの変数{0} に値{1}を登録しようとしてエラーが発生しました", key, value));
+            }
+            var val = (List<Disg>)field.GetValue(this);
+
+            // 変数に値を追加する
+            val.Add(value);
+
+            // 変数を更新する
+            field.SetValue(this, val);
+        }
+    }
 
     internal class ResultDisgCombine
     {
@@ -50,9 +68,11 @@ namespace PDF_Manager.Printing.PrintResult
         public static DisgCombine getDisgCombine(Dictionary<string, object> Dis)
         {
             var _disg = new DisgCombine();
+
             for (int j = 0; j < Dis.Count; j++)
             {
                 var item = JToken.FromObject(Dis.ElementAt(j).Value);
+                var k = Dis.ElementAt(j).Key;
 
                 var ds = new Disg();
 
@@ -66,7 +86,7 @@ namespace PDF_Manager.Printing.PrintResult
                 ds.caseStr = dataManager.TypeChange(item["case"]);
                 ds.comb = dataManager.TypeChange(item["comb"]);
 
-                _disg.dx_max.Add(ds);
+                _disg.Add(k, ds);
 
             }
             return _disg;

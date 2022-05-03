@@ -22,7 +22,7 @@ namespace PDF_Manager.Printing
         private InputNode node;
         private InputElement element;
 
-        public InputMember(PrintData pd, Dictionary<string, object> value){
+        public InputMember(PrintData pd, Dictionary<string, object> value)
         {
             this.node = (InputNode)pd.printDatas["node"];
             this.element = (InputElement)pd.printDatas["element"];
@@ -45,6 +45,7 @@ namespace PDF_Manager.Printing
             }
         }
 
+        /*
         /// <summary>
         /// 部材にの長さを取得する
         /// </summary>
@@ -95,8 +96,9 @@ namespace PDF_Manager.Printing
             }
             return this.members[No];
         }
+        */
 
-
+        /*
         public void printPDF(PdfDoc mc)
         {
 
@@ -188,6 +190,8 @@ namespace PDF_Manager.Printing
                 }
             }
         }
+        */
+            
     }
 }
 

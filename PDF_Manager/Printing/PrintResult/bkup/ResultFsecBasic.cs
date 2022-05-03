@@ -18,6 +18,7 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    /*
     internal class ResultFsecBasic
     {
         //変位量データの基本形のデータはここに入る
@@ -132,5 +133,7 @@ namespace PDF_Manager.Printing
 
         }
     }
+
+    */
 }
 

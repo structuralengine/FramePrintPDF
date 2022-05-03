@@ -63,6 +63,7 @@ namespace PDF_Manager.Printing
             }
         }
 
+        /*
         /// <summary>
         /// 印刷する
         /// </summary>
@@ -209,7 +210,6 @@ namespace PDF_Manager.Printing
                 }
             }
 
-            /*
             // 全行の取得
             int count = 20;
             for (int i = 0; i < title.Count; i++)
@@ -218,7 +218,6 @@ namespace PDF_Manager.Printing
             }
             // 改ページ判定
             mc.DataCountKeep(count);
-            */
 
             #endregion
 
@@ -293,6 +292,8 @@ namespace PDF_Manager.Printing
             }
             #endregion
         }
+        */
+
 
         /// <summary>
         /// 材料名を取得する

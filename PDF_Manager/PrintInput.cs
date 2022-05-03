@@ -59,6 +59,7 @@ public class PrintInput
         // PDF ページを準備する
         var mc = new PdfDoc(red);
 
+        /*
         // 荷重図
         if (red.printDatas["diagramLoad"] != null)
         {
@@ -92,6 +93,7 @@ public class PrintInput
         mc = ResultReacCombine.ReacAnnexingPDF(mc, red);
         mc = ResultReacPickUp.ReacAnnexingPDF(mc, red);
 
+        */
         return mc;
     }
 

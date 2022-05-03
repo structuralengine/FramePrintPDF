@@ -1,7 +1,6 @@
 ﻿using PDF_Manager.Printing;
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace PDF_Manager
 {
@@ -44,7 +43,6 @@ namespace PDF_Manager
             this.printDatas.Add("fix_member", new InputFixMember(this, data));
             // shell
             this.printDatas.Add("shell", new InputShell(this, data));
-
             // load
             //基本荷重
             this.printDatas.Add("loadname", new InputLoadName(this, data));
@@ -75,6 +73,7 @@ namespace PDF_Manager
             this.printDatas.Add("reacCombine", new ResultReacCombine(this, data));
             // reacPickup
             this.printDatas.Add("reacPickup", new ResultReacPickUp(this, data));
+
             // 荷重図
             this.printDatas.Add("diagramLoad", new InputDiagramLoad(this, data));
 

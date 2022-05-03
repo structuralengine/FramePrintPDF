@@ -18,9 +18,10 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
-    internal class ResultReacBasic
+    /*
+    internal class ResultDisgBasic
     {
-        //反力データの基本形のデータはここに入る
+        //変位量データの基本形のデータはここに入る
         public List<List<string[]>> data = new List<List<string[]>>();
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace PDF_Manager.Printing
         /// </summary>
         /// <param name="mc">PdfDoc</param>
         /// <param name="Elem">case1つぶんのデータ</param>
-        public void ReacBasic(PdfDoc mc, JArray Elem)
+        public void DisgBasic(PdfDoc mc, JArray Elem)
         {
             List<string[]> table = new List<string[]>();
 
@@ -37,22 +38,20 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < Elem.Count; j++)
                 {
                     JToken item = Elem[j];
-
                     string[] line = new String[7];
 
                     line[0] = dataManager.TypeChange(item["id"]);
-                    line[1] = dataManager.TypeChange(item["tx"], 2);
-                    line[2] = dataManager.TypeChange(item["ty"], 2);
-                    line[3] = mc.Dimension(dataManager.TypeChange(item["tz"], 2));
-                    line[4] = mc.Dimension(dataManager.TypeChange(item["mx"], 2));
-                    line[5] = mc.Dimension(dataManager.TypeChange(item["my"], 2));
-                    line[6] = dataManager.TypeChange(item["mz"], 2);
+                    line[1] = dataManager.TypeChange(item["dx"], 4);
+                    line[2] = dataManager.TypeChange(item["dy"], 4);
+                    line[3] = dataManager.TypeChange(item["dz"], 4);
+                    line[4] = dataManager.TypeChange(item["rx"], 4);
+                    line[5] = dataManager.TypeChange(item["ry"], 4);
+                    line[6] = dataManager.TypeChange(item["rz"], 4);
 
                     table.Add(line);
                 }
                 data.Add(table);
             }
-
             else if (mc.dimension == 2)
             {
                 int bottomCell = mc.bottomCell * 2;
@@ -75,15 +74,15 @@ namespace PDF_Manager.Printing
 
                             string[] line = new String[8];
                             line[0] = dataManager.TypeChange(targetValue_l["id"]);
-                            line[1] = dataManager.TypeChange(targetValue_l["tx"], 2);
-                            line[2] = dataManager.TypeChange(targetValue_l["ty"], 2);
-                            line[3] = dataManager.TypeChange(targetValue_l["mz"], 2);
+                            line[1] = dataManager.TypeChange(targetValue_l["dx"], 4);
+                            line[2] = dataManager.TypeChange(targetValue_l["dy"], 4);
+                            line[3] = dataManager.TypeChange(targetValue_l["rz"], 4);
 
                             var targetValue_r = Elem[k];
                             line[4] = dataManager.TypeChange(targetValue_r["id"]);
-                            line[5] = dataManager.TypeChange(targetValue_r["tx"], 2);
-                            line[6] = dataManager.TypeChange(targetValue_r["ty"], 2);
-                            line[7] = dataManager.TypeChange(targetValue_r["mz"], 2);
+                            line[5] = dataManager.TypeChange(targetValue_r["dx"], 4);
+                            line[6] = dataManager.TypeChange(targetValue_r["dy"], 4);
+                            line[7] = dataManager.TypeChange(targetValue_r["rz"], 4);
                             body.Add(line);
                         }
                         data.Add(body);
@@ -106,18 +105,18 @@ namespace PDF_Manager.Printing
 
                             string[] line = new String[8];
                             line[0] = dataManager.TypeChange(targetValue_l["id"]);
-                            line[1] = dataManager.TypeChange(targetValue_l["tx"], 2);
-                            line[2] = dataManager.TypeChange(targetValue_l["ty"], 2);
-                            line[3] = dataManager.TypeChange(targetValue_l["mz"], 2);
+                            line[1] = dataManager.TypeChange(targetValue_l["dx"], 4);
+                            line[2] = dataManager.TypeChange(targetValue_l["dy"], 4);
+                            line[3] = dataManager.TypeChange(targetValue_l["rz"], 4);
 
                             try
                             {
                                 //　各行のデータを取得する（右段)
                                 var targetValue_r = Elem[k];
                                 line[4] = dataManager.TypeChange(targetValue_r["id"]);
-                                line[5] = dataManager.TypeChange(targetValue_r["tx"], 2);
-                                line[6] = dataManager.TypeChange(targetValue_r["ty"], 2);
-                                line[7] = dataManager.TypeChange(targetValue_r["mz"], 2);
+                                line[5] = dataManager.TypeChange(targetValue_r["dx"], 4);
+                                line[6] = dataManager.TypeChange(targetValue_r["dy"], 4);
+                                line[7] = dataManager.TypeChange(targetValue_r["rz"], 4);
                                 body.Add(line);
                             }
                             catch
@@ -137,30 +136,63 @@ namespace PDF_Manager.Printing
         }
 
         /// <summary>
-        ///　反力データの基本形PDF書き込み
+        ///　変位データの基本形PDF書き込み
         /// </summary>
         /// <param name="mc">PdfDoc</param>
         /// <param name="LL">LLがList何番目のデータか</param>
-        public void ReacBasicPDF(PdfDoc mc, int LL = 0)
-        {
-            //　ヘッダー
+        public void DisgBasicPDF(PdfDoc mc, int LL = 0)
+        {   //　ヘッダー
             string[,] header_content3D = {
-                { "節点", "x方向の", "y方向の", "z方向の", "x軸回りの", "y軸回りの","z軸周りの" },
-                { "No", "支点反力", "支点反力", "支点反力", "回転反力", "回転反力","回転反力" },
-                { "",  "(kN)", "(kN)", "(kN)", "(kN・m)", "(kN・m)", "(kN・m)" },
+                { "節点", "X方向の", "Y方向の", "Z方向の", "X軸回りの", "Y軸回りの", "Z軸回りの" },
+                { "No", "移動量", "移動量", "移動量", "回転量", "回転量", "回転量" },
+                { "", "(mm)", "(mm)", "(mm)", "(mmrad)", "(mmrad)", "(mmrad)" },
             };
+
             string[,] header_content2D = {
-                { "節点", "x方向の", "y方向の", "回転", "節点", "x方向の","y方向の","回転", },
-                { "No", "支点反力", "支点反力", "拘束力", "","支点反力", "支点反力","拘束力" },
-                { "",  "(kN)", "(kN)", "(kN・m)", "","(kN)",  "(kN)", "(kN・m)" },
+                 { "節点", "X方向の", "Y方向の", "", "節点", "X方向の", "Y方向の", "" },
+                { "No", "移動量", "移動量", "回転量", "No", "移動量", "移動量", "回転量" },
+                { "", "(mm)", "(mm)", "(mmrad)", "","(mmrad)", "(mmrad)", "(mmrad)" },
             };
+
+            switch (mc.language)
+            {
+                case "en":
+                    header_content3D[0, 0] = "Node";
+                    header_content3D[0, 1] = "X";
+                    header_content3D[0, 2] = "Y";
+                    header_content3D[0, 3] = "Z";
+                    header_content3D[0, 4] = "X";
+                    header_content3D[0, 5] = "Y";
+                    header_content3D[0, 6] = "Z";
+                    header_content3D[0, 1] = "Displacement";
+                    header_content3D[0, 2] = "Displacement";
+                    header_content3D[0, 3] = "Displacement";
+                    header_content3D[0, 4] = "Rotation";
+                    header_content3D[0, 5] = "Rotation";
+                    header_content3D[0, 6] = "Rotation";
+
+                    header_content2D[0, 0] = "Node";
+                    header_content2D[0, 1] = "X";
+                    header_content2D[0, 2] = "Y";
+                    header_content2D[0, 4] = "Node";
+                    header_content2D[0, 5] = "X";
+                    header_content2D[0, 6] = "Y";
+                    header_content2D[0, 1] = "Displacement";
+                    header_content2D[0, 2] = "Displacement";
+                    header_content2D[0, 3] = "Rotation";
+                    header_content2D[0, 5] = "Displacement";
+                    header_content2D[0, 6] = "Displacement";
+                    header_content2D[0, 7] = "Rotation";
+                    break;
+            }
 
             // ヘッダーのx方向の余白
             int[,] header_Xspacing3D = {
-                { 10, 70, 140, 210, 280, 350, 420 },
-                { 10, 70, 140, 210, 280, 350, 420 },
-                { 10, 70, 140, 210, 280, 350, 420 },
+                { 10, 65, 130, 195, 260, 325, 390 },
+                { 10, 65, 130, 195, 260, 325, 390 },
+                { 10, 65, 130, 195, 260, 325, 390 },
             };
+
             int[,] header_Xspacing2D = {
                 { 10, 60, 120, 180, 250, 300, 360,420 },
                 { 10, 60, 120, 180, 250, 300, 360,420 },
@@ -169,10 +201,11 @@ namespace PDF_Manager.Printing
 
             // ボディーのx方向の余白　-1
             int[,] body_Xspacing3D = {
-                { 17, 85, 155, 225, 295, 365,435 }
+                { 17, 85, 150, 215, 280, 345,410 }
             };
+
             int[,] body_Xspacing2D = {
-                { 17, 75, 135, 195, 257,315,375,435 }
+                { 17, 80, 140, 200, 257,320,380,440 }
             };
 
             string[,] header_content = mc.dimension == 3 ? header_content3D : header_content2D;
@@ -187,5 +220,6 @@ namespace PDF_Manager.Printing
 
         }
     }
+    */
 }
 

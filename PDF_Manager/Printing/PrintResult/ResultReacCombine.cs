@@ -1,9 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
-namespace PDF_Manager.Printing.PrintResult
+namespace PDF_Manager.Printing
 {
     public class ReacCombine
     {
@@ -19,6 +21,26 @@ namespace PDF_Manager.Printing.PrintResult
         public List<Reac> my_min = new List<Reac>();
         public List<Reac> mz_max = new List<Reac>();
         public List<Reac> mz_min = new List<Reac>();
+
+
+        public void Add(string key, Reac value)
+        {
+            // key と同じ名前の変数を取得する
+            Type type = this.GetType();
+            FieldInfo field = type.GetField(key);
+            if (field == null)
+            {
+                throw new Exception(String.Format("ReacCombineクラスの変数{0} に値{1}を登録しようとしてエラーが発生しました", key, value));
+            }
+            var val = (List<Reac>)field.GetValue(this);
+
+            // 変数に値を追加する
+            val.Add(value);
+
+            // 変数を更新する
+            field.SetValue(this, val);
+        }
+
     }
 
 
@@ -38,34 +60,34 @@ namespace PDF_Manager.Printing.PrintResult
                 var No = dataManager.TypeChange(target.ElementAt(i).Key);  // ケース番号
                 var val = JToken.FromObject(target.ElementAt(i).Value);
 
-                var Dis = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
-                var _reac = ResultReacCombine.getReacCombine(Dis);
+                var Rec = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
+                var _reac = ResultReacCombine.getReacCombine(Rec);
 
                 this.reacs.Add(No, _reac);
             }
         }
 
-        public static ReacCombine getReacCombine(Dictionary<string, object> Dis)
+        public static ReacCombine getReacCombine(Dictionary<string, object> Rec)
         {
             var _reac = new ReacCombine();
-            for (int j = 0; j < Dis.Count; j++)
+            for (int j = 0; j < Rec.Count; j++)
             {
-                var item = JToken.FromObject(Dis.ElementAt(j).Value);
-                var k = Dis.ElementAt(j).Key;
+                var item = JToken.FromObject(Rec.ElementAt(j).Value);
+                var k = Rec.ElementAt(j).Key;
 
-                var ds = new Reac();
+                var re = new Reac();
 
-                ds.n = Dis.ElementAt(j).Key;
-                ds.tx = dataManager.parseDouble(item["tx"]);
-                ds.ty = dataManager.parseDouble(item["ty"]);
-                ds.tz = dataManager.parseDouble(item["tz"]);
-                ds.mx = dataManager.parseDouble(item["mx"]);
-                ds.my = dataManager.parseDouble(item["my"]);
-                ds.mz = dataManager.parseDouble(item["mz"]);
-                ds.caseStr = dataManager.TypeChange(item["case"]);
-                ds.comb = dataManager.TypeChange(item["comb"]);
+                re.n = Rec.ElementAt(j).Key;
+                re.tx = dataManager.parseDouble(item["tx"]);
+                re.ty = dataManager.parseDouble(item["ty"]);
+                re.tz = dataManager.parseDouble(item["tz"]);
+                re.mx = dataManager.parseDouble(item["mx"]);
+                re.my = dataManager.parseDouble(item["my"]);
+                re.mz = dataManager.parseDouble(item["mz"]);
+                re.caseStr = dataManager.TypeChange(item["case"]);
+                re.comb = dataManager.TypeChange(item["comb"]);
 
-                _reac[k].Add(ds);
+                _reac.Add(k, re);
 
             }
             return _reac;

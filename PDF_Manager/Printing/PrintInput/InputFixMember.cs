@@ -197,7 +197,7 @@ namespace PDF_Manager.Printing
                 }
             }
                 */
-
+        /*
         public void FixMemberPDF(PdfDoc mc)
         {
             // 全行の取得
@@ -311,6 +311,7 @@ namespace PDF_Manager.Printing
             }
 
         }
+        */
     }
 
 }

@@ -18,6 +18,7 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    /*
     internal class ResultFsecAnnexing
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
@@ -319,6 +320,9 @@ namespace PDF_Manager.Printing
             //mc.PrintResultAnnexing(title, type, data, header_content, header_Xspacing, body_Xspacing,6);
 
         }
+    
     }
+
+    */
 }
 

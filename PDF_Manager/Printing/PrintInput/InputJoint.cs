@@ -115,7 +115,7 @@ namespace PDF_Manager.Printing
             data.Add(table);
         }
         */
-
+        /*
         public void JointPDF(PdfDoc mc)
         {
             // 全行の取得
@@ -214,6 +214,7 @@ namespace PDF_Manager.Printing
             }
 
         }
+        */
     }
 
 }

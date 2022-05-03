@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
-using PDF_Manager.Printing.PrintResult;
+using PDF_Manager.Printing;
 using System.Collections.Generic;
 using System.Linq;
 

@@ -18,6 +18,7 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    /*
     internal class ResultDisgAnnexing
     {
         private Dictionary<string, object> value = new Dictionary<string, object>();
@@ -280,5 +281,7 @@ namespace PDF_Manager.Printing
 
         }
     }
+    
+    */
 }
 

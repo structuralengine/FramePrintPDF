@@ -20,7 +20,7 @@ using Newtonsoft.Json;
 
 namespace PDF_Manager.Printing
 {
-    internal class Text : PdfDoc
+    internal class Text
     {
         static public void PrtText(PdfDoc mc, string str)
         {

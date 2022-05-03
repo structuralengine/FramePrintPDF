@@ -9,11 +9,8 @@ namespace PDF_Manager.Printing
 {
     class InputDiagramLoad
     {
-
-        public InputDiagramLoad( Dictionary<string, object> value)
+        public InputDiagramLoad(PrintData pd, Dictionary<string, object> value) 
         {
-            this.mc = _mc;
-
             //荷重図の設定データを取得する
             var target = JObject.FromObject(value["diagramLoad"]).ToObject<Dictionary<string, object>>();
 
@@ -34,8 +31,6 @@ namespace PDF_Manager.Printing
             // 文字サイズ
             double fontSize = target.ContainsKey("fontSize") ? (double)target["fontSize"] : 9;
 
-            //
-            this.mc.xpen = new XPen(XBrushes.Black, 1);
 
             #region
             /* 
@@ -563,9 +558,9 @@ namespace PDF_Manager.Printing
             #endregion
 
 
-
         }
 
+        /*
         /// <summary>
         /// 荷重図の作成
         /// </summary>
@@ -608,6 +603,6 @@ namespace PDF_Manager.Printing
             Shape.Drawcircle(this.mc, p, z);
         }
 
-
+        */
     }
 }

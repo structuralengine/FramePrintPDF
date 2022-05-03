@@ -94,7 +94,7 @@ namespace PDF_Manager.Printing
                 data.Add(body);
             }
             */
-
+        /*
         public void NoticePointsPDF(PdfDoc mc)
         {
             int bottomCell = mc.bottomCell;
@@ -157,6 +157,7 @@ namespace PDF_Manager.Printing
             }
 
         }
+        */
     }
 }
 

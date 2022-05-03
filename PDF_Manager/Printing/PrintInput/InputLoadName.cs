@@ -31,7 +31,7 @@ namespace PDF_Manager.Printing
 
     internal class InputLoadName
     {
-        private Dictionary<int, LoadName> loadnames = new Dictionary<int, LoadName>);
+        private Dictionary<int, LoadName> loadnames = new Dictionary<int, LoadName>();
 
         public InputLoadName(PrintData pd, Dictionary<string, object> value)
         {

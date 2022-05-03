@@ -14,11 +14,85 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+
+    public class Fsec
+    {
+        public string m;    // 要素番号
+        public string n;    // 節点番号
+        public double l;    // 着目点距離
+        public double fx;
+        public double fy;
+        public double fz;
+        public double mx;
+        public double my;
+        public double mz;
+
+        // 組み合わせで使う
+        public string caseStr = null;
+        public string comb = null;
+    }
+
+
     internal class ResultFsec
     {
+
+        private Dictionary<string, object> fsecs = new Dictionary<string, object>();
+
+        public ResultFsec(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["fsec"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = dataManager.TypeChange(target.ElementAt(i).Key);  // ケース番号
+                var val = JToken.FromObject(target.ElementAt(i).Value);
+
+                if (val.Type == JTokenType.Array)
+                {
+                    JArray Fsc = (JArray)val;
+                    var _fsec = new List<Fsec>();
+                    for (int j = 0; j < Fsc.Count; j++)
+                    {
+                        JToken item = Fsc[j];
+
+                        var fs = new Fsec();
+
+                        fs.n = dataManager.TypeChange(item["n"]);
+                        fs.m = dataManager.TypeChange(item["m"]);
+                        fs.l = dataManager.parseDouble(item["m"]);
+                        fs.fx = dataManager.parseDouble(item["fx"]);
+                        fs.fy = dataManager.parseDouble(item["fy"]);
+                        fs.fz = dataManager.parseDouble(item["fz"]);
+                        fs.mx = dataManager.parseDouble(item["mx"]);
+                        fs.my = dataManager.parseDouble(item["my"]);
+                        fs.mz = dataManager.parseDouble(item["mz"]);
+
+                        _fsec.Add(fs);
+
+                    }
+                    this.fsecs.Add(key, _fsec);
+
+                }
+                else if (val.Type == JTokenType.Object)
+                {   // LL：連行荷重の時
+                    var Fsc = ((JObject)val).ToObject<Dictionary<string, object>>();
+                    var _fsec = ResultFsecCombine.getFsecCombine(Fsc);
+                    this.fsecs.Add(key, _fsec);
+                }
+
+            }
+        }
+
+
+    }
+}
+/*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         public ResultFsecBasic fsecBasic;
         public ResultFsecAnnexing fsecAnnex;
@@ -180,3 +254,4 @@ namespace PDF_Manager.Printing
     }
 }
 
+*/

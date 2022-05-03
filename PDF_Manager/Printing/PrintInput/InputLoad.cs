@@ -118,7 +118,7 @@ namespace PDF_Manager.Printing
                 this.loads.Add(index, lo);
             }
         }
-    }
+
     /*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         List<string> title = new List<string>();
@@ -218,6 +218,7 @@ namespace PDF_Manager.Printing
 
         */
 
+        /*
         public void LoadPDF(PdfDoc mc)
         {
             // 全行の取得
@@ -383,5 +384,7 @@ namespace PDF_Manager.Printing
 
             }
         }
+      */      
     }
+
 }
