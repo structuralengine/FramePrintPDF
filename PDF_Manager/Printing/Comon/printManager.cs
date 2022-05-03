@@ -1,6 +1,7 @@
 ﻿using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 
 namespace PDF_Manager.Printing.Comon
@@ -46,6 +47,41 @@ namespace PDF_Manager.Printing.Comon
         /// 小さい（テーブル内などの）改行高さ
         /// </summary>
         public static double LineSpacing3 = printManager.FontHeight;
+
+
+        // 数値を文字列に変換する
+        public static string toString(object data, int round = 0, string style = null)
+        {
+            if (data == null)
+                return "";
+
+            string result = data.ToString();
+
+            double tmp;
+            if(double.TryParse(result, out tmp))
+            {   // 数値の場合 四捨五入等の処理を行う
+                if (double.IsNaN(tmp))
+                {
+                    result = "";
+                }
+                else if (style == null)
+                {
+                    var digit = "F" + round.ToString();
+                    result = Double.IsNaN(Math.Round(tmp, round, MidpointRounding.AwayFromZero)) ? "" : tmp.ToString(digit);
+                    if (StringInfo.ParseCombiningCharacters(result).Length > round + 5)
+                    {
+                        result = tmp.ToString("E2", CultureInfo.CreateSpecificCulture("en-US"));
+                    }
+                }
+                else if (style == "E")
+                {
+                    result = Double.IsNaN(Math.Round(tmp, round, MidpointRounding.AwayFromZero)) ? "" : tmp.ToString("E2", CultureInfo.CreateSpecificCulture("en-US"));
+                }
+            } 
+
+            return result;
+        }
+
 
 
     }
