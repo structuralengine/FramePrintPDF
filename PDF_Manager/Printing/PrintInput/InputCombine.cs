@@ -29,7 +29,7 @@ namespace PDF_Manager.Printing
         public const string KEY = "combine";
         private Dictionary<int, Combine> conbines = new Dictionary<int, Combine>();
 
-        public InputCombine(PrintData pd, Dictionary<string, object> value)
+        public InputCombine(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

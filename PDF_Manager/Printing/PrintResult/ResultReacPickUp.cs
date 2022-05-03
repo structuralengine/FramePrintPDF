@@ -8,7 +8,7 @@ namespace PDF_Manager.Printing
     {
         public new const string KEY = "reacPickUp";
 
-        public ResultReacPickUp(PrintData pd, Dictionary<string, object> value) : base(pd, value, ResultReacPickUp.KEY)
+        public ResultReacPickUp(Dictionary<string, object> value) : base(value, ResultReacPickUp.KEY)
         {
 
         }

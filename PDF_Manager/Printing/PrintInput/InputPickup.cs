@@ -32,7 +32,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<int, PickUp> conbines = new Dictionary<int, PickUp>();
 
-        public InputPickup(PrintData pd, Dictionary<string, object> value)
+        public InputPickup(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using PDF_Manager.Comon;
 using PDF_Manager.Printing.PrintDiagram;
 using PdfSharpCore.Drawing;
 using System;
@@ -11,11 +12,10 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "diagramLoad";
 
-        public InputDiagramLoad(PrintData pd, Dictionary<string, object> value) 
+        public InputDiagramLoad(Dictionary<string, object> value) 
         {
             if (!value.ContainsKey(KEY))
                 return;
-
 
             //荷重図の設定データを取得する
             var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
@@ -27,12 +27,12 @@ namespace PDF_Manager.Printing
             string pageOrientation = target.ContainsKey("pageOrientation") ? (string)target["pageOrientation"] : "Vertical";   // Horizontal
 
             // 軸線スケール
-            double scaleX = target.ContainsKey("scaleX") ? (double)target["scaleX"] : double.NaN;
-            double scaleY = target.ContainsKey("scaleY") ? (double)target["scaleY"] : double.NaN;
+            double scaleX = dataManager.parseDouble(target, "scaleX");
+            double scaleY = dataManager.parseDouble(target, "scaleY"); 
 
             // 位置補正
-            double posX = target.ContainsKey("scaleX") ? (double)target["scaleX"] : double.NaN;
-            double posY = target.ContainsKey("scaleY") ? (double)target["scaleY"] : double.NaN;
+            double posX = dataManager.parseDouble(target, "posX");
+            double posY = dataManager.parseDouble(target, "posY");
 
             // 文字サイズ
             double fontSize = target.ContainsKey("fontSize") ? (double)target["fontSize"] : 9;

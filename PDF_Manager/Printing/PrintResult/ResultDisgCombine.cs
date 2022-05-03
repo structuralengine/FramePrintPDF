@@ -48,7 +48,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, DisgCombine> disgs = new Dictionary<string, DisgCombine>();
 
-        public ResultDisgCombine(PrintData pd, Dictionary<string, object> value, string key = ResultDisgCombine.KEY)
+        public ResultDisgCombine(Dictionary<string, object> value, string key = ResultDisgCombine.KEY)
         {
             if (!value.ContainsKey(KEY))
                 return;

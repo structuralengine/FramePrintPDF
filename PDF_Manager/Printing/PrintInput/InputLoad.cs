@@ -56,14 +56,12 @@ namespace PDF_Manager.Printing
         private Dictionary<int, Load> loads = new Dictionary<int, Load>();
         private InputLoadName loadname;
 
-        public InputLoad(PrintData pd, Dictionary<string, object> value)
+        public InputLoad(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;
 
-            this.loadname = (InputLoadName)pd.printDatas[InputLoadName.KEY];
-
-            //nodeデータを取得する
+            // loadデータを取得する
             var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する

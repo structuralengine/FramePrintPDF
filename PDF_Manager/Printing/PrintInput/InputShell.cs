@@ -31,17 +31,11 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, Shell> shells = new Dictionary<string, Shell>();
 
-        private InputNode node;
-        private InputElement element;
 
-        public InputShell(PrintData pd, Dictionary<string, object> value)
+        public InputShell( Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;
-
-
-            this.node = (InputNode)pd.printDatas[InputNode.KEY];
-            this.element = (InputElement)pd.printDatas[InputElement.KEY];
 
             // memberデータを取得する
             var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();

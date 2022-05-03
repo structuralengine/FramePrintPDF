@@ -36,7 +36,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<int, List<Joint>> joints = new Dictionary<int, List<Joint>>();
 
-        public InputJoint(PrintData pd, Dictionary<string, object> value)
+        public InputJoint(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

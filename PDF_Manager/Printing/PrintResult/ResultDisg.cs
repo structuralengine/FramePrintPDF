@@ -28,7 +28,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, object> disgs = new Dictionary<string, object>();
 
-        public ResultDisg(PrintData pd, Dictionary<string, object> value)
+        public ResultDisg(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

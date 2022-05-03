@@ -50,7 +50,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, ReacCombine> reacs = new Dictionary<string, ReacCombine>();
 
-        public ResultReacCombine(PrintData pd, Dictionary<string, object> value, string key = ResultReacCombine.KEY)
+        public ResultReacCombine(Dictionary<string, object> value, string key = ResultReacCombine.KEY)
         {
             if (!value.ContainsKey(KEY))
                 return;

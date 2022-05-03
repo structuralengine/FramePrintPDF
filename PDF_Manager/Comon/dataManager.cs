@@ -68,7 +68,21 @@ namespace PDF_Manager.Comon
 
             return result;
         }
+        static public double parseDouble(object data)
+        {
+            JToken a = JToken.FromObject(data);
+            return dataManager.parseDouble(a);
 
+        }
+        static public double parseDouble(Dictionary<string,object> dict, string key)
+        {
+            if (dict.ContainsKey("key"))
+            {
+                object data = dict[key];
+                return dataManager.parseDouble(data);
+            }
+            return double.NaN;
+        }
         /// <summary>
         /// int型に変換する
         /// </summary>

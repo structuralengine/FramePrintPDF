@@ -29,7 +29,7 @@ namespace PDF_Manager.Printing
         /// </summary>
         /// <param name="dataManager"></param>
         /// <param name="value"></param>
-        public InputElement(PrintData pd, Dictionary<string, object> value)
+        public InputElement(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

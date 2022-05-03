@@ -40,7 +40,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, object> reacs = new Dictionary<string, object>();
 
-        public ResultReac(PrintData pd, Dictionary<string, object> value)
+        public ResultReac(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

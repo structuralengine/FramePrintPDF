@@ -43,7 +43,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, object> fsecs = new Dictionary<string, object>();
 
-        public ResultFsec(PrintData pd, Dictionary<string, object> value)
+        public ResultFsec(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

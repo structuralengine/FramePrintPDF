@@ -21,16 +21,11 @@ namespace PDF_Manager.Printing
         public const string KEY = "member";
 
         private Dictionary<string, Member> members = new Dictionary<string, Member>();
-        private InputNode node;
-        private InputElement element;
 
-        public InputMember(PrintData pd, Dictionary<string, object> value)
+        public InputMember(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;
-
-            this.node = (InputNode)pd.printDatas[InputNode.KEY];
-            this.element = (InputElement)pd.printDatas[InputElement.KEY];
 
             // memberデータを取得する
             var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
@@ -45,7 +40,7 @@ namespace PDF_Manager.Printing
                 m.ni = dataManager.TypeChange(item["ni"]);
                 m.nj = dataManager.TypeChange(item["nj"]);
                 m.e = dataManager.TypeChange(item["e"]);
-                m.cg = dataManager.parseInt(item["cg"]);
+                m.cg = dataManager.parseDouble(item["cg"]);
                 this.members.Add(key, m);
             }
         }

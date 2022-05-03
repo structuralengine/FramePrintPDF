@@ -24,7 +24,7 @@ namespace PDF_Manager.Printing
         /// </summary>
         /// <param name="dataManager"></param>
         /// <param name="value"></param>
-        public InputNode(PrintData pd, Dictionary<string, object> value)
+        public InputNode(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;
@@ -40,8 +40,8 @@ namespace PDF_Manager.Printing
 
                 var pos = new Vector3();
                 pos.x = dataManager.parseDouble(item["x"]);
-                pos.y = dataManager.parseDouble(item["x"]);
-                pos.z = dataManager.parseDouble(item["x"]);
+                pos.y = dataManager.parseDouble(item["y"]);
+                pos.z = dataManager.parseDouble(item["z"]);
                 this.nodes.Add(key, pos);
             }
         }

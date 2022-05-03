@@ -28,54 +28,54 @@ namespace PDF_Manager
                 this.printDatas.Add("language", "ja");
 
             // node
-            this.printDatas.Add(InputNode.KEY, new InputNode(this, data));
+            this.printDatas.Add(InputNode.KEY, new InputNode(data));
             // element
-            this.printDatas.Add(InputElement.KEY, new InputElement(this, data));
+            this.printDatas.Add(InputElement.KEY, new InputElement(data));
             // member
-            this.printDatas.Add(InputMember.KEY, new InputMember(this, data));
+            this.printDatas.Add(InputMember.KEY, new InputMember(data));
             // fixnode
-            this.printDatas.Add(InputFixNode.KEY, new InputFixNode(this, data));
+            this.printDatas.Add(InputFixNode.KEY, new InputFixNode(data));
             // joint
-            this.printDatas.Add(InputJoint.KEY, new InputJoint(this, data));
+            this.printDatas.Add(InputJoint.KEY, new InputJoint(data));
             // notice_points
-            this.printDatas.Add(InputNoticePoints.KEY, new InputNoticePoints(this, data));
+            this.printDatas.Add(InputNoticePoints.KEY, new InputNoticePoints(data));
             // fixmember
-            this.printDatas.Add(InputFixMember.KEY, new InputFixMember(this, data));
+            this.printDatas.Add(InputFixMember.KEY, new InputFixMember(data));
             // shell
-            this.printDatas.Add(InputShell.KEY, new InputShell(this, data));
+            this.printDatas.Add(InputShell.KEY, new InputShell(data));
             // load
             //基本荷重
-            this.printDatas.Add(InputLoadName.KEY, new InputLoadName(this, data));
+            this.printDatas.Add(InputLoadName.KEY, new InputLoadName(data));
             //実荷重
-            this.printDatas.Add(InputLoad.KEY, new InputLoad(this, data));
+            this.printDatas.Add(InputLoad.KEY, new InputLoad(data));
             // define
-            this.printDatas.Add(InputDefine.KEY, new InputDefine(this, data));
+            this.printDatas.Add(InputDefine.KEY, new InputDefine(data));
             // combine 
-            this.printDatas.Add(InputCombine.KEY, new InputCombine(this, data));
+            this.printDatas.Add(InputCombine.KEY, new InputCombine(data));
             // pickup
-            this.printDatas.Add(InputPickup.KEY, new InputPickup(this, data));
+            this.printDatas.Add(InputPickup.KEY, new InputPickup(data));
 
             // disg
-            this.printDatas.Add(ResultDisg.KEY, new ResultDisg(this, data));
+            this.printDatas.Add(ResultDisg.KEY, new ResultDisg(data));
             // disgcombine
-            this.printDatas.Add(ResultDisgCombine.KEY, new ResultDisgCombine(this, data));
+            this.printDatas.Add(ResultDisgCombine.KEY, new ResultDisgCombine(data));
             // disgPickup
-            this.printDatas.Add(ResultDisgPickUp.KEY, new ResultDisgPickUp(this, data));
+            this.printDatas.Add(ResultDisgPickUp.KEY, new ResultDisgPickUp(data));
             // fsec
-            this.printDatas.Add(ResultFsec.KEY, new ResultFsec(this, data));
+            this.printDatas.Add(ResultFsec.KEY, new ResultFsec(data));
             // fseccombine
-            this.printDatas.Add(ResultFsecCombine.KEY, new ResultFsecCombine(this, data));
+            this.printDatas.Add(ResultFsecCombine.KEY, new ResultFsecCombine(data));
             // fsecPickup
-            this.printDatas.Add(ResultFsecPickUp.KEY, new ResultFsecPickUp(this, data));
+            this.printDatas.Add(ResultFsecPickUp.KEY, new ResultFsecPickUp(data));
             // reac
-            this.printDatas.Add(ResultReac.KEY, new ResultReac(this, data));
+            this.printDatas.Add(ResultReac.KEY, new ResultReac(data));
             // reaccombine
-            this.printDatas.Add(ResultReacCombine.KEY, new ResultReacCombine(this, data));
+            this.printDatas.Add(ResultReacCombine.KEY, new ResultReacCombine(data));
             // reacPickup
-            this.printDatas.Add(ResultReacPickUp.KEY, new ResultReacPickUp(this, data));
+            this.printDatas.Add(ResultReacPickUp.KEY, new ResultReacPickUp(data));
 
             // 荷重図
-            this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(this, data));
+            this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(data));
 
         }
 

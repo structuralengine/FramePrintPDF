@@ -35,7 +35,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<int, LoadName> loadnames = new Dictionary<int, LoadName>();
 
-        public InputLoadName(PrintData pd, Dictionary<string, object> value)
+        public InputLoadName(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

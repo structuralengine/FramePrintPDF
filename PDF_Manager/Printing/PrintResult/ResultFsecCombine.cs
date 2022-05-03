@@ -49,7 +49,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, FsecCombine> Fsecs = new Dictionary<string, FsecCombine>();
 
-        public ResultFsecCombine(PrintData pd, Dictionary<string, object> value, string key = ResultFsecCombine.KEY)
+        public ResultFsecCombine(Dictionary<string, object> value, string key = ResultFsecCombine.KEY)
         {
             if (!value.ContainsKey(KEY))
                 return;

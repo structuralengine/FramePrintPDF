@@ -17,14 +17,11 @@ namespace PDF_Manager.Printing
         public const string KEY = "notice_points";
 
         private List<NoticePoint> noticepoints = new List<NoticePoint>();
-        private InputMember member;
 
-        public InputNoticePoints(PrintData pd, Dictionary<string, object> value)
+        public InputNoticePoints(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;
-
-            this.member = (InputMember)pd.printDatas[InputMember.KEY];
 
             //nodeデータを取得する
             JArray target = JArray.FromObject(value[KEY]);

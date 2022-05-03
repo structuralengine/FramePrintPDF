@@ -8,7 +8,7 @@ namespace PDF_Manager.Printing
     {
         public new const string KEY = "disgPickUp";
 
-        public ResultDisgPickUp(PrintData pd, Dictionary<string, object> value) : base(pd, value, ResultDisgPickUp.KEY)
+        public ResultDisgPickUp(Dictionary<string, object> value) : base(value, ResultDisgPickUp.KEY)
         {
 
         }

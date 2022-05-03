@@ -20,7 +20,7 @@ namespace PDF_Manager.Printing
 {
     public class FixNode
     {
-        public string n;   // 節点番号
+        public string n;    // 節点番号
         public double tx;
         public double ty;
         public double tz;
@@ -35,7 +35,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<int, List<FixNode>> fixnodes = new Dictionary<int, List<FixNode>>();
 
-        public InputFixNode(PrintData pd, Dictionary<string, object> value)
+        public InputFixNode(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

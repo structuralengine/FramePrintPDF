@@ -33,7 +33,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<int, List<FixMember>> fixmembers = new Dictionary<int, List<FixMember>>();
 
-        public InputFixMember(PrintData pd, Dictionary<string, object> value)
+        public InputFixMember(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;

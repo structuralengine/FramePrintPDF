@@ -16,7 +16,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<int, Define> defines = new Dictionary<int, Define>();
 
-        public InputDefine(PrintData pd, Dictionary<string, object> value)
+        public InputDefine(Dictionary<string, object> value)
         {
             if (!value.ContainsKey(KEY))
                 return;
