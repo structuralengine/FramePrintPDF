@@ -58,40 +58,20 @@ namespace PDF_Manager.Printing
                         _disg.Add(ds);
 
                     }
-                    this.disgs.Add(key, _disg.ToArray());
+                    this.disgs.Add(key, _disg);
 
                 } 
                 else if (val.Type == JTokenType.Object)
                 {   // LL：連行荷重の時
-                    var Dis = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
-                    var _disg = new DisgCombine();
-                    for (int j = 0; j < Dis.Count; j++)
-                    {
-                        var item = JToken.FromObject(Dis.ElementAt(j).Value);
-
-                        var ds = new Disg();
-
-                        ds.n = Dis.ElementAt(j).Key;
-                        ds.dx = dataManager.parseDouble(item["dx"]);
-                        ds.dy = dataManager.parseDouble(item["dy"]);
-                        ds.dz = dataManager.parseDouble(item["dz"]);
-                        ds.rx = dataManager.parseDouble(item["rx"]);
-                        ds.ry = dataManager.parseDouble(item["ry"]);
-                        ds.rz = dataManager.parseDouble(item["rz"]);
-                        ds.caseStr = dataManager.TypeChange(item["case"]);
-                        ds.comb = dataManager.TypeChange(item["comb"]);
-
-                        _disg.dx_max.Add(ds);
-
-                    }
+                    var Dis = ((JObject)val).ToObject<Dictionary<string, object>>();
+                    var _disg = ResultDisgCombine.getDisgCombine(Dis);
                     this.disgs.Add(key, _disg);
-
                 }
-
-
 
             }
         }
+
+
     }
 }
 /*

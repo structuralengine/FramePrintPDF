@@ -14,11 +14,77 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
+    public class Reac
+    {
+        public string n;    // 節点番号
+        public double tx;
+        public double ty;
+        public double tz;
+        public double mx;
+        public double my;
+        public double mz;
+
+        // 組み合わせで使う
+        public string caseStr = null;
+        public string comb = null;
+    }
+
+
     internal class ResultReac
     {
+        private Dictionary<string, object> reacs = new Dictionary<string, object>();
+
+        public ResultReac(PrintData pd, Dictionary<string, object> value)
+        {
+            // データを取得する．
+            var target = JObject.FromObject(value["reac"]).ToObject<Dictionary<string, object>>();
+
+            // データを抽出する
+            for (var i = 0; i < target.Count; i++)
+            {
+                var key = dataManager.TypeChange(target.ElementAt(i).Key);  // ケース番号
+                var val = JToken.FromObject(target.ElementAt(i).Value);
+
+                if (val.Type == JTokenType.Array)
+                {
+                    JArray Dis = (JArray)val;
+                    var _reac = new List<Reac>();
+                    for (int j = 0; j < Dis.Count; j++)
+                    {
+                        JToken item = Dis[j];
+
+                        var ds = new Reac();
+
+                        ds.n = dataManager.TypeChange(item["n"]);
+                        ds.tx = dataManager.parseDouble(item["tx"]);
+                        ds.ty = dataManager.parseDouble(item["ty"]);
+                        ds.tz = dataManager.parseDouble(item["tz"]);
+                        ds.mx = dataManager.parseDouble(item["mx"]);
+                        ds.my = dataManager.parseDouble(item["my"]);
+                        ds.mz = dataManager.parseDouble(item["mz"]);
+
+                        _reac.Add(ds);
+
+                    }
+                    this.reacs.Add(key, _reac);
+
+                }
+                else if (val.Type == JTokenType.Object)
+                {   // LL：連行荷重の時
+                    var Dis = ((JObject)val).ToObject<Dictionary<string, object>>();
+                    var _reac = ResultReacCombine.getReacCombine(Dis);
+                    this.reacs.Add(key, _reac);
+                }
+
+            }
+        }
+    }
+}
+/*
         private Dictionary<string, object> value = new Dictionary<string, object>();
         public ResultReacBasic reacBasic;
         public ResultReacAnnexing reacAnnex;
@@ -150,3 +216,4 @@ namespace PDF_Manager.Printing
     }
 }
 
+*/
