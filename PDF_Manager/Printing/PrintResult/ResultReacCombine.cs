@@ -75,25 +75,30 @@ namespace PDF_Manager.Printing
         public static ReacCombine getReacCombine(Dictionary<string, object> Rec)
         {
             var _reac = new ReacCombine();
-            for (int j = 0; j < Rec.Count; j++)
+
+            for (int i = 0; i < Rec.Count; i++)
             {
-                var item = JToken.FromObject(Rec.ElementAt(j).Value);
-                var k = Rec.ElementAt(j).Key;
+                var elist = JObject.FromObject(Rec.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                var k = Rec.ElementAt(i).Key;
 
-                var re = new Reac();
+                for (int j = 0; j < elist.Count; j++)
+                {
+                    var item = JObject.FromObject(elist.ElementAt(j).Value);
 
-                re.n = Rec.ElementAt(j).Key;
-                re.tx = dataManager.parseDouble(item["tx"]);
-                re.ty = dataManager.parseDouble(item["ty"]);
-                re.tz = dataManager.parseDouble(item["tz"]);
-                re.mx = dataManager.parseDouble(item["mx"]);
-                re.my = dataManager.parseDouble(item["my"]);
-                re.mz = dataManager.parseDouble(item["mz"]);
-                re.caseStr = dataManager.toString(item["case"]);
-                re.comb = dataManager.toString(item["comb"]);
+                    var re = new Reac();
 
-                _reac.Add(k, re);
+                    re.n = dataManager.toString(elist.ElementAt(j).Key);
+                    re.tx = dataManager.parseDouble(item["tx"]);
+                    re.ty = dataManager.parseDouble(item["ty"]);
+                    re.tz = dataManager.parseDouble(item["tz"]);
+                    re.mx = dataManager.parseDouble(item["mx"]);
+                    re.my = dataManager.parseDouble(item["my"]);
+                    re.mz = dataManager.parseDouble(item["mz"]);
+                    re.caseStr = dataManager.toString(item["case"]);
+                    re.comb = dataManager.toString(item["comb"]);
 
+                    _reac.Add(k, re);
+                }
             }
             return _reac;
         }

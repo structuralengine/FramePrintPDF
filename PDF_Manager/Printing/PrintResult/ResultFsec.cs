@@ -69,7 +69,7 @@ namespace PDF_Manager.Printing
 
                         fs.n = dataManager.toString(item["n"]);
                         fs.m = dataManager.toString(item["m"]);
-                        fs.l = dataManager.parseDouble(item["m"]);
+                        fs.l = dataManager.parseDouble(item["l"]);
                         fs.fx = dataManager.parseDouble(item["fx"]);
                         fs.fy = dataManager.parseDouble(item["fy"]);
                         fs.fz = dataManager.parseDouble(item["fz"]);

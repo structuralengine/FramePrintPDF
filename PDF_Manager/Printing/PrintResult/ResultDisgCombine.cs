@@ -63,7 +63,7 @@ namespace PDF_Manager.Printing
                 var No = dataManager.toString(target.ElementAt(i).Key);  // ケース番号
                 var val = JToken.FromObject(target.ElementAt(i).Value);
 
-                var Dis = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
+                var Dis = ((JObject)val).ToObject<Dictionary<string, object>>();
                 var _disg = ResultDisgCombine.getDisgCombine(Dis);
 
                 this.disgs.Add(No, _disg);
@@ -74,25 +74,29 @@ namespace PDF_Manager.Printing
         {
             var _disg = new DisgCombine();
 
-            for (int j = 0; j < Dis.Count; j++)
+            for (int i = 0; i < Dis.Count; i++)
             {
-                var item = JToken.FromObject(Dis.ElementAt(j).Value);
-                var k = Dis.ElementAt(j).Key;
+                var elist = JObject.FromObject(Dis.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                var k = Dis.ElementAt(i).Key;
 
-                var ds = new Disg();
+                for (int j = 0; j < elist.Count; j++)
+                {
+                    var item = JObject.FromObject(elist.ElementAt(j).Value);
 
-                ds.n = Dis.ElementAt(j).Key;
-                ds.dx = dataManager.parseDouble(item["dx"]);
-                ds.dy = dataManager.parseDouble(item["dy"]);
-                ds.dz = dataManager.parseDouble(item["dz"]);
-                ds.rx = dataManager.parseDouble(item["rx"]);
-                ds.ry = dataManager.parseDouble(item["ry"]);
-                ds.rz = dataManager.parseDouble(item["rz"]);
-                ds.caseStr = dataManager.toString(item["case"]);
-                ds.comb = dataManager.toString(item["comb"]);
+                    var ds = new Disg();
 
-                _disg.Add(k, ds);
+                    ds.n = dataManager.toString(elist.ElementAt(j).Key);
+                    ds.dx = dataManager.parseDouble(item["dx"]);
+                    ds.dy = dataManager.parseDouble(item["dy"]);
+                    ds.dz = dataManager.parseDouble(item["dz"]);
+                    ds.rx = dataManager.parseDouble(item["rx"]);
+                    ds.ry = dataManager.parseDouble(item["ry"]);
+                    ds.rz = dataManager.parseDouble(item["rz"]);
+                    ds.caseStr = dataManager.toString(item["case"]);
+                    ds.comb = dataManager.toString(item["comb"]);
 
+                    _disg.Add(k, ds);
+                }
             }
             return _disg;
         }
