@@ -34,7 +34,7 @@ namespace PDF_Manager.Printing
 
         public InputPickup(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             // データを取得する．

@@ -31,7 +31,7 @@ namespace PDF_Manager.Printing
         /// <param name="value"></param>
         public InputElement(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             // elementデータを取得する．

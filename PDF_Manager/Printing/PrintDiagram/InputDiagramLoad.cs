@@ -13,7 +13,7 @@ namespace PDF_Manager.Printing
 
         public InputDiagramLoad(PrintData pd, Dictionary<string, object> value) 
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
 

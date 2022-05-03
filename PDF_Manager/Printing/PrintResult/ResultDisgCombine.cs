@@ -50,7 +50,7 @@ namespace PDF_Manager.Printing
 
         public ResultDisgCombine(PrintData pd, Dictionary<string, object> value, string key = ResultDisgCombine.KEY)
         {
-            if (value.ContainsKey(key))
+            if (!value.ContainsKey(KEY))
                 return;
 
             // データを取得する．

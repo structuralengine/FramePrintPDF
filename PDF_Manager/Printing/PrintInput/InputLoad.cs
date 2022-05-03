@@ -58,7 +58,7 @@ namespace PDF_Manager.Printing
 
         public InputLoad(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             this.loadname = (InputLoadName)pd.printDatas[InputLoadName.KEY];

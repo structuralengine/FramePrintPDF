@@ -21,7 +21,7 @@ namespace PDF_Manager.Printing
 
         public InputNoticePoints(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             this.member = (InputMember)pd.printDatas[InputMember.KEY];

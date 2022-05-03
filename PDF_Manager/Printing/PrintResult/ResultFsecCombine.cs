@@ -51,7 +51,7 @@ namespace PDF_Manager.Printing
 
         public ResultFsecCombine(PrintData pd, Dictionary<string, object> value, string key = ResultFsecCombine.KEY)
         {
-            if (value.ContainsKey(key))
+            if (!value.ContainsKey(KEY))
                 return;
 
             // データを取得する．

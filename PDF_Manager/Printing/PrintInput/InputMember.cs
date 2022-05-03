@@ -26,7 +26,7 @@ namespace PDF_Manager.Printing
 
         public InputMember(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             this.node = (InputNode)pd.printDatas[InputNode.KEY];

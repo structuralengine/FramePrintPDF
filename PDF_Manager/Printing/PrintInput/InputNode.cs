@@ -26,7 +26,7 @@ namespace PDF_Manager.Printing
         /// <param name="value"></param>
         public InputNode(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             //nodeデータを取得する

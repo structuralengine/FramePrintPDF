@@ -30,7 +30,7 @@ namespace PDF_Manager.Printing
 
         public ResultDisg(PrintData pd, Dictionary<string, object> value)
         {
-            if (value.ContainsKey(KEY))
+            if (!value.ContainsKey(KEY))
                 return;
 
             // データを取得する．
