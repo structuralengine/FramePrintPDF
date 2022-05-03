@@ -37,9 +37,9 @@ namespace PDF_Manager.Printing
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
                 var m = new Member();
-                m.ni = dataManager.TypeChange(item["ni"]);
-                m.nj = dataManager.TypeChange(item["nj"]);
-                m.e = dataManager.TypeChange(item["e"]);
+                m.ni = dataManager.toString(item["ni"]);
+                m.nj = dataManager.toString(item["nj"]);
+                m.e = dataManager.toString(item["e"]);
                 m.cg = dataManager.parseDouble(item["cg"]);
                 this.members.Add(key, m);
             }

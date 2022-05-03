@@ -58,7 +58,7 @@ namespace PDF_Manager.Printing
 
                     var jo = new Joint();
 
-                    jo.m = dataManager.TypeChange(item["m"]);
+                    jo.m = dataManager.toString(item["m"]);
                     jo.xi = dataManager.parseInt(item["xi"]);
                     jo.yi = dataManager.parseInt(item["yi"]);
                     jo.zi = dataManager.parseInt(item["zi"]);

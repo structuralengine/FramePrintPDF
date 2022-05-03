@@ -27,7 +27,7 @@ namespace PDF_Manager.Printing
     internal class InputCombine
     {
         public const string KEY = "combine";
-        private Dictionary<int, Combine> conbines = new Dictionary<int, Combine>();
+        private Dictionary<int, Combine> combines = new Dictionary<int, Combine>();
 
         public InputCombine(Dictionary<string, object> value)
         {
@@ -51,7 +51,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < item.Count; j++)
                 {
                     var id = item.ElementAt(j).Key;  // "C1", "C2"...
-                    var val = (double)item.ElementAt(j).Value;
+                    var val = item.ElementAt(j).Value;
 
                     if (id.Contains("name"))
                     {
@@ -59,11 +59,15 @@ namespace PDF_Manager.Printing
                     }
                     else if (id.Contains("C"))
                     {
-                        double coef = (double)val;
+                        double coef = dataManager.parseDouble(val);
                         _combine.coef.Add(id, coef);
                     }
+                    else
+                    {
+                        continue;
+                    }
                 }
-                this.conbines.Add(index, _combine);
+                this.combines.Add(index, _combine);
             }
         }
 

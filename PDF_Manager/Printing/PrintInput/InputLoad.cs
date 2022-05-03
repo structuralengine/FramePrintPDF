@@ -54,7 +54,6 @@ namespace PDF_Manager.Printing
         public const string KEY = "load";
 
         private Dictionary<int, Load> loads = new Dictionary<int, Load>();
-        private InputLoadName loadname;
 
         public InputLoad(Dictionary<string, object> value)
         {
@@ -68,7 +67,7 @@ namespace PDF_Manager.Printing
             for (var i = 0; i < target.Count; i++)
             {
                 var key = target.ElementAt(i).Key;
-                int index = dataManager.parseInt(key);
+                var index = int.Parse(key);
 
                 var lo = new Load();
 
@@ -76,17 +75,16 @@ namespace PDF_Manager.Printing
                 
                 if (item.ContainsKey("load_member") )
                 {   // 要素荷重
-                    var _loadMember = item["load_member"];
                     var LoadM = new List<LoadMember>();
-                    foreach(JToken member in _loadMember)
+                    foreach(JToken member in item["load_member"])
                     {
                         var lm = new LoadMember();
 
-                        lm.m1 = dataManager.TypeChange(member["m1"]);
-                        lm.m2 = dataManager.TypeChange(member["m2"]);
-                        lm.direction = dataManager.TypeChange(member["direction"]);
-                        lm.mark = dataManager.TypeChange(member["mark"]);
-                        lm.L1 = dataManager.TypeChange(member["L1"]);
+                        lm.m1 = dataManager.toString(member["m1"]);
+                        lm.m2 = dataManager.toString(member["m2"]);
+                        lm.direction = dataManager.toString(member["direction"]);
+                        lm.mark = dataManager.toString(member["mark"]);
+                        lm.L1 = dataManager.toString(member["L1"]);
                         lm.L2 = dataManager.parseDouble(member["L2"]);
                         lm.P1 = dataManager.parseDouble(member["P1"]);
                         lm.P2 = dataManager.parseDouble(member["P2"]);
@@ -98,13 +96,12 @@ namespace PDF_Manager.Printing
 
                 if (item.ContainsKey("load_node"))
                 {   // 節点荷重
-                    var _loadNode = item["load_node"];
                     var LoadN = new List<LoadNode>();
-                    foreach (JToken node in _loadNode)
+                    foreach (JToken node in item["load_node"])
                     {
                         var ln = new LoadNode();
 
-                        ln.n = dataManager.TypeChange(node["n"]);
+                        ln.n = dataManager.toString(node["n"]);
                         ln.tx = dataManager.parseDouble(node["tx"]);
                         ln.ty = dataManager.parseDouble(node["ty"]);
                         ln.tz = dataManager.parseDouble(node["tz"]);

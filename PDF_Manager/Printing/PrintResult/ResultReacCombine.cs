@@ -62,7 +62,7 @@ namespace PDF_Manager.Printing
             // データを抽出する
             for (var i = 0; i < target.Count; i++)
             {
-                var No = dataManager.TypeChange(target.ElementAt(i).Key);  // ケース番号
+                var No = dataManager.toString(target.ElementAt(i).Key);  // ケース番号
                 var val = JToken.FromObject(target.ElementAt(i).Value);
 
                 var Rec = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
@@ -89,8 +89,8 @@ namespace PDF_Manager.Printing
                 re.mx = dataManager.parseDouble(item["mx"]);
                 re.my = dataManager.parseDouble(item["my"]);
                 re.mz = dataManager.parseDouble(item["mz"]);
-                re.caseStr = dataManager.TypeChange(item["case"]);
-                re.comb = dataManager.TypeChange(item["comb"]);
+                re.caseStr = dataManager.toString(item["case"]);
+                re.comb = dataManager.toString(item["comb"]);
 
                 _reac.Add(k, re);
 

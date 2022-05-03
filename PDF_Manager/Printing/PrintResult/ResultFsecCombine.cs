@@ -61,7 +61,7 @@ namespace PDF_Manager.Printing
             // データを抽出する
             for (var i = 0; i < target.Count; i++)
             {
-                var No = dataManager.TypeChange(target.ElementAt(i).Key);  // ケース番号
+                var No = dataManager.toString(target.ElementAt(i).Key);  // ケース番号
                 var val = JToken.FromObject(target.ElementAt(i).Value);
 
                 var Fsc = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
@@ -82,8 +82,8 @@ namespace PDF_Manager.Printing
 
                 var fs = new Fsec();
 
-                fs.n = dataManager.TypeChange(item["n"]);
-                fs.m = dataManager.TypeChange(item["m"]);
+                fs.n = dataManager.toString(item["n"]);
+                fs.m = dataManager.toString(item["m"]);
                 fs.l = dataManager.parseDouble(item["m"]);
                 fs.fx = dataManager.parseDouble(item["fx"]);
                 fs.fy = dataManager.parseDouble(item["fy"]);
@@ -91,8 +91,8 @@ namespace PDF_Manager.Printing
                 fs.mx = dataManager.parseDouble(item["mx"]);
                 fs.my = dataManager.parseDouble(item["my"]);
                 fs.mz = dataManager.parseDouble(item["mz"]);
-                fs.caseStr = dataManager.TypeChange(item["case"]);
-                fs.comb = dataManager.TypeChange(item["comb"]);
+                fs.caseStr = dataManager.toString(item["case"]);
+                fs.comb = dataManager.toString(item["comb"]);
 
                 _Fsec.Add(k, fs);
 

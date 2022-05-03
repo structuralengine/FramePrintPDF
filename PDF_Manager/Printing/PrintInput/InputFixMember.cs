@@ -55,7 +55,7 @@ namespace PDF_Manager.Printing
 
                     var fm = new FixMember();
 
-                    fm.m = dataManager.TypeChange(item["m"]);
+                    fm.m = dataManager.toString(item["m"]);
                     fm.tx = dataManager.parseDouble(item["tx"]);
                     fm.ty = dataManager.parseDouble(item["ty"]);
                     fm.tz = dataManager.parseDouble(item["tz"]);

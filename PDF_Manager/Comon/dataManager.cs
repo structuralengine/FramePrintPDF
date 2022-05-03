@@ -12,6 +12,28 @@ namespace PDF_Manager.Comon
 
         // データの精査と変換
         // (data,四捨五入する時の桁数,指数形式の表示など)
+        public static string toString(JToken data)
+        {
+            string result = "";
+
+            if (data == null)
+                return result;
+
+            if (data.Type == JTokenType.Null)
+                return result;
+
+            try
+            {
+                result = data.ToString();
+            }
+            catch
+            {
+                result = "";
+            }
+
+            return result;
+        }
+
         public static string TypeChange(JToken data, int round = 0, string style = "none")
         {
             string newDataString = "";
@@ -64,9 +86,12 @@ namespace PDF_Manager.Comon
             if (data == null) return result;
             if (data.Type == JTokenType.Null) return result;
 
-            result = double.Parse(data.ToString());
-
+            if (!double.TryParse(data.ToString(), out result))
+            {
+                return double.NaN;
+            }
             return result;
+
         }
         static public double parseDouble(object data)
         {
@@ -100,5 +125,11 @@ namespace PDF_Manager.Comon
             return result;
         }
 
+        static public int parseInt(object data)
+        {
+            JToken a = JToken.FromObject(data);
+            return dataManager.parseInt(a);
+
+        }
     }
 }

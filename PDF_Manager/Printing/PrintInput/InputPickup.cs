@@ -21,7 +21,7 @@ namespace PDF_Manager.Printing
     public class PickUp
     {
         public string name;
-        public Dictionary<string, double> no = new Dictionary<string, double>();
+        public Dictionary<string, int> com = new Dictionary<string, int>();
     }
 
 
@@ -30,7 +30,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "pickup";
 
-        private Dictionary<int, PickUp> conbines = new Dictionary<int, PickUp>();
+        private Dictionary<int, PickUp> pickups = new Dictionary<int, PickUp>();
 
         public InputPickup(Dictionary<string, object> value)
         {
@@ -54,7 +54,7 @@ namespace PDF_Manager.Printing
                 for (int j = 0; j < item.Count; j++)
                 {
                     var id = item.ElementAt(j).Key;  // "C1", "C2"...
-                    var val = (double)item.ElementAt(j).Value;
+                    var val = item.ElementAt(j).Value;
 
                     if (id.Contains("name"))
                     {
@@ -62,11 +62,15 @@ namespace PDF_Manager.Printing
                     }
                     else if (id.Contains("C"))
                     {
-                        double coef = (double)val;
-                        _pickup.no.Add(id, coef);
+                        int no = dataManager.parseInt(val);
+                        _pickup.com.Add(id, no);
+                    }
+                    else
+                    {
+                        continue;
                     }
                 }
-                this.conbines.Add(index, _pickup);
+                this.pickups.Add(index, _pickup);
             }
         }
 

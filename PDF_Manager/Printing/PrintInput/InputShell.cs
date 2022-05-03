@@ -47,7 +47,7 @@ namespace PDF_Manager.Printing
                 var item = JObject.FromObject(target.ElementAt(i).Value);
 
                 var s = new Shell();
-                s.e = dataManager.TypeChange(item["e"]);
+                s.e = dataManager.toString(item["e"]);
 
                 // nodeデータを取得する
                 var itemPoints = item["Points"];

@@ -57,7 +57,7 @@ namespace PDF_Manager.Printing
 
                     var fn = new FixNode();
 
-                    fn.n = dataManager.TypeChange(item["n"]);
+                    fn.n = dataManager.toString(item["n"]);
                     fn.tx = dataManager.parseDouble(item["tx"]);
                     fn.ty = dataManager.parseDouble(item["ty"]);
                     fn.tz = dataManager.parseDouble(item["tz"]);

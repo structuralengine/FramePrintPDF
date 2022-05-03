@@ -32,7 +32,7 @@ namespace PDF_Manager.Printing
 
                 var np = new NoticePoint();
 
-                np.m = dataManager.TypeChange(item["m"]);
+                np.m = dataManager.toString(item["m"]);
 
                 var itemPoints = item["Points"];
                 var _points = new List<double>();

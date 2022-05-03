@@ -37,7 +37,7 @@ namespace PDF_Manager.Printing
 
         public InputLoadName(Dictionary<string, object> value)
         {
-            if (!value.ContainsKey(KEY))
+            if (!value.ContainsKey(InputLoad.KEY))
                 return;
 
             //nodeデータを取得する
@@ -47,14 +47,14 @@ namespace PDF_Manager.Printing
             for (var i = 0; i < target.Count; i++)
             {
                 var key = target.ElementAt(i).Key;
-                int index = dataManager.parseInt(key);
+                var index = int.Parse(key);
                 var item = JObject.FromObject(target.ElementAt(i).Value);
                 var ln = new LoadName();
 
 
                 ln.rate = dataManager.parseDouble(item["rate"]);
-                ln.symbol = dataManager.TypeChange(item["symbol"]);
-                ln.name = dataManager.TypeChange(item["name"]);
+                ln.symbol = dataManager.toString(item["symbol"]);
+                ln.name = dataManager.toString(item["name"]);
                 ln.fix_node = dataManager.parseInt(item["fix_node"]);
                 ln.element = dataManager.parseInt(item["element"]);
                 ln.fix_member = dataManager.parseInt(item["fix_member"]);

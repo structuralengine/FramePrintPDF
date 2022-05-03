@@ -52,7 +52,7 @@ namespace PDF_Manager.Printing
 
                     var e = new Element();
 
-                    e.name = dataManager.TypeChange(item["n"]);
+                    e.name = dataManager.toString(item["n"]);
                     e.E = dataManager.parseDouble(item["E"]);
                     e.G = dataManager.parseDouble(item["G"]);
                     e.Xp = dataManager.parseDouble(item["Xp"]);

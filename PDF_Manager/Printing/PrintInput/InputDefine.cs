@@ -41,7 +41,7 @@ namespace PDF_Manager.Printing
                     if (!id.Contains("C"))
                         continue;
 
-                    int no = (int)item.ElementAt(j).Value;
+                    int no = dataManager.parseInt(item.ElementAt(j).Value);
 
                     _define.no.Add(id, no);
                 }
