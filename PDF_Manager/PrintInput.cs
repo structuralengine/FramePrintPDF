@@ -85,13 +85,13 @@ public class PrintInput
         // 計算結果データ
         mc = ResultDisg.printPDF(mc, red);
         mc = ResultDisgCombine.printPDF(mc, red);
-        mc = ResultDisgPickUp.printPDF(mc, red);
+        mc = ResultDisgPickup.printPDF(mc, red);
         mc = ResultFsec.printPDF(mc, red);
         mc = ResultFsecCombine.printPDF(mc, red);
-        mc = ResultFsecPickUp.printPDF(mc, red);
+        mc = ResultFsecPickup.printPDF(mc, red);
         mc = ResultReac.ReacPDF(mc, red);
         mc = ResultReacCombine.ReacAnnexingPDF(mc, red);
-        mc = ResultReacPickUp.ReacAnnexingPDF(mc, red);
+        mc = ResultReacPickup.ReacAnnexingPDF(mc, red);
 
         */
         return mc;

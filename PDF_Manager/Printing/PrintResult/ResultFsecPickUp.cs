@@ -4,11 +4,11 @@ using System.Text;
 
 namespace PDF_Manager.Printing
 {
-    class ResultFsecPickUp : ResultFsecCombine
+    class ResultFsecPickup : ResultFsecCombine
     {
-        public new const string KEY = "fsecPickUp";
+        public new const string KEY = "fsecPickup";
 
-        public ResultFsecPickUp(Dictionary<string, object> value) : base(value, ResultFsecCombine.KEY)
+        public ResultFsecPickup(Dictionary<string, object> value) : base(value, ResultFsecPickup.KEY)
         {
 
         }

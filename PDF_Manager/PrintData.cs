@@ -60,19 +60,19 @@ namespace PDF_Manager
             // disgcombine
             this.printDatas.Add(ResultDisgCombine.KEY, new ResultDisgCombine(data));
             // disgPickup
-            this.printDatas.Add(ResultDisgPickUp.KEY, new ResultDisgPickUp(data));
+            this.printDatas.Add(ResultDisgPickup.KEY, new ResultDisgPickup(data));
             // fsec
             this.printDatas.Add(ResultFsec.KEY, new ResultFsec(data));
             // fseccombine
             this.printDatas.Add(ResultFsecCombine.KEY, new ResultFsecCombine(data));
             // fsecPickup
-            this.printDatas.Add(ResultFsecPickUp.KEY, new ResultFsecPickUp(data));
+            this.printDatas.Add(ResultFsecPickup.KEY, new ResultFsecPickup(data));
             // reac
             this.printDatas.Add(ResultReac.KEY, new ResultReac(data));
             // reaccombine
             this.printDatas.Add(ResultReacCombine.KEY, new ResultReacCombine(data));
             // reacPickup
-            this.printDatas.Add(ResultReacPickUp.KEY, new ResultReacPickUp(data));
+            this.printDatas.Add(ResultReacPickup.KEY, new ResultReacPickup(data));
 
             // 荷重図
             this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(data));

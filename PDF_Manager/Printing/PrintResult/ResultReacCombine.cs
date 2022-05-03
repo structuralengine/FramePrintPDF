@@ -52,7 +52,7 @@ namespace PDF_Manager.Printing
 
         public ResultReacCombine(Dictionary<string, object> value, string key = ResultReacCombine.KEY)
         {
-            if (!value.ContainsKey(KEY))
+            if (!value.ContainsKey(key))
                 return;
 
             // データを取得する．

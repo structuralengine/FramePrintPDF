@@ -10,18 +10,18 @@ namespace PDF_Manager.Printing
 {
     public class FsecCombine
     {
-        public List<Fsec> dx_max = new List<Fsec>();
-        public List<Fsec> dx_min = new List<Fsec>();
-        public List<Fsec> dy_max = new List<Fsec>();
-        public List<Fsec> dy_min = new List<Fsec>();
-        public List<Fsec> dz_max = new List<Fsec>();
-        public List<Fsec> dz_min = new List<Fsec>();
-        public List<Fsec> rx_max = new List<Fsec>();
-        public List<Fsec> rx_min = new List<Fsec>();
-        public List<Fsec> ry_max = new List<Fsec>();
-        public List<Fsec> ry_min = new List<Fsec>();
-        public List<Fsec> rz_max = new List<Fsec>();
-        public List<Fsec> rz_min = new List<Fsec>();
+        public List<Fsec> fx_max = new List<Fsec>();
+        public List<Fsec> fx_min = new List<Fsec>();
+        public List<Fsec> fy_max = new List<Fsec>();
+        public List<Fsec> fy_min = new List<Fsec>();
+        public List<Fsec> fz_max = new List<Fsec>();
+        public List<Fsec> fz_min = new List<Fsec>();
+        public List<Fsec> mx_max = new List<Fsec>();
+        public List<Fsec> mx_min = new List<Fsec>();
+        public List<Fsec> my_max = new List<Fsec>();
+        public List<Fsec> my_min = new List<Fsec>();
+        public List<Fsec> mz_max = new List<Fsec>();
+        public List<Fsec> mz_min = new List<Fsec>();
 
         public void Add(string key, Fsec value)
         {
@@ -51,7 +51,7 @@ namespace PDF_Manager.Printing
 
         public ResultFsecCombine(Dictionary<string, object> value, string key = ResultFsecCombine.KEY)
         {
-            if (!value.ContainsKey(KEY))
+            if (!value.ContainsKey(key))
                 return;
 
             // データを取得する．
@@ -75,26 +75,31 @@ namespace PDF_Manager.Printing
         {
             var _Fsec = new FsecCombine();
 
-            for (int j = 0; j < Fsc.Count; j++)
+            for (int i = 0; i < Fsc.Count; i++)
             {
-                var item = JToken.FromObject(Fsc.ElementAt(j).Value);
-                var k = Fsc.ElementAt(j).Key;
+                JArray elist = JArray.FromObject(Fsc.ElementAt(i).Value);
+                var k = Fsc.ElementAt(i).Key; // fx_min fx_max...
 
-                var fs = new Fsec();
+                for (int j = 0; j < elist.Count; j++)
+                {
+                    var item = elist[j];
+                    var fs = new Fsec();
 
-                fs.n = dataManager.toString(item["n"]);
-                fs.m = dataManager.toString(item["m"]);
-                fs.l = dataManager.parseDouble(item["m"]);
-                fs.fx = dataManager.parseDouble(item["fx"]);
-                fs.fy = dataManager.parseDouble(item["fy"]);
-                fs.fz = dataManager.parseDouble(item["fz"]);
-                fs.mx = dataManager.parseDouble(item["mx"]);
-                fs.my = dataManager.parseDouble(item["my"]);
-                fs.mz = dataManager.parseDouble(item["mz"]);
-                fs.caseStr = dataManager.toString(item["case"]);
-                fs.comb = dataManager.toString(item["comb"]);
+                    fs.n = dataManager.toString(item["n"]);
+                    fs.m = dataManager.toString(item["m"]);
+                    fs.l = dataManager.parseDouble(item["m"]);
+                    fs.fx = dataManager.parseDouble(item["fx"]);
+                    fs.fy = dataManager.parseDouble(item["fy"]);
+                    fs.fz = dataManager.parseDouble(item["fz"]);
+                    fs.mx = dataManager.parseDouble(item["mx"]);
+                    fs.my = dataManager.parseDouble(item["my"]);
+                    fs.mz = dataManager.parseDouble(item["mz"]);
+                    fs.caseStr = dataManager.toString(item["case"]);
+                    fs.comb = dataManager.toString(item["comb"]);
 
-                _Fsec.Add(k, fs);
+                    _Fsec.Add(k, fs);
+                }
+
 
             }
             return _Fsec;

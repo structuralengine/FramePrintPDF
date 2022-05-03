@@ -18,7 +18,7 @@ using PDF_Manager.Comon;
 
 namespace PDF_Manager.Printing
 {
-    public class PickUp
+    public class Pickup
     {
         public string name;
         public Dictionary<string, int> com = new Dictionary<string, int>();
@@ -30,7 +30,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "pickup";
 
-        private Dictionary<int, PickUp> pickups = new Dictionary<int, PickUp>();
+        private Dictionary<int, Pickup> pickups = new Dictionary<int, Pickup>();
 
         public InputPickup(Dictionary<string, object> value)
         {
@@ -50,7 +50,7 @@ namespace PDF_Manager.Printing
                 // define を構成する 基本荷重No群
                 var item = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
 
-                var _pickup = new PickUp();
+                var _pickup = new Pickup();
                 for (int j = 0; j < item.Count; j++)
                 {
                     var id = item.ElementAt(j).Key;  // "C1", "C2"...

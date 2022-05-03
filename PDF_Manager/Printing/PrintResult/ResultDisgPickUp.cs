@@ -4,11 +4,11 @@ using System.Text;
 
 namespace PDF_Manager.Printing
 {
-    internal class ResultDisgPickUp : ResultDisgCombine
+    internal class ResultDisgPickup : ResultDisgCombine
     {
-        public new const string KEY = "disgPickUp";
+        public new const string KEY = "disgPickup";
 
-        public ResultDisgPickUp(Dictionary<string, object> value) : base(value, ResultDisgPickUp.KEY)
+        public ResultDisgPickup(Dictionary<string, object> value) : base(value, ResultDisgPickup.KEY)
         {
 
         }
