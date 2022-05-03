@@ -56,13 +56,15 @@ namespace PDF_Manager.Printing
 
         // タイトル
         private string title;
+        // 2次元か3次元か
+        private int dimension;
         // 項目タイトル
         private string[,] header_content;
         // ヘッダーのx方向の余白
         private int[,] header_Xspacing;
         // ボディーのx方向の余白
         private int[,] body_Xspacing;
-        // 行数
+        // 列数で３次元の場合は2列、2次元の場合は3列
         private int columns;
 
         /// <summary>
@@ -70,7 +72,8 @@ namespace PDF_Manager.Printing
         /// </summary>
         private void printInit(PdfDocument mc, PrintData data)
         {
-            if (data.dimension == 3)
+            this.dimension = data.dimension;
+            if (this.dimension == 3)
             {   // 3次元
                 this.columns = 2;
                 this.header_Xspacing = new int[,] {
@@ -177,6 +180,47 @@ namespace PDF_Manager.Printing
             return new int[] { rows1, rows2 };
         }
 
+
+        /// <summary>
+        /// 1ページに入れるコンテンツを集計する
+        /// </summary>
+        /// <param name="target">印刷対象の</param>
+        /// <param name="index1"></param>
+        /// <param name="index2"></param>
+        /// <returns></returns>
+        private List<string[]> getPageContents(Dictionary<string, Vector3> target, int rows)
+        {
+            int count = this.header_content.GetLength(1);
+
+            // 行コンテンツを生成
+            var table = new List<string[]>();
+
+            for (var i = 0; i < rows; i++)
+            {
+                var lines = new string[count];
+
+                for (var j = 0; j < this.columns; j++)
+                {
+                    int index = i + (rows * j);
+
+                    if (target.Count <= index)
+                        break;
+
+                    string No = target.ElementAt(index).Key;
+                    Vector3 XYZ = target.ElementAt(index).Value;
+
+                    lines[0 + this.columns * j] = No;
+                    lines[1 + this.columns * j] = printManager.toString(XYZ.x, 3);
+                    lines[2 + this.columns * j] = printManager.toString(XYZ.y, 3);
+                    if (this.dimension == 3)
+                        lines[3 + this.columns * j] = printManager.toString(XYZ.z, 3);
+                }
+                table.Add(lines);
+            }
+            return table;
+        }
+
+
         /// <summary>
         /// 印刷する
         /// </summary>
@@ -189,40 +233,46 @@ namespace PDF_Manager.Printing
             // 印刷可能な行数
             var printRows = this.getPrintRowCount(mc);
 
-            // 行コンテンツを生成
-            var page = new List<string[]>();
-
             // 全データを 1ページに印刷したら 何行になるか
             int counter = this.nodes.Count;
             int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(counter) / this.columns));
 
+            // 行コンテンツを生成
+            var page = new List<List<string[]>>();
+
+
             // ページに入る行数
-            int rows = printRows[0];  
+            int rows = printRows[0];
+
+            var table = getPageContents(this.nodes, rs);
+            page.Add(table);
 
             // 集計開始
             while (0 < counter)
             {
                 if (rs < rows)
                 {   // 全データが1ページに入る場合
-                    var columns = new string[this.header_content.GetLength(1)];
-                    // 
                     for(var i = 0; i < rs; i++)
                     {
-                        for(var j=0; j< this.columns; j++)
+                        var columns = new string[this.header_content.GetLength(1)];
+                        for (var j=0; j< this.columns; j++)
                         {
                             int index = i + (rs * j);
                             
-                            if(this.nodes.Count < index)
+                            if(this.nodes.Count <= index)
                                 break;
 
                             string No = this.nodes.ElementAt(index).Key;
                             var XYZ = this.nodes.ElementAt(index).Value;
 
-                            columns[0 + 3 * j] = No;
-                            columns[1 + 3 * j] = printManager.toString(XYZ.x, 3);
-                            columns[2 + 3 * j] = printManager.toString(XYZ.y, 3);
+                            columns[0 + this.columns * j] = No;
+                            columns[1 + this.columns * j] = printManager.toString(XYZ.x, 3);
+                            columns[2 + this.columns * j] = printManager.toString(XYZ.y, 3);
+                            if (data.dimension == 3)
+                                columns[3 + this.columns * j] = printManager.toString(XYZ.z, 3);
                         }
                         page.Add(columns);
+                        columns = null;
                     }
                     break;
                 }
