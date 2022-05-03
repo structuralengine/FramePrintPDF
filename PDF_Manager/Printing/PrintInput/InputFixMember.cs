@@ -29,12 +29,17 @@ namespace PDF_Manager.Printing
 
     internal class InputFixMember
     {
+        public const string KEY = "fix_member";
+
         private Dictionary<int, List<FixMember>> fixmembers = new Dictionary<int, List<FixMember>>();
 
         public InputFixMember(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["fix_member"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

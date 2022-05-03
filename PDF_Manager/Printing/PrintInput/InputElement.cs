@@ -20,6 +20,8 @@ namespace PDF_Manager.Printing
 
     internal class InputElement
     {
+        public const string KEY = "element";
+
         private Dictionary<int, Dictionary<string, Element>> elements = new Dictionary<int, Dictionary<string, Element>>();
 
         /// <summary>
@@ -29,8 +31,11 @@ namespace PDF_Manager.Printing
         /// <param name="value"></param>
         public InputElement(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // elementデータを取得する．
-            var target = JObject.FromObject(value["element"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

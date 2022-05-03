@@ -9,10 +9,16 @@ namespace PDF_Manager.Printing
 {
     class InputDiagramLoad
     {
+        public const string KEY = "diagramLoad";
+
         public InputDiagramLoad(PrintData pd, Dictionary<string, object> value) 
         {
+            if (value.ContainsKey(KEY))
+                return;
+
+
             //荷重図の設定データを取得する
-            var target = JObject.FromObject(value["diagramLoad"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // ペーパサイズ
             string pageSize = target.ContainsKey("pageSize") ? (string)target["pageSize"] : "A4";

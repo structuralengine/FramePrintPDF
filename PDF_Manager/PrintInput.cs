@@ -11,7 +11,7 @@ public class PrintInput
     public PrintInput(string jsonString)
     {
         // データを読み込む
-        JObject data = (JObject.Parse(jsonString));
+        JObject data = JObject.Parse(jsonString);
         var value = data.ToObject<Dictionary<string, object>>(); // JObject.FromObject(data).ToObject<Dictionary<string, object>>();
         //　準備のためのclassの呼び出し
         this.data = new PrintData(value);

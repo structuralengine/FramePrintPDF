@@ -28,12 +28,17 @@ namespace PDF_Manager.Printing
 
     internal class InputPickup
     {
+        public const string KEY = "pickup";
+
         private Dictionary<int, PickUp> conbines = new Dictionary<int, PickUp>();
 
         public InputPickup(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["pickup"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

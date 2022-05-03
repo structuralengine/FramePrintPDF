@@ -24,12 +24,17 @@ namespace PDF_Manager.Printing
 
     internal class ResultDisg
     {
+        public const string KEY = "disg";
+
         private Dictionary<string, object> disgs = new Dictionary<string, object>();
 
         public ResultDisg(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["disg"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

@@ -12,13 +12,17 @@ namespace PDF_Manager.Printing
 
     internal class InputDefine
     {
+        public const string KEY = "define";
 
         private Dictionary<int, Define> defines = new Dictionary<int, Define>();
 
         public InputDefine(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["define"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

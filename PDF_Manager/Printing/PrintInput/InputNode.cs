@@ -15,6 +15,8 @@ namespace PDF_Manager.Printing
 
     internal class InputNode
     {
+        public const string KEY = "node";
+
         private Dictionary<string, Vector3> nodes = new Dictionary<string, Vector3>();
 
         /// <summary>
@@ -24,9 +26,11 @@ namespace PDF_Manager.Printing
         /// <param name="value"></param>
         public InputNode(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
 
             //nodeデータを取得する
-            var target = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for(var i=0; i< target.Count; i++)

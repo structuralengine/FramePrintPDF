@@ -45,10 +45,15 @@ namespace PDF_Manager.Printing
 
     class ResultFsecCombine
     {
+        public const string KEY = "FsecCombine";
+
         private Dictionary<string, FsecCombine> Fsecs = new Dictionary<string, FsecCombine>();
 
-        public ResultFsecCombine(PrintData pd, Dictionary<string, object> value, string key = "FsecCombine")
+        public ResultFsecCombine(PrintData pd, Dictionary<string, object> value, string key = ResultFsecCombine.KEY)
         {
+            if (value.ContainsKey(key))
+                return;
+
             // データを取得する．
             var target = JObject.FromObject(value[key]).ToObject<Dictionary<string, object>>();
 

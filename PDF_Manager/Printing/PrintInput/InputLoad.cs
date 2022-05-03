@@ -51,16 +51,20 @@ namespace PDF_Manager.Printing
 
     internal class InputLoad
     {
+        public const string KEY = "load";
+
         private Dictionary<int, Load> loads = new Dictionary<int, Load>();
         private InputLoadName loadname;
 
         public InputLoad(PrintData pd, Dictionary<string, object> value)
         {
-            this.loadname = (InputLoadName)pd.printDatas["LoadName"];
+            if (value.ContainsKey(KEY))
+                return;
 
+            this.loadname = (InputLoadName)pd.printDatas[InputLoadName.KEY];
 
             //nodeデータを取得する
-            var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

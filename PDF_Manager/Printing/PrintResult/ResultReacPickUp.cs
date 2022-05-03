@@ -6,7 +6,9 @@ namespace PDF_Manager.Printing
 {
     class ResultReacPickUp : ResultReacCombine
     {
-        public ResultReacPickUp(PrintData pd, Dictionary<string, object> value) : base(pd, value, "reacPickUp")
+        public new const string KEY = "reacPickUp";
+
+        public ResultReacPickUp(PrintData pd, Dictionary<string, object> value) : base(pd, value, ResultReacPickUp.KEY)
         {
 
         }

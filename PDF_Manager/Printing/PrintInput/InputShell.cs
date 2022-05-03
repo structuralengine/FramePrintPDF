@@ -27,6 +27,8 @@ namespace PDF_Manager.Printing
 
     internal class InputShell
     {
+        public const string KEY = "shell";
+
         private Dictionary<string, Shell> shells = new Dictionary<string, Shell>();
 
         private InputNode node;
@@ -34,11 +36,15 @@ namespace PDF_Manager.Printing
 
         public InputShell(PrintData pd, Dictionary<string, object> value)
         {
-            this.node = (InputNode)pd.printDatas["node"];
-            this.element = (InputElement)pd.printDatas["element"];
+            if (value.ContainsKey(KEY))
+                return;
+
+
+            this.node = (InputNode)pd.printDatas[InputNode.KEY];
+            this.element = (InputElement)pd.printDatas[InputElement.KEY];
 
             // memberデータを取得する
-            var target = JObject.FromObject(value["shell"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

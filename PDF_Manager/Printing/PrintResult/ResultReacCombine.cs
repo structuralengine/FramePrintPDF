@@ -46,10 +46,15 @@ namespace PDF_Manager.Printing
 
     class ResultReacCombine
     {
+        public const string KEY = "reacCombine";
+
         private Dictionary<string, ReacCombine> reacs = new Dictionary<string, ReacCombine>();
 
-        public ResultReacCombine(PrintData pd, Dictionary<string, object> value, string key = "reacCombine")
+        public ResultReacCombine(PrintData pd, Dictionary<string, object> value, string key = ResultReacCombine.KEY)
         {
+            if (value.ContainsKey(key))
+                return;
+
             // データを取得する．
             var target = JObject.FromObject(value[key]).ToObject<Dictionary<string, object>>();
 

@@ -18,17 +18,22 @@ namespace PDF_Manager.Printing
 
     internal class InputMember
     {
+        public const string KEY = "member";
+
         private Dictionary<string, Member> members = new Dictionary<string, Member>();
         private InputNode node;
         private InputElement element;
 
         public InputMember(PrintData pd, Dictionary<string, object> value)
         {
-            this.node = (InputNode)pd.printDatas["node"];
-            this.element = (InputElement)pd.printDatas["element"];
+            if (value.ContainsKey(KEY))
+                return;
+
+            this.node = (InputNode)pd.printDatas[InputNode.KEY];
+            this.element = (InputElement)pd.printDatas[InputElement.KEY];
 
             // memberデータを取得する
-            var target = JObject.FromObject(value["member"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

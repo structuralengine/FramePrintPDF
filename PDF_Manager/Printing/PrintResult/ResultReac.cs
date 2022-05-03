@@ -36,12 +36,17 @@ namespace PDF_Manager.Printing
 
     internal class ResultReac
     {
+        public const string KEY = "reac";
+
         private Dictionary<string, object> reacs = new Dictionary<string, object>();
 
         public ResultReac(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["reac"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

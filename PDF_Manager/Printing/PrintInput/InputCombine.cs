@@ -26,12 +26,16 @@ namespace PDF_Manager.Printing
 
     internal class InputCombine
     {
+        public const string KEY = "combine";
         private Dictionary<int, Combine> conbines = new Dictionary<int, Combine>();
 
         public InputCombine(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["combine"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

@@ -39,13 +39,17 @@ namespace PDF_Manager.Printing
 
     internal class ResultFsec
     {
+        public const string KEY = "fsec";
 
         private Dictionary<string, object> fsecs = new Dictionary<string, object>();
 
         public ResultFsec(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["fsec"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

@@ -14,15 +14,20 @@ namespace PDF_Manager.Printing
 
     internal class InputNoticePoints
     {
+        public const string KEY = "notice_points";
+
         private List<NoticePoint> noticepoints = new List<NoticePoint>();
         private InputMember member;
 
         public InputNoticePoints(PrintData pd, Dictionary<string, object> value)
         {
-            this.member = (InputMember)pd.printDatas["member"];
+            if (value.ContainsKey(KEY))
+                return;
+
+            this.member = (InputMember)pd.printDatas[InputMember.KEY];
 
             //nodeデータを取得する
-            JArray target = JArray.FromObject(value["notice_points"]);
+            JArray target = JArray.FromObject(value[KEY]);
 
             for (int i = 0; i < target.Count; i++)
             {

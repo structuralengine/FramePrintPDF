@@ -6,7 +6,9 @@ namespace PDF_Manager.Printing
 {
     class ResultFsecPickUp : ResultFsecCombine
     {
-        public ResultFsecPickUp(PrintData pd, Dictionary<string, object> value) : base(pd, value, "fsecPickUp")
+        public new const string KEY = "fsecPickUp";
+
+        public ResultFsecPickUp(PrintData pd, Dictionary<string, object> value) : base(pd, value, ResultFsecCombine.KEY)
         {
 
         }

@@ -32,12 +32,17 @@ namespace PDF_Manager.Printing
 
     internal class InputJoint
     {
+        public const string KEY = "joint";
+
         private Dictionary<int, List<Joint>> joints = new Dictionary<int, List<Joint>>();
 
         public InputJoint(PrintData pd, Dictionary<string, object> value)
         {
+            if (value.ContainsKey(KEY))
+                return;
+
             // データを取得する．
-            var target = JObject.FromObject(value["joint"]).ToObject<Dictionary<string, object>>();
+            var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
             // データを抽出する
             for (var i = 0; i < target.Count; i++)

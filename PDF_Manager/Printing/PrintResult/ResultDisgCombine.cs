@@ -44,10 +44,15 @@ namespace PDF_Manager.Printing
 
     internal class ResultDisgCombine
     {
+        public const string KEY = "disgCombine";
+
         private Dictionary<string, DisgCombine> disgs = new Dictionary<string, DisgCombine>();
 
-        public ResultDisgCombine(PrintData pd, Dictionary<string, object> value, string key = "disgCombine")
+        public ResultDisgCombine(PrintData pd, Dictionary<string, object> value, string key = ResultDisgCombine.KEY)
         {
+            if (value.ContainsKey(key))
+                return;
+
             // データを取得する．
             var target = JObject.FromObject(value[key]).ToObject<Dictionary<string, object>>();
 
