@@ -129,7 +129,7 @@ namespace PDF_Manager.Printing
 
                 for (int k = 0; k < elist.Count; k++)
                 {
-                    var item = JObject.FromObject(elist.ElementAt(k).Value); ;
+                    var item = JObject.FromObject(elist.ElementAt(k).Value);
                     string[] line = new String[8];
 
                     line[0] = dataManager.TypeChange(elist.ElementAt(k).Key);

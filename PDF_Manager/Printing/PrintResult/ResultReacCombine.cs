@@ -65,7 +65,7 @@ namespace PDF_Manager.Printing
                 var No = dataManager.toString(target.ElementAt(i).Key);  // ケース番号
                 var val = JToken.FromObject(target.ElementAt(i).Value);
 
-                var Rec = ((JObject)val).ToObject<Dictionary<string, object>>(); ;
+                var Rec = ((JObject)val).ToObject<Dictionary<string, object>>();
                 var _reac = ResultReacCombine.getReacCombine(Rec);
 
                 this.reacs.Add(No, _reac);

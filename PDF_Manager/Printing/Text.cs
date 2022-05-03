@@ -31,7 +31,7 @@ namespace PDF_Manager.Printing
             mc.gfx.DrawString(str, mc.font_mic, XBrushes.Black, mc.CurrentPos);
 
             mc.CurrentPos.X += str.Length * 10;
-            mc.CurrentPos.Y += 10; ;
+            mc.CurrentPos.Y += 10;
 
         }
 

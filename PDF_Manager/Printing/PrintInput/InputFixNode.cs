@@ -114,11 +114,11 @@ namespace PDF_Manager.Printing
 
                     line[0] = dataManager.TypeChange(item["n"]);
                     line[1] = dataManager.TypeChange(item["tx"]);
-                    line[2] = dataManager.TypeChange(item["ty"]); ;
+                    line[2] = dataManager.TypeChange(item["ty"]);
                     line[3] = dataManager.TypeChange(item["tz"]);
                     line[4] = dataManager.TypeChange(item["rx"]);
                     line[5] = dataManager.TypeChange(item["ry"]);
-                    line[6] = dataManager.TypeChange(item["rz"]); ;
+                    line[6] = dataManager.TypeChange(item["rz"]);
 
                     table.Add(line);
                 }
