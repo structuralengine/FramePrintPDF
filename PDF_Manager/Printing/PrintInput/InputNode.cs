@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
+using PDF_Manager.Printing.Comon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,8 @@ namespace PDF_Manager.Printing
 
     internal class InputNode
     {
+        # region 初期化・データの集計
+
         public const string KEY = "node";
 
         private Dictionary<string, Vector3> nodes = new Dictionary<string, Vector3>();
@@ -46,92 +49,161 @@ namespace PDF_Manager.Printing
             }
         }
 
-        /*
+        #endregion
+
+
+        #region 印刷処理
+
+        // タイトル
+        private string title;
+        // 項目タイトル
+        private string[,] header_content;
+        // ヘッダーのx方向の余白
+        private int[,] header_Xspacing;
+        // ボディーのx方向の余白
+        private int[,] body_Xspacing;
+
+        /// <summary>
+        /// 印刷前の初期化処理
+        /// </summary>
+        private void printInit(PdfDocument mc, PrintData data)
+        {
+            if (data.dimension == 3)
+            {   // 3次元
+                this.header_Xspacing = new int[,] {
+                    { 10, 60, 120, 180, 250, 300, 360, 420 },
+                    { 10, 60, 120, 180, 250, 300, 360, 420 },
+                };
+                this.body_Xspacing = new int[,] {
+                    { 17, 77, 137, 197, 257, 317, 377, 437 }
+                };
+                switch (data.language)
+                {
+                    case "en":
+                        this.title = "Node Data";
+                        this.header_content = new string[,] {
+                            { "Node", "", "", "", "Node", "", "", "", },
+                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
+                        };
+                        break;
+
+                    case "cn":
+                        this.title = "节点";
+                        this.header_content = new string[,] {
+                            { "节点", "", "", "", "节点", "", "", "", },
+                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
+                        };
+                        break;
+
+                    default:
+                        this.title = "格点データ";
+                        this.header_content = new string[,] {
+                            { "格点", "", "", "", "格点", "", "", "", },
+                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
+                        };
+                        break;
+                }
+            }
+            else
+            {   // 2次元
+                this.header_Xspacing = new int[,] {
+                    { 10, 60, 120, 120, 190, 240, 300, 420 },
+                    { 10, 60, 120, 120, 190, 240, 300, 420 },
+                };
+                this.body_Xspacing = new int[,] {
+                    { 17, 77, 137, 137, 197, 257, 317, 437 }
+                };
+                switch (data.language)
+                {
+                    case "en":
+                        this.title = "Node Data";
+                        this.header_content = new string[,] {
+                            { "Node", "", "", "", "Node", "", "", "", },
+                            { "No", "X", "Y", "", "No", "X", "Y", "" }
+                        };
+                        break;
+
+                    case "cn":
+                        this.title = "节点";
+                        this.header_content = new string[,] {
+                            { "节点", "", "", "", "节点", "", "", "", },
+                            { "No", "X", "Y", "", "No", "X", "Y", "" }
+                        };
+                        break;
+
+                    default:
+                        this.title = "格点データ";
+                        this.header_content = new string[,] {
+                            { "格点", "", "", "", "格点", "", "", "", },
+                            { "No", "X", "Y", "", "No", "X", "Y", "" }
+                        };
+                        break;
+                }
+            }
+        }
+
+
         /// <summary>
         /// 印刷する
         /// </summary>
         /// <param name="mc"></param>
-        public static void printPDF(PdfDoc mc)
+        public void printPDF(PdfDocument mc, PrintData data)
         {
-            #region 印刷設定
-            // ヘッダーのx方向の余白
-            var header_Xspacing = (this.helper.dimension == 3) ?
-                new int[,] {
-                    { 10, 60, 120, 180, 250, 300, 360, 420 },
-                    { 10, 60, 120, 180, 250, 300, 360, 420 },
-                } :
-                new int[,] {
-                    { 10, 60, 120, 120, 190, 240, 300, 420 },
-                    { 10, 60, 120, 120, 190, 240, 300, 420 },
-                };
+            // タイトル などの初期化
+            this.printInit(mc, data);
 
-            // ボディーのx方向の余白
-            var body_Xspacing = (this.helper.dimension == 3) ?
-                new int[,] {
-                    { 17, 77, 137, 197, 257, 317, 377, 437 }
-                } :
-                new int[,] {
-                    { 17, 77, 137, 137, 197, 257, 317, 437 }
-                };
+            // 何行印刷できるか調べる
+            // タイトルの印字高さ + 改行高
+            double H1 = printManager.FontHeight + printManager.LineSpacing1;
+            // 表題の印字高さ + 改行高
+            double H2 = this.header_content.Length * printManager.FontHeight + printManager.LineSpacing2;
 
-            //　ヘッダー
-            string title;
-            string[,] header_content;
-            switch (this.helper.language)
+            // 1ページ目に入る（現在位置から）行数
+            double Hx = mc.currentPageSize.Height;
+            Hx -= mc.currentY;
+            Hx -= H1;
+            Hx -= H2;
+
+            /*
+            // 2ページ目以降（ページ全体を使ってよい場合）の行数
+
+            var currentPos = mc.currentY; // 現在のポジション
+            int counter = 0;
+            while (counter < this.nodes.Count)
             {
-                case "en":
-                    title = "Node Data";
-                    header_content = (this.helper.dimension == 3) ?
-                        new string[,] {
-                            { "Node", "", "", "", "Node", "", "", "", },
-                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
-                        } :
-                        new string[,] {
-                            { "Node", "", "", "", "Node", "", "", "", },
-                            { "No", "X", "Y", "", "No", "X", "Y", "" }
-                        };
-                    break;
+                if(mc.currentPageSize.Height < currentPos)
+                {   // 改ページが必要ならば
+                    currentPos = H1 + H2; //
+                }
+                double curY = H1 + H2;
+                // 現在のポジション
 
-                case "cn":
-                    title = "节点";
-                    header_content = (this.helper.dimension == 3) ?
-                        new string[,] {
-                            { "节点", "", "", "", "节点", "", "", "", },
-                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
-                        } :
-                        new string[,] {
-                            { "节点", "", "", "", "节点", "", "", "", },
-                            { "No", "X", "Y", "", "No", "X", "Y", "" }
-                        };
-                    break;
-
-                default:
-                    title = "格点データ";
-                    header_content = (this.helper.dimension == 3) ?
-                        new string[,] {
-                            { "格点", "", "", "", "格点", "", "", "", },
-                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
-                        } :
-                        new string[,] {
-                            { "格点", "", "", "", "格点", "", "", "", },
-                            { "No", "X", "Y", "", "No", "X", "Y", "" }
-                        };
-                    break;
             }
 
-            #endregion
+            // 何行印刷できるか調べる
+            double rowHeight = printManager.;
 
-            #region 印刷する内容を集計する
+            // 印刷可能な領域
+            var page = mc.currentPageSize;
+            var pageHeight = page.Height;   // 用紙の印刷可能範囲の高さ
+            var pageWidth = page.Width;     // 用紙の印刷可能範囲の幅
 
-            List<List<string[]>> data = new List<List<string[]>>();
 
-            int bottomCell = mc.bottomCell * 2;
+            // 何行印刷できるか調べる
+            int dataCount = this.nodes.Count;
 
-            var row = this.nodes.Count;
-            var page = 0;
+            // タイトルとヘッダーの印字で必要な高さ
+            int titleHeigth = 
+
+
 
             while (true)
             {
+                // 何行印刷できるか調べる
+                var height = mc.currentY;       // 現在の高さ
+
+
+
                 if (row > bottomCell)
                 {
                     List<string[]> body = new List<string[]>();
@@ -237,9 +309,14 @@ namespace PDF_Manager.Printing
                     }
                 }
             }
+
+            */
             #endregion
         }
 
+
+        #region 他のモジュールのヘルパー関数
+        /*
         /// <summary>
         /// 節点座標を返す
         /// </summary>
@@ -266,6 +343,7 @@ namespace PDF_Manager.Printing
             return node;
         }
         */
+        #endregion
 
     }
 

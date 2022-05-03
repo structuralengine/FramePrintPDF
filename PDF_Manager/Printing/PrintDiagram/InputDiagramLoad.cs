@@ -20,12 +20,6 @@ namespace PDF_Manager.Printing
             //荷重図の設定データを取得する
             var target = JObject.FromObject(value[KEY]).ToObject<Dictionary<string, object>>();
 
-            // ペーパサイズ
-            string pageSize = target.ContainsKey("pageSize") ? (string)target["pageSize"] : "A4";
-
-            // ペーパ向き
-            string pageOrientation = target.ContainsKey("pageOrientation") ? (string)target["pageOrientation"] : "Vertical";   // Horizontal
-
             // 軸線スケール
             double scaleX = dataManager.parseDouble(target, "scaleX");
             double scaleY = dataManager.parseDouble(target, "scaleY"); 
@@ -566,38 +560,19 @@ namespace PDF_Manager.Printing
 
         }
 
-        /*
+        
         /// <summary>
         /// 荷重図の作成
         /// </summary>
         /// <param name="_mc">キャンパス</param>
         /// <param name="class_set">入力データ</param>
-        public static void DiagramOfLoadPDF(PdfDoc _mc, object[] class_set)
+        public void printPDF(PdfDocument mc, PrintData data)
         {
-
-            // 入力データの取得
-            // 節点
-            this.node = (InputNode)class_set[(int)class_name.node];
-            // 部材
-            this.member = (InputMember)class_set[(int)class_name.member];
-            // 材料
-            this.element = (InputElement)class_set[(int)class_name.elememt];
-            // 支点
-            this.fixnode = (InputFixNode)class_set[(int)class_name.fix_node];
-            // 結合
-            this.joint = (InputJoint)class_set[(int)class_name.joint];
-            // バネ
-            this.fixmember = (InputFixMember)class_set[(int)class_name.fix_member];
-            // 荷重名
-            this.loadname = (InputLoadName)class_set[(int)class_name.loadname];
-            // 荷重強度
-            this.load = (InputLoad)class_set[(int)class_name.load];
-
-            this.printNode();
-
 
         }
 
+
+        /*
         /// <summary>
         /// 節点の印字
         /// </summary>

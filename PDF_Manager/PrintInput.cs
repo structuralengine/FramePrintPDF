@@ -12,7 +12,7 @@ public class PrintInput
     {
         // データを読み込む
         JObject data = JObject.Parse(jsonString);
-        var value = data.ToObject<Dictionary<string, object>>(); // JObject.FromObject(data).ToObject<Dictionary<string, object>>();
+        var value = data.ToObject<Dictionary<string, object>>(); 
         //　準備のためのclassの呼び出し
         this.data = new PrintData(value);
     }
@@ -53,46 +53,48 @@ public class PrintInput
     /// <summary>
     /// PDF を生成する
     /// </summary>
-    /// <param name="red"></param>
-    private static PdfDoc printPDF(PrintData red)
+    /// <param name="data"></param>
+    private static PdfDocument printPDF(PrintData data)
     {
         // PDF ページを準備する
-        var mc = new PdfDoc(red);
+        var mc = new PdfDocument(data);
 
-        /*
         // 荷重図
-        if (red.printDatas["diagramLoad"] != null)
+        if (data.printDatas["diagramLoad"] != null)
         {
-            mc = InputDiagramLoad.printPDF(mc, red);
+            InputDiagramLoad diaLoad = (InputDiagramLoad)data.printDatas[InputDiagramLoad.KEY];
+            diaLoad.printPDF(mc, data);                        // 格点
             return mc; // 荷重図の指定があったらその他の出力はしない
         }
 
         // 入力データ
-        mc = InputNode.printPDF(mc, red);            // 格点
-        mc = InputMember.printPDF(mc, red);          // 部材
-        mc = InputElement.printPDF(mc, red);         // 材料
-        mc = InputFixNode.FixNodePDF(mc, red);       // 支点   
-        mc = InputJoint.printPDF(mc, red);           // 結合
-        mc = InputNoticePoints.printPDF(mc, red);    // 着目点
-        mc = InputFixMember.printPDF(mc,red);        // バネ
-        mc = InputShell.printPDF(mc, red);           // シェル
-        mc = InputLoadName.printPDF(mc, red);        // 荷重名称 
-        mc = InputLoad.printPDF(mc, red);            // 荷重強度 
-        mc = InputDefine.printPDF(mc, red);          // 組み合わせDefine
-        mc = InputCombine.printPDF(mc, red);         // 組み合わせCombine
-        mc = InputPickup.printPDF(mc, red);          // 組み合わせピックアップ
+        // 格点
+        ((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
+
+        /*
+        mc = InputMember.printPDF(mc, data);          // 部材
+        mc = InputElement.printPDF(mc, data);         // 材料
+        mc = InputFixNode.FixNodePDF(mc, data);       // 支点   
+        mc = InputJoint.printPDF(mc, data);           // 結合
+        mc = InputNoticePoints.printPDF(mc, data);    // 着目点
+        mc = InputFixMember.printPDF(mc,data);        // バネ
+        mc = InputShell.printPDF(mc, data);           // シェル
+        mc = InputLoadName.printPDF(mc, data);        // 荷重名称 
+        mc = InputLoad.printPDF(mc, data);            // 荷重強度 
+        mc = InputDefine.printPDF(mc, data);          // 組み合わせDefine
+        mc = InputCombine.printPDF(mc, data);         // 組み合わせCombine
+        mc = InputPickup.printPDF(mc, data);          // 組み合わせピックアップ
 
         // 計算結果データ
-        mc = ResultDisg.printPDF(mc, red);
-        mc = ResultDisgCombine.printPDF(mc, red);
-        mc = ResultDisgPickup.printPDF(mc, red);
-        mc = ResultFsec.printPDF(mc, red);
-        mc = ResultFsecCombine.printPDF(mc, red);
-        mc = ResultFsecPickup.printPDF(mc, red);
-        mc = ResultReac.ReacPDF(mc, red);
-        mc = ResultReacCombine.ReacAnnexingPDF(mc, red);
-        mc = ResultReacPickup.ReacAnnexingPDF(mc, red);
-
+        mc = ResultDisg.printPDF(mc, data);
+        mc = ResultDisgCombine.printPDF(mc, data);
+        mc = ResultDisgPickup.printPDF(mc, data);
+        mc = ResultFsec.printPDF(mc, data);
+        mc = ResultFsecCombine.printPDF(mc, data);
+        mc = ResultFsecPickup.printPDF(mc, data);
+        mc = ResultReac.ReacPDF(mc, data);
+        mc = ResultReacCombine.ReacAnnexingPDF(mc, data);
+        mc = ResultReacPickup.ReacAnnexingPDF(mc, data);
         */
         return mc;
     }

@@ -1,7 +1,5 @@
 ﻿{
-  "diagramLoad": {
-
-  },
+  "title": "ああああああああ",
   "node": {
     "1": {
       "x": -5,
@@ -3000,6 +2998,6 @@
     }
   },
   "dimension": 2,
-    "language": "ja"
+  "language": "ja"
 
 }

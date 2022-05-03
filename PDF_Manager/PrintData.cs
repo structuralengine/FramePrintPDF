@@ -27,6 +27,24 @@ namespace PDF_Manager
             else
                 this.printDatas.Add("language", "ja");
 
+            // ペーパサイズ
+            if (data.ContainsKey("pageSize"))
+                this.printDatas.Add("pageSize", data["pageSize"].ToString());
+            else
+                this.printDatas.Add("pageSize", "A4");
+
+            // ペーパ向き
+            if (data.ContainsKey("pageOrientation"))
+                this.printDatas.Add("pageOrientation", data["pageOrientation"].ToString());
+            else
+                this.printDatas.Add("pageOrientation", "Vertical"); // or Horizontal
+
+            // タイトル
+            if (data.ContainsKey("title"))
+                this.printDatas.Add("title", data["title"].ToString());
+            else
+                this.printDatas.Add("title", null);
+
             // node
             this.printDatas.Add(InputNode.KEY, new InputNode(data));
             // element
@@ -79,6 +97,58 @@ namespace PDF_Manager
 
         }
 
+        #region 他のモジュールのヘルパー関数
+        
 
+        /// <summary>
+        /// 2次元モードか3次元モードか？
+        /// </summary>
+        public int dimension
+        {
+            get
+            {
+                int re = (int)this.printDatas["dimension"];
+                return re;
+            }
+        }
+
+        public string language
+        {
+            get
+            {
+                string re = (string)this.printDatas["language"];
+                return re;
+            }
+        }
+
+        public string pageSize
+        {
+            get
+            {
+                string re = (string)this.printDatas["pageSize"];
+                return re;
+            }
+        }
+
+        public string pageOrientation
+        {
+            get
+            {
+                string re = (string)this.printDatas["pageOrientation"];
+                return re;
+            }
+
+        }
+
+        public string title
+        {
+            get
+            {
+                string re = (string)this.printDatas["title"];
+                return re;
+            }
+
+        }
+        #endregion
     }
 }
