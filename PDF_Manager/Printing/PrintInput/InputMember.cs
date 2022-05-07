@@ -174,25 +174,25 @@ namespace PDF_Manager.Printing
                 var lines = new string[count];
 
                 string No = target.ElementAt(i).Key;
-                Member Mem = target.ElementAt(i).Value;
+                Member item = target.ElementAt(i).Value;
 
                 int j = 0;
                 lines[j] = No;
                 j++;
-                lines[j] = printManager.toString(Mem.ni);
+                lines[j] = printManager.toString(item.ni);
                 j++;
-                lines[j] = printManager.toString(Mem.nj);
+                lines[j] = printManager.toString(item.nj);
                 j++;
                 lines[j] = printManager.toString(this.GetMemberLength(No), 3);
                 j++;
-                lines[j] = printManager.toString(Mem.e);
+                lines[j] = printManager.toString(item.e);
                 j++;
                 if (this.dimension == 3)
                 {
-                    lines[j] = printManager.toString(Mem.cg, 3);
+                    lines[j] = printManager.toString(item.cg, 3);
                     j++;
                 }
-                lines[j] = printManager.toString(this.Element.GetElementName(Mem.e));
+                lines[j] = printManager.toString(this.Element.GetElementName(item.e));
                 j++;
                 table.Add(lines);
             }
@@ -249,7 +249,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printContent(mc, page, this.title,
+            printManager.printContent(mc, page, new string[] { this.title },
                                       this.header_content, this.header_Xspacing,
                                       this.body_Xspacing, this.body_align);
  

@@ -189,13 +189,13 @@ namespace PDF_Manager.Printing
                         continue;
 
                     string No = target.ElementAt(index).Key;
-                    Vector3 XYZ = target.ElementAt(index).Value;
+                    Vector3 item = target.ElementAt(index).Value;
 
                     lines[0 + c * j] = No;
-                    lines[1 + c * j] = printManager.toString(XYZ.x, 3);
-                    lines[2 + c * j] = printManager.toString(XYZ.y, 3);
+                    lines[1 + c * j] = printManager.toString(item.x, 3);
+                    lines[2 + c * j] = printManager.toString(item.y, 3);
                     if (this.dimension == 3)
-                        lines[3 + c * j] = printManager.toString(XYZ.z, 3);
+                        lines[3 + c * j] = printManager.toString(item.z, 3);
                 }
                 table.Add(lines);
             }
@@ -249,7 +249,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printContent(mc, page, this.title,
+            printManager.printContent(mc, page, new string[] { this.title },
                                       this.header_content, this.header_Xspacing,
                                       this.body_Xspacing, this.body_align);
 

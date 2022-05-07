@@ -133,7 +133,7 @@ namespace PDF_Manager.Printing.Comon
         /// <param name="header_Xspacing">表題の位置</param>
         /// <param name="body_Xspacing">表内容の位置</param>
         /// <param name="body_align">表の文字位置</param>
-        public static void printContent(PdfDocument mc, List<List<string[]>> page, string title,
+        public static void printContent(PdfDocument mc, List<List<string[]>> page, string[] title,
                                         string[,] header_content, double[] header_Xspacing, 
                                         double[] body_Xspacing, XStringFormat[] body_align)
         {
@@ -145,9 +145,12 @@ namespace PDF_Manager.Printing.Comon
                     mc.NewPage(); // 2ページ目以降は改ページする
 
                 // タイトルの印字
-                mc.setCurrentX(printManager.H1PosX);
-                Text.PrtText(mc, title);
-                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                foreach(var s in title)
+                {
+                    mc.setCurrentX(printManager.H1PosX);
+                    Text.PrtText(mc, s);
+                    mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                }
 
                 // 表題の印字
                 for (int i = 0; i < header_content.Rank; i++)
