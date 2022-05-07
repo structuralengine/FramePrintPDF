@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
 using PDF_Manager.Printing.Comon;
+using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -61,28 +62,29 @@ namespace PDF_Manager.Printing
         // 項目タイトル
         private string[,] header_content;
         // ヘッダーのx方向の余白
-        private int[,] header_Xspacing;
+        private double[] header_Xspacing;
         // ボディーのx方向の余白
-        private int[,] body_Xspacing;
-        // 列数で３次元の場合は2列、2次元の場合は3列
-        private int columns;
+        private double[] body_Xspacing;
+
 
         /// <summary>
         /// 印刷前の初期化処理
         /// </summary>
-        private void printInit(PdfDocument mc, PrintData data)
+        private int printInit(PdfDocument mc, PrintData data)
         {
+            var X1 = printManager.H1PosX; //表題を印字するX位置  px ピクセル
+
+            int columns = 0; // 列数で３次元の場合は2列、2次元の場合は3列
+
             this.dimension = data.dimension;
             if (this.dimension == 3)
             {   // 3次元
-                this.columns = 2;
-                this.header_Xspacing = new int[,] {
-                    { 10, 60, 120, 180, 250, 300, 360, 420 },
-                    { 10, 60, 120, 180, 250, 300, 360, 420 },
+                columns = 2;
+                this.header_Xspacing = new double[] {
+                    X1, X1 + 70, X1 + 140, X1 + 210, X1 + 280, X1 + 350, X1 + 420, X1 + 490
                 };
-                this.body_Xspacing = new int[,] {
-                    { 17, 77, 137, 197, 257, 317, 377, 437 }
-                };
+                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
+
                 switch (data.language)
                 {
                     case "en":
@@ -112,14 +114,12 @@ namespace PDF_Manager.Printing
             }
             else
             {   // 2次元
-                this.columns = 3;
-                this.header_Xspacing = new int[,] {
-                    { 10, 60, 120, 120, 190, 240, 300, 420, 420 },
-                    { 10, 60, 120, 120, 190, 240, 300, 420, 420 },
+                columns = 3;
+                this.header_Xspacing = new double[] {
+                    X1, X1 + 60, X1 + 120, X1 + 180, X1 + 240, X1 + 300, X1 + 360, X1 + 420, X1 + 480 
                 };
-                this.body_Xspacing = new int[,] {
-                    { 17, 77, 137, 137, 197, 257, 317, 437, 437 }
-                };
+                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; } );
+
                 switch (data.language)
                 {
                     case "en":
@@ -147,6 +147,8 @@ namespace PDF_Manager.Printing
                         break;
                 }
             }
+
+            return columns;
         }
 
         /// <summary>
@@ -165,7 +167,7 @@ namespace PDF_Manager.Printing
             double H2 = this.header_content.GetLength(0) * printManager.FontHeight + printManager.LineSpacing2;
 
             // 1行当りの高さ + 改行高
-            double H3 = printManager.FontHeight + printManager.LineSpacing3;
+            double H3 = printManager.LineSpacing3;
 
             // 2ページ目以降（ページ全体を使ってよい場合）の行数
             double Hx = mc.currentPageSize.Height;
@@ -174,7 +176,7 @@ namespace PDF_Manager.Printing
             int rows2 = (int)(Hx / H3); // 切り捨て
 
             // 1ページ目（現在位置から）の行数
-            Hx -= mc.currentY;
+            Hx -= mc.contentY;
             int rows1 = (int)(Hx / H3); // 切り捨て
 
             return new int[] { rows1, rows2 };
@@ -184,13 +186,13 @@ namespace PDF_Manager.Printing
         /// <summary>
         /// 1ページに入れるコンテンツを集計する
         /// </summary>
-        /// <param name="target">印刷対象の</param>
-        /// <param name="index1"></param>
-        /// <param name="index2"></param>
-        /// <returns></returns>
-        private List<string[]> getPageContents(Dictionary<string, Vector3> target, int rows)
+        /// <param name="target">印刷対象の配列</param>
+        /// <param name="rows">行数</param>
+        /// <returns>印刷する用の配列</returns>
+        private List<string[]> getPageContents(Dictionary<string, Vector3> target, int rows, int columns)
         {
             int count = this.header_content.GetLength(1);
+            int c = count / columns;
 
             // 行コンテンツを生成
             var table = new List<string[]>();
@@ -199,21 +201,21 @@ namespace PDF_Manager.Printing
             {
                 var lines = new string[count];
 
-                for (var j = 0; j < this.columns; j++)
+                for (var j = 0; j < columns; j++)
                 {
                     int index = i + (rows * j);
 
                     if (target.Count <= index)
-                        break;
+                        continue;
 
                     string No = target.ElementAt(index).Key;
                     Vector3 XYZ = target.ElementAt(index).Value;
 
-                    lines[0 + this.columns * j] = No;
-                    lines[1 + this.columns * j] = printManager.toString(XYZ.x, 3);
-                    lines[2 + this.columns * j] = printManager.toString(XYZ.y, 3);
+                    lines[0 + c * j] = No;
+                    lines[1 + c * j] = printManager.toString(XYZ.x, 3);
+                    lines[2 + c * j] = printManager.toString(XYZ.y, 3);
                     if (this.dimension == 3)
-                        lines[3 + this.columns * j] = printManager.toString(XYZ.z, 3);
+                        lines[3 + c * j] = printManager.toString(XYZ.z, 3);
                 }
                 table.Add(lines);
             }
@@ -228,216 +230,96 @@ namespace PDF_Manager.Printing
         public void printPDF(PdfDocument mc, PrintData data)
         {
             // タイトル などの初期化
-            this.printInit(mc, data);
+            int columns = this.printInit(mc, data);
 
             // 印刷可能な行数
             var printRows = this.getPrintRowCount(mc);
 
-            // 全データを 1ページに印刷したら 何行になるか
-            int counter = this.nodes.Count;
-            int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(counter) / this.columns));
-
             // 行コンテンツを生成
             var page = new List<List<string[]>>();
 
-
-            // ページに入る行数
+            // 1ページ目に入る行数
             int rows = printRows[0];
 
-            var table = getPageContents(this.nodes, rs);
-            page.Add(table);
-
             // 集計開始
-            while (0 < counter)
+            var tmp1 = new Dictionary<string, Vector3>(this.nodes); // clone
+            while (true)
             {
-                if (rs < rows)
-                {   // 全データが1ページに入る場合
-                    for(var i = 0; i < rs; i++)
-                    {
-                        var columns = new string[this.header_content.GetLength(1)];
-                        for (var j=0; j< this.columns; j++)
-                        {
-                            int index = i + (rs * j);
-                            
-                            if(this.nodes.Count <= index)
-                                break;
-
-                            string No = this.nodes.ElementAt(index).Key;
-                            var XYZ = this.nodes.ElementAt(index).Value;
-
-                            columns[0 + this.columns * j] = No;
-                            columns[1 + this.columns * j] = printManager.toString(XYZ.x, 3);
-                            columns[2 + this.columns * j] = printManager.toString(XYZ.y, 3);
-                            if (data.dimension == 3)
-                                columns[3 + this.columns * j] = printManager.toString(XYZ.z, 3);
-                        }
-                        page.Add(columns);
-                        columns = null;
-                    }
-                    break;
-                }
-                else
+                // 1ページに納まる分のデータをコピー
+                var tmp2 = new Dictionary<string, Vector3>();
+                for (int i=0; i<rows * columns; i++)
                 {
-                    var columns = new string[this.header_content.GetLength(1)];
-
-
-                    page.Add(columns);
-
-                    // 残りのデータ数を更新する
-                    counter -= 100000;
-                    rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(counter) / this.columns));
+                    if (tmp1.Count <= 0)
+                        break;
+                    tmp2.Add(tmp1.First().Key, tmp1.First().Value);
+                    tmp1.Remove(tmp1.First().Key);
                 }
+                if (tmp2.Count <= 0)
+                    break;
+
+                // 全データを 1ページに印刷したら 何行になるか
+                int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
+                rows = Math.Min(rows, rs);
+
+                var table = this.getPageContents(tmp2, rows, columns);
+                page.Add(table);
+
+                // 2ページ以降に入る行数
                 rows = printRows[1];
             }
-                /*
-                // 2ページ目以降（ページ全体を使ってよい場合）の行数
 
-                var currentPos = mc.currentY; // 現在のポジション
-                int counter = 0;
-                while (counter < this.nodes.Count)
+
+            // 表の印刷
+            int p = 1;
+            foreach (var table in page)
+            {
+                if(1 < p)
+                    mc.NewPage();
+
+                // タイトルの印字
+                mc.setCurrentX(printManager.H1PosX);
+                Text.PrtText(mc, this.title);
+                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing1);
+
+                // 表題の印字
+                for(int i=0; i<this.header_content.Rank; i++)
                 {
-                    if(mc.currentPageSize.Height < currentPos)
-                    {   // 改ページが必要ならば
-                        currentPos = H1 + H2; //
+                    for(int j=0; j<this.header_content.GetLength(i); j++)
+                    {
+                        var str = this.header_content[i, j];
+                        if (str.Length <= 0)
+                            continue;
+                        var x = this.header_Xspacing[j];
+                        mc.setCurrentX(x);
+                        Text.PrtText(mc, str);
                     }
-                    double curY = H1 + H2;
-                    // 現在のポジション
+                    mc.addCurrentY(printManager.FontHeight);
+                }
+                mc.addCurrentY(printManager.LineSpacing2); // 中くらい（タイトル後など）の改行高さ
 
+                // 表の印刷
+                foreach (var line in table)
+                {
+                    for(int i=0; i< line.Length; i++)
+                    {
+                        var str = line[i];
+                        if (str == null)
+                            continue;
+                        if (str.Length <= 0)
+                            continue;
+                        var x = this.body_Xspacing[i];
+                        mc.setCurrentX(x);
+                        Text.PrtText(mc, str, align: XStringFormats.BottomRight);
+                    }
+                    mc.addCurrentY(printManager.LineSpacing3); // 小さい（テーブル内などの）改行高さ
                 }
 
-                // 何行印刷できるか調べる
-                double rowHeight = printManager.;
-
-                // 印刷可能な領域
-                var page = mc.currentPageSize;
-                var pageHeight = page.Height;   // 用紙の印刷可能範囲の高さ
-                var pageWidth = page.Width;     // 用紙の印刷可能範囲の幅
-
-
-                // 何行印刷できるか調べる
-                int dataCount = this.nodes.Count;
-
-                // タイトルとヘッダーの印字で必要な高さ
-                int titleHeigth = 
-
-
-
-                while (true)
-                {
-                    // 何行印刷できるか調べる
-                    var height = mc.currentY;       // 現在の高さ
-
-
-
-                    if (row > bottomCell)
-                    {
-                        List<string[]> body = new List<string[]>();
-                        var half = bottomCell / 2;
-                        for (var i = 0; i < half; i++)
-                        {
-                            //　各行の配列開始位置を取得する（左段/右段)
-                            var j = bottomCell * page + i;
-                            var k = bottomCell * page + bottomCell / 2 + i;
-
-                            string[] line = Enumerable.Repeat<String>("", 8).ToArray();
-
-                            //　各行のデータを取得する（左段/右段)
-                            Vector3 targetValue_l = this.nodes.ElementAt(j).Value;
-                            line[0] = this.nodes.ElementAt(j).Key;
-                            line[1] = dataManager.TypeChange(targetValue_l.x, 3);
-                            line[2] = dataManager.TypeChange(targetValue_l.y, 3);
-                            if(this.helper.dimension == 3)
-                                line[3] = dataManager.TypeChange(targetValue_l.z, 3);
-
-                            var targetValue_r = this.nodes.ElementAt(k).Value;
-                            line[4] = this.nodes.ElementAt(k).Key;
-                            line[5] = dataManager.TypeChange(targetValue_r.x, 3);
-                            line[6] = dataManager.TypeChange(targetValue_r.y, 3);
-                            if (this.helper.dimension == 3)
-                                line[7] = dataManager.TypeChange(targetValue_r.z, 3);
-
-                            body.Add(line);
-                        }
-                        data.Add(body);
-                        row -= bottomCell;
-                        page++;
-                    }
-                    else
-                    {
-                        List<string[]> body = new List<string[]>();
-
-                        row = row % 2 == 0 ? row / 2 : row / 2 + 1;
-
-                        for (var i = 0; i < row; i++)
-                        {
-                            //　各行の配列開始位置を取得する（左段/右段)
-                            var j = bottomCell * page + i;
-                            var k = j + row;
-
-                            string[] line = Enumerable.Repeat<String>("", 8).ToArray();
-
-                            //　各行のデータを取得する（左段)
-                            var targetValue_l = this.nodes.ElementAt(j).Value;
-                            line[0] = this.nodes.ElementAt(j).Key;
-                            line[1] = dataManager.TypeChange(targetValue_l.x, 3);
-                            line[2] = dataManager.TypeChange(targetValue_l.y, 3);
-                            if (this.helper.dimension == 3)
-                                line[3] = dataManager.TypeChange(targetValue_l.z, 3);
-
-                            try
-                            {
-                                //　各行のデータを取得する（右段)
-                                var targetValue_r = this.nodes.ElementAtOrDefault(k).Value;
-                                line[4] = this.nodes.ElementAtOrDefault(k).Key;
-                                line[5] = dataManager.TypeChange(targetValue_r.x, 3);
-                                line[6] = dataManager.TypeChange(targetValue_r.y, 3);
-                                if (this.helper.dimension == 3)
-                                    line[7] = dataManager.TypeChange(targetValue_r.z, 3);
-                            }
-                            catch
-                            {
-                                line[4] = "";
-                                line[5] = "";
-                                line[6] = "";
-                                line[7] = "";
-                            }
-                            body.Add(line);
-                        }
-                        data.Add(body);
-                        break;
-                    }
-                }
-                #endregion
-
-                #region 印刷する
-                mc.PrintContent(title, 0);
-                mc.CurrentRow(2);
-                mc.CurrentColumn(0);
-
-                mc.Header(header_content, header_Xspacing);
-
-
-                for (int i = 0; i < data.Count; i++)
-                {
-                    var pages = data[i];
-                    for (int j = 0; j < pages.Count; j++)
-                    {
-                        var line = pages[j];
-                        for (int k = 0; k < line.Length; k++)
-                        {
-                            mc.CurrentColumn(body_Xspacing[0, k]); //x方向移動
-                            mc.PrintContent(line[k], 3); // print
-                        }
-                        if (!(i == data.Count - 1 && j == data[i].Count - 1))
-                        {
-                            mc.CurrentRow(1); // y方向移動
-                        }
-                    }
-                }
-
-                */
-                #endregion
+                p++;
             }
+           
+
+        }
+        #endregion
 
 
         #region 他のモジュールのヘルパー関数

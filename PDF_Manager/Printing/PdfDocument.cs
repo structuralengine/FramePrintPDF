@@ -31,7 +31,7 @@ namespace PDF_Manager.Printing
         private PageSize pageSize;
         private PageOrientation pageOrientation;
 
-        private string title;   // 左上に印字するタイトル
+        private string title;   // 全ページ共通 左上に印字するタイトル
 
         /// <summary>
         /// 現在の座標
@@ -73,11 +73,12 @@ namespace PDF_Manager.Printing
             {
                 double height = this.currentPage.Height;
                 height -= this.Margine.Top;
-                height -= this.Margine.Bottom;
                 // 高さはタイトルの分だけ小さくなる
                 height -= printManager.titlePos.Y;
                 height -= printManager.FontHeight;
                 height -= printManager.LineSpacing2;
+
+                height -= this.Margine.Bottom;
 
                 double width = this.currentPage.Width;
                 width -= this.Margine.Left;
@@ -90,19 +91,34 @@ namespace PDF_Manager.Printing
         /// <summary>
         /// 現在の位置（マージンとタイトルの分を引いた Y位置）
         /// </summary>
-        public double currentY
+        public double contentY
         {
             get
             {
-                double result = this.currentPos.Y - this.Margine.Top;
+                double height = this.currentPos.Y;
+                // 高さはマージンの分だけ小さくなる
+                height -= this.Margine.Top;
                 // 高さはタイトルの分だけ小さくなる
-                result -= printManager.titlePos.Y;
-                result -= printManager.FontHeight;
-                result -= printManager.LineSpacing2;
-                return result;
+                height -= printManager.titlePos.Y;
+                height -= printManager.FontHeight;
+                height -= printManager.LineSpacing2;
+                return height;
             }
         }
 
+        /// <summary>
+        /// 改行する
+        /// </summary>
+        /// <param name="LF"></param>
+        public void addCurrentY(double LF)
+        {
+            this.currentPos.Y += LF;
+        }
+        public void setCurrentX(double X)
+        {
+            this.currentPos.X = Margine.Left;
+            this.currentPos.X += X;
+        }
 
         /// <summary>
         /// 改ページ
