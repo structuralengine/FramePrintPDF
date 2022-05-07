@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
 using PDF_Manager.Printing.Comon;
+using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -60,7 +61,12 @@ namespace PDF_Manager.Printing
         private double[] header_Xspacing;
         // ボディーのx方向の余白
         private double[] body_Xspacing;
-
+        // ボディーの文字位置
+        private XStringFormat[] body_align;
+        // 節点情報
+        private InputNode Node = null;
+        // 材料情報
+        private InputElement Element = null;
 
         /// <summary>
         /// 印刷前の初期化処理
@@ -73,7 +79,7 @@ namespace PDF_Manager.Printing
             if (this.dimension == 3)
             {   // 3次元
                 this.header_Xspacing = new double[] {
-                    X1, X1 + 70, X1 + 140, X1 + 210, X1 + 280, X1 + 350, X1 + 420, X1 + 490
+                    X1, X1 + 50, X1 + 100, X1 + 170, X1 + 220, X1 + 300, X1 + 400
                 };
                 this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
 
@@ -103,11 +109,15 @@ namespace PDF_Manager.Printing
                         };
                         break;
                 }
+                this.body_align = new XStringFormat[] {
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomRight, XStringFormats.BottomLeft
+                };
+
             }
             else
             {   // 2次元
                 this.header_Xspacing = new double[] {
-                    X1, X1 + 60, X1 + 120, X1 + 180, X1 + 240, X1 + 300, X1 + 360, X1 + 420, X1 + 480
+                    X1, X1 + 50, X1 + 100, X1 + 170, X1 + 220, X1 + 300
                 };
                 this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
 
@@ -137,39 +147,12 @@ namespace PDF_Manager.Printing
                         };
                         break;
                 }
+                this.body_align = new XStringFormat[] {
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomLeft
+                };
+
             }
 
-        }
-
-        /// <summary>
-        /// 何行印刷できるか調べる
-        /// </summary>
-        /// <returns>
-        /// return[0] = 1ページ目の印刷可能行数, 
-        /// return[1] = 2ページ目以降の印刷可能行数
-        /// </returns>
-        private int[] getPrintRowCount(PdfDocument mc)
-        {
-            // タイトルの印字高さ + 改行高
-            double H1 = printManager.FontHeight + printManager.LineSpacing1;
-
-            // 表題の印字高さ + 改行高
-            double H2 = this.header_content.GetLength(0) * printManager.FontHeight + printManager.LineSpacing2;
-
-            // 1行当りの高さ + 改行高
-            double H3 = printManager.LineSpacing3;
-
-            // 2ページ目以降（ページ全体を使ってよい場合）の行数
-            double Hx = mc.currentPageSize.Height;
-            Hx -= H1;
-            Hx -= H2;
-            int rows2 = (int)(Hx / H3); // 切り捨て
-
-            // 1ページ目（現在位置から）の行数
-            Hx -= mc.contentY;
-            int rows1 = (int)(Hx / H3); // 切り捨て
-
-            return new int[] { rows1, rows2 };
         }
 
 
@@ -179,34 +162,38 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
-        private List<string[]> getPageContents(Dictionary<string, Vector3> target, int rows, int columns)
+        private List<string[]> getPageContents(Dictionary<string, Member> target)
         {
             int count = this.header_content.GetLength(1);
-            int c = count / columns;
 
             // 行コンテンツを生成
             var table = new List<string[]>();
 
-            for (var i = 0; i < rows; i++)
+            for (var i = 0; i < target.Count; i++)
             {
                 var lines = new string[count];
 
-                for (var j = 0; j < columns; j++)
+                string No = target.ElementAt(i).Key;
+                Member Mem = target.ElementAt(i).Value;
+
+                int j = 0;
+                lines[j] = No;
+                j++;
+                lines[j] = printManager.toString(Mem.ni);
+                j++;
+                lines[j] = printManager.toString(Mem.nj);
+                j++;
+                lines[j] = printManager.toString(this.GetMemberLength(No), 3);
+                j++;
+                lines[j] = printManager.toString(Mem.e);
+                j++;
+                if (this.dimension == 3)
                 {
-                    int index = i + (rows * j);
-
-                    if (target.Count <= index)
-                        continue;
-
-                    string No = target.ElementAt(index).Key;
-                    Vector3 XYZ = target.ElementAt(index).Value;
-
-                    lines[0 + c * j] = No;
-                    lines[1 + c * j] = printManager.toString(XYZ.x, 3);
-                    lines[2 + c * j] = printManager.toString(XYZ.y, 3);
-                    if (this.dimension == 3)
-                        lines[3 + c * j] = printManager.toString(XYZ.z, 3);
+                    lines[j] = printManager.toString(Mem.cg, 3);
+                    j++;
                 }
+                lines[j] = printManager.toString(this.Element.GetElementName(Mem.e));
+                j++;
                 table.Add(lines);
             }
             return table;
@@ -219,25 +206,32 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+            // 部材長を取得できる状態にする
+            this.Node = (InputNode)data.printDatas[InputNode.KEY];
+
+            // 材料名称を取得できる状態にする
+            this.Element = (InputElement)data.printDatas[InputElement.KEY];
+
+
             // タイトル などの初期化
             this.printInit(mc, data);
 
             // 印刷可能な行数
-            var printRows = this.getPrintRowCount(mc);
+            var printRows = printManager.getPrintRowCount(mc, this.header_content);
 
             // 行コンテンツを生成
             var page = new List<List<string[]>>();
 
             // 1ページ目に入る行数
             int rows = printRows[0];
-            /*
+
             // 集計開始
-            var tmp1 = new Dictionary<string, Vector3>(this.nodes); // clone
+            var tmp1 = new Dictionary<string, Member>(this.members); // clone
             while (true)
             {
                 // 1ページに納まる分のデータをコピー
-                var tmp2 = new Dictionary<string, Vector3>();
-                for (int i = 0; i < rows * columns; i++)
+                var tmp2 = new Dictionary<string, Member>();
+                for (int i = 0; i < rows; i++)
                 {
                     if (tmp1.Count <= 0)
                         break;
@@ -247,73 +241,25 @@ namespace PDF_Manager.Printing
                 if (tmp2.Count <= 0)
                     break;
 
-                // 全データを 1ページに印刷したら 何行になるか
-                int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
-                rows = Math.Min(rows, rs);
-
-                var table = this.getPageContents(tmp2, rows, columns);
+                var table = this.getPageContents(tmp2);
                 page.Add(table);
 
                 // 2ページ以降に入る行数
                 rows = printRows[1];
             }
 
-
             // 表の印刷
-            int p = 1;
-            foreach (var table in page)
-            {
-                if (1 < p)
-                    mc.NewPage();
-
-                // タイトルの印字
-                mc.setCurrentX(printManager.H1PosX);
-                Text.PrtText(mc, this.title);
-                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing1);
-
-                // 表題の印字
-                for (int i = 0; i < this.header_content.Rank; i++)
-                {
-                    for (int j = 0; j < this.header_content.GetLength(i); j++)
-                    {
-                        var str = this.header_content[i, j];
-                        if (str.Length <= 0)
-                            continue;
-                        var x = this.header_Xspacing[j];
-                        mc.setCurrentX(x);
-                        Text.PrtText(mc, str);
-                    }
-                    mc.addCurrentY(printManager.FontHeight);
-                }
-                mc.addCurrentY(printManager.LineSpacing2); // 中くらい（タイトル後など）の改行高さ
-
-                // 表の印刷
-                foreach (var line in table)
-                {
-                    for (int i = 0; i < line.Length; i++)
-                    {
-                        var str = line[i];
-                        if (str == null)
-                            continue;
-                        if (str.Length <= 0)
-                            continue;
-                        var x = this.body_Xspacing[i];
-                        mc.setCurrentX(x);
-                        Text.PrtText(mc, str, align: XStringFormats.BottomRight);
-                    }
-                    mc.addCurrentY(printManager.LineSpacing3); // 小さい（テーブル内などの）改行高さ
-                }
-
-                p++;
-            }
-            */
-
+            printManager.printContent(mc, page, this.title,
+                                      this.header_content, this.header_Xspacing,
+                                      this.body_Xspacing, this.body_align);
+ 
         }
+        
         #endregion
 
 
         #region 他のモジュールのヘルパー関数
-        /*
+
         /// <summary>
         /// 部材にの長さを取得する
         /// </summary>
@@ -325,29 +271,23 @@ namespace PDF_Manager.Printing
         {
             var memb = this.GetMember(memberNo);
 
-            string ni = memb.ni.ToString();
-            string nj = memb.nj.ToString();
-            if (ni == null || nj == null)
+            if (memb == null)
+                return double.NaN;
+
+            if (memb.ni == null || memb.nj == null)
             {
-                return 0;
+                return double.NaN;
             }
 
-            InputNode node = new InputNode();
-            double[] iPos = node.GetNodePos(ni, value);
-            double[] jPos = node.GetNodePos(nj, value);
+            Vector3 iPos = this.Node.GetNodePos(memb.ni);
+            Vector3 jPos = this.Node.GetNodePos(memb.nj);
             if (iPos == null || jPos == null)
             {
-                return 0;
+                return double.NaN;
             }
 
-            double xi = iPos[0];
-            double yi = iPos[1];
-            double zi = iPos[2];
-            double xj = jPos[0];
-            double yj = jPos[1];
-            double zj = jPos[2];
+            double result = Math.Sqrt(Math.Pow(iPos.x - jPos.x, 2) + Math.Pow(iPos.y - jPos.y, 2) + Math.Pow(iPos.z - jPos.z, 2));
 
-            double result = Math.Sqrt(Math.Pow(xi - xj, 2) + Math.Pow(yi - yj, 2) + Math.Pow(zi - zj, 2));
             return result;
         }
 
@@ -364,7 +304,7 @@ namespace PDF_Manager.Printing
             }
             return this.members[No];
         }
-        */
+        
 
         /*
         public void printPDF(PdfDoc mc)

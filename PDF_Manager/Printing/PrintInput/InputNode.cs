@@ -65,6 +65,8 @@ namespace PDF_Manager.Printing
         private double[] header_Xspacing;
         // ボディーのx方向の余白
         private double[] body_Xspacing;
+        // ボディーの文字位置
+        private XStringFormat[] body_align;
 
 
         /// <summary>
@@ -111,6 +113,10 @@ namespace PDF_Manager.Printing
                         };
                         break;
                 }
+                this.body_align = new XStringFormat[] {
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
+                };
             }
             else
             {   // 2次元
@@ -146,43 +152,17 @@ namespace PDF_Manager.Printing
                         };
                         break;
                 }
+                this.body_align = new XStringFormat[] {
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
+                };
             }
 
             return columns;
         }
 
-        /// <summary>
-        /// 何行印刷できるか調べる
-        /// </summary>
-        /// <returns>
-        /// return[0] = 1ページ目の印刷可能行数, 
-        /// return[1] = 2ページ目以降の印刷可能行数
-        /// </returns>
-        private int[] getPrintRowCount(PdfDocument mc)
-        {
-            // タイトルの印字高さ + 改行高
-            double H1 = printManager.FontHeight + printManager.LineSpacing1;
-
-            // 表題の印字高さ + 改行高
-            double H2 = this.header_content.GetLength(0) * printManager.FontHeight + printManager.LineSpacing2;
-
-            // 1行当りの高さ + 改行高
-            double H3 = printManager.LineSpacing3;
-
-            // 2ページ目以降（ページ全体を使ってよい場合）の行数
-            double Hx = mc.currentPageSize.Height;
-            Hx -= H1;
-            Hx -= H2;
-            int rows2 = (int)(Hx / H3); // 切り捨て
-
-            // 1ページ目（現在位置から）の行数
-            Hx -= mc.contentY;
-            int rows1 = (int)(Hx / H3); // 切り捨て
-
-            return new int[] { rows1, rows2 };
-        }
-
-
+        
         /// <summary>
         /// 1ページに入れるコンテンツを集計する
         /// </summary>
@@ -233,7 +213,7 @@ namespace PDF_Manager.Printing
             int columns = this.printInit(mc, data);
 
             // 印刷可能な行数
-            var printRows = this.getPrintRowCount(mc);
+            var printRows = printManager.getPrintRowCount(mc, this.header_content);
 
             // 行コンテンツを生成
             var page = new List<List<string[]>>();
@@ -268,88 +248,44 @@ namespace PDF_Manager.Printing
                 rows = printRows[1];
             }
 
-
             // 表の印刷
-            int p = 1;
-            foreach (var table in page)
-            {
-                if(1 < p)
-                    mc.NewPage();
-
-                // タイトルの印字
-                mc.setCurrentX(printManager.H1PosX);
-                Text.PrtText(mc, this.title);
-                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing1);
-
-                // 表題の印字
-                for(int i=0; i<this.header_content.Rank; i++)
-                {
-                    for(int j=0; j<this.header_content.GetLength(i); j++)
-                    {
-                        var str = this.header_content[i, j];
-                        if (str.Length <= 0)
-                            continue;
-                        var x = this.header_Xspacing[j];
-                        mc.setCurrentX(x);
-                        Text.PrtText(mc, str);
-                    }
-                    mc.addCurrentY(printManager.FontHeight);
-                }
-                mc.addCurrentY(printManager.LineSpacing2); // 中くらい（タイトル後など）の改行高さ
-
-                // 表の印刷
-                foreach (var line in table)
-                {
-                    for(int i=0; i< line.Length; i++)
-                    {
-                        var str = line[i];
-                        if (str == null)
-                            continue;
-                        if (str.Length <= 0)
-                            continue;
-                        var x = this.body_Xspacing[i];
-                        mc.setCurrentX(x);
-                        Text.PrtText(mc, str, align: XStringFormats.BottomRight);
-                    }
-                    mc.addCurrentY(printManager.LineSpacing3); // 小さい（テーブル内などの）改行高さ
-                }
-
-                p++;
-            }
-           
+            printManager.printContent(mc, page, this.title,
+                                      this.header_content, this.header_Xspacing,
+                                      this.body_Xspacing, this.body_align);
 
         }
+
+
         #endregion
 
 
         #region 他のモジュールのヘルパー関数
-        /*
         /// <summary>
         /// 節点座標を返す
         /// </summary>
         /// <param name="nodeNo"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public double[] GetNodePos(string nodeNo, Dictionary<string, object> value)
+        /// 
+        public Vector3 GetNodePos(string nodeNo)
         {
-            //var nodeList = JObject.FromObject(value["node"]).ToObject<Dictionary<string, object>>();
-
             if (this.nodes.Count <= 0)
                 return null;
 
             if (!this.nodes.ContainsKey(nodeNo))
                 return null;
 
-            var targetValue = this.nodes[nodeNo];
+            var target = this.nodes[nodeNo];
 
-            double[] node = new double[3];
-            node[0] = double.IsNaN(targetValue.x) ? 0 : targetValue.x;
-            node[1] = double.IsNaN(targetValue.y) ? 0 : targetValue.y;
-            node[2] = double.IsNaN(targetValue.z) ? 0 : targetValue.z;
+            var result = new Vector3();
 
-            return node;
+            result.x = double.IsNaN(target.x) ? 0 : target.x;
+            result.y = double.IsNaN(target.y) ? 0 : target.y;
+            result.z = double.IsNaN(target.z) ? 0 : target.z;
+
+            return result;
         }
-        */
+        
         #endregion
 
     }
