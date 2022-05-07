@@ -98,7 +98,7 @@ namespace PDF_Manager.Printing
             if (this.dimension == 3)
             {   // 3次元
                 this.header_Xspacing = new double[] {
-                    X1, X1 + 50, X1 + 110, X1 + 170, X1 + 230, X1 + 320, X1 + 405
+                    X1, X1 + 50, X1 + 110, X1 + 170, X1 + 230, X1 + 300, X1 + 360, X1 + 420
                 };
                 this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
 
@@ -129,7 +129,9 @@ namespace PDF_Manager.Printing
                         break;
                 }
                 this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomRight, XStringFormats.BottomRight
+                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, 
+                    XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomRight, 
+                    XStringFormats.BottomRight, XStringFormats.BottomRight
                 };
 
             }
@@ -297,17 +299,20 @@ namespace PDF_Manager.Printing
                         tmp2.Add(tmp1.First().Key, tmp1.First().Value);
                         tmp1.Remove(tmp1.First().Key);
                     }
-                    if (tmp2.Count <= 0)
-                        break;
-                    if (this.dimension == 3)
+
+                    if (tmp2.Count > 0)
                     {
-                        var table = this.getPageContents3D(tmp2);
+                        var table = (this.dimension == 3) ? this.getPageContents3D(tmp2):
+                                                            this.getPageContents2D(tmp2);
                         page.Add(table);
                     }
-                    else
+                    else if (tmp1.Count <= 0)
                     {
-                        var table = this.getPageContents2D(tmp2);
-                        page.Add(table);
+                        break;
+                    }
+                    else
+                    { // 印刷するものもない
+                        mc.NewPage();
                     }
 
                     // 2ページ以降に入る行数

@@ -234,15 +234,23 @@ namespace PDF_Manager.Printing
                     tmp2.Add(tmp1.First().Key, tmp1.First().Value);
                     tmp1.Remove(tmp1.First().Key);
                 }
-                if (tmp2.Count <= 0)
+                if (tmp2.Count > 0)
+                {
+                    // 全データを 1ページに印刷したら 何行になるか
+                    int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
+                    rows = Math.Min(rows, rs);
+
+                    var table = this.getPageContents(tmp2, rows, columns);
+                    page.Add(table);
+                }
+                else if (tmp1.Count <= 0)
+                {
                     break;
-
-                // 全データを 1ページに印刷したら 何行になるか
-                int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
-                rows = Math.Min(rows, rs);
-
-                var table = this.getPageContents(tmp2, rows, columns);
-                page.Add(table);
+                }
+                else
+                { // 印刷するものもない
+                    mc.NewPage();
+                }
 
                 // 2ページ以降に入る行数
                 rows = printRows[1];

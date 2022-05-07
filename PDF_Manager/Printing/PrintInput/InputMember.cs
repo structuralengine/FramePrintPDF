@@ -238,11 +238,20 @@ namespace PDF_Manager.Printing
                     tmp2.Add(tmp1.First().Key, tmp1.First().Value);
                     tmp1.Remove(tmp1.First().Key);
                 }
-                if (tmp2.Count <= 0)
-                    break;
 
-                var table = this.getPageContents(tmp2);
-                page.Add(table);
+                if (tmp2.Count > 0)
+                {
+                    var table = this.getPageContents(tmp2);
+                    page.Add(table);
+                }
+                else if (tmp1.Count <= 0)
+                {
+                    break;
+                }
+                else
+                { // 印刷するものもない
+                    mc.NewPage();
+                }
 
                 // 2ページ以降に入る行数
                 rows = printRows[1];
