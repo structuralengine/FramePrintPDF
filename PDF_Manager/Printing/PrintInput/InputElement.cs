@@ -276,7 +276,7 @@ namespace PDF_Manager.Printing
 
 
             // 集計開始
-            foreach(var tmp0 in new Dictionary<int, Dictionary<string, Element>>(this.elements))
+            foreach(var tmp0 in this.elements)
             {
                 var typeNo = string.Format("Type{0}", tmp0.Key); // タイプ番号
                 var titles = new string[] { this.title, typeNo };
@@ -287,7 +287,7 @@ namespace PDF_Manager.Printing
                 // 1ページ目に入る行数
                 int rows = printRows[0];
 
-                var tmp1 = tmp0.Value;
+                var tmp1 = new Dictionary<string, Element>(tmp0.Value);
                 while (true)
                 {
                     // 1ページに納まる分のデータをコピー

@@ -68,12 +68,22 @@ namespace PDF_Manager.Printing
         // ボディーの文字位置
         private XStringFormat[] body_align;
 
+        private Table myTable;
 
         /// <summary>
         /// 印刷前の初期化処理
         /// </summary>
         private int printInit(PdfDocument mc, PrintData data)
         {
+            if (this.dimension == 3)
+            {   // 3次元
+                this.myTable = new Table();
+            }
+            else
+            {
+                this.myTable = new Table();
+            }
+
             var X1 = printManager.H1PosX; //表題を印字するX位置  px ピクセル
 
             int columns = 0; // 列数で３次元の場合は2列、2次元の場合は3列

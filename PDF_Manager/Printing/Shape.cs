@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PDF_Manager.Printing.PrintDiagram
+namespace PDF_Manager.Printing
 {
     internal class Shape
     {
