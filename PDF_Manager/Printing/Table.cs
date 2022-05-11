@@ -75,31 +75,53 @@ namespace PDF_Manager.Printing
         public Table(int _rows, int _cols)
         {
             //** Row, Col Count
-            CellRows = _rows;
-            CellCols = _cols;
+            this.CellRows = _rows;
+            this.CellCols = _cols;
 
             this.setRowCount(_rows);
         }
 
         public void setRowCount(int _rows)
         {
+            // 昔の情報を取っておく
+            var oldCell = new string[_rows + 1, this.CellCols + 1];
+            var oldAlignX = new string[_rows + 1, this.CellCols + 1];
+            var oldAlignY = new string[_rows + 1, this.CellCols + 1];
+            if (this.Cell != null)
+            {
+                oldCell = this.Cell.Clone() as string[,];
+                oldAlignX = this.AlignX.Clone() as string[,];
+                oldAlignY = this.AlignY.Clone() as string[,];
+            }
+            int oldRows = this.CellRows; // 昔のデータの行数
+
             //** Row, Col Count
             this.CellRows = _rows;
+
             //** Init Cell
             this.Cell = new string[_rows + 1, this.CellCols + 1];
-            for (int i = 1; i <= _rows; ++i)
-                for (int j = 1; j <= this.CellCols; ++j)
-                    this.Cell[i, j] = "";
+            for (int j = 1; j <= this.CellCols; ++j)
+                for (int i = 1; i <= oldRows; ++i)
+                    this.Cell[i, j] = oldCell[i,j];
+
 
             //** Init Align
             this.AlignX = new string[_rows + 1, this.CellCols + 1];
-            for (int i = 1; i <= _rows; ++i)
-                for (int j = 1; j <= this.CellCols; ++j)
+            for (int j = 1; j <= this.CellCols; ++j) { 
+                for (int i = 1; i <= oldRows; ++i)
+                    this.AlignX[i, j] = oldAlignX[i, j];
+                for (int i = oldRows + 1; i <= _rows; ++i)
                     this.AlignX[i, j] = "C";
+            }
+
             this.AlignY = new string[_rows + 1, this.CellCols + 1];
-            for (int i = 1; i <= _rows; ++i)
-                for (int j = 1; j <= this.CellCols; ++j)
-                    this.AlignY[i, j] = "C";
+            for (int j = 1; j <= this.CellCols; ++j)
+            {
+                for (int i = 1; i <= oldRows; ++i)
+                    this.AlignY[i, j] = oldAlignY[i, j];
+                for (int i = oldRows + 1; i <= _rows; ++i)
+                    this.AlignX[i, j] = "C";
+            }
 
             //** Init RowHeight
             this.RowHeight = new double[_rows + 1];

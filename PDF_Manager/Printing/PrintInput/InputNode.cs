@@ -75,14 +75,15 @@ namespace PDF_Manager.Printing
         /// </summary>
         private int printInit(PdfDocument mc, PrintData data)
         {
-            if (this.dimension == 3)
-            {   // 3次元
-                this.myTable = new Table();
-            }
-            else
-            {
-                this.myTable = new Table();
-            }
+            int cols = (this.dimension == 3) ? 8 : 9;
+            this.myTable = new Table(2, cols);
+
+
+
+
+
+
+
 
             var X1 = printManager.H1PosX; //表題を印字するX位置  px ピクセル
 

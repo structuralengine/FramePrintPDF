@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
-using PDF_Manager.Printing.PrintDiagram;
 using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
