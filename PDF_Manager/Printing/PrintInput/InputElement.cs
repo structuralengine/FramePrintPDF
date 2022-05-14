@@ -73,7 +73,7 @@ namespace PDF_Manager.Printing
 
 
         #region 印刷処理
-
+        /*
         // タイトル
         private string title;
         // 2次元か3次元か
@@ -326,7 +326,7 @@ namespace PDF_Manager.Printing
             }
 
         }
-
+        */
         #endregion
 
 

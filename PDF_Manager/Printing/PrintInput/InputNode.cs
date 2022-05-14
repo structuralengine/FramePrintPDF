@@ -81,8 +81,8 @@ namespace PDF_Manager.Printing
 
                 // テーブルの幅
                 for (var i=0; i < cols; i++)
-                    this.myTable.ColWidth[i] = 80;
-                this.myTable.ColWidth[0] = 40; // 格点No
+                    this.myTable.ColWidth[i] = 80.0;
+                this.myTable.ColWidth[0] = 40.0; // 格点No
                 this.myTable.ColWidth[4] = this.myTable.ColWidth[0];
 
                 // ヘッダー
@@ -304,7 +304,7 @@ namespace PDF_Manager.Printing
                 var tbl = HeaderTable.Clone();
                 tbl.ReDim(tbl.Rows + table.Count, tbl.Columns);
 
-                int r = tbl.Rows;
+                int r = HeaderTable.Rows;
                 foreach (var line in table)
                 {
                     for (int c = 0; c < line.Length; c++)
@@ -316,6 +316,7 @@ namespace PDF_Manager.Printing
                             continue;
                         tbl[r, c] = str;
                     }
+                    r++;
                 }
 
                 // 表の印刷

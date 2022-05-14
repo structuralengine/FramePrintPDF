@@ -95,13 +95,13 @@ namespace PDF_Manager.Printing
         public void ReDim(int _rows, int _cols)
         {
             // 昔の情報を取っておく
-            var oldCell = this.Cell.Clone() as string[,];
-            var oldAlignX = this.AlignX.Clone() as string[,];
-            var oldAlignY = this.AlignY.Clone() as string[,];
-            var oldRowHeight = this.RowHeight.Clone() as double[];
-            var oldColWidth = this.ColWidth.Clone() as double[];
-            var oldHolLW = this.HolLW.Clone() as double[, ];
-            var oldVtcLW = this.VtcLW.Clone() as double[, ];
+            var oldCell = (this.Cell != null) ? this.Cell.Clone() as string[,] : null;
+            var oldAlignX = (this.AlignX != null) ? this.AlignX.Clone() as string[,] : null;
+            var oldAlignY = (this.AlignY != null) ? this.AlignY.Clone() as string[,] : null;
+            var oldRowHeight = (this.RowHeight != null) ? this.RowHeight.Clone() as double[] : null;
+            var oldColWidth = (this.ColWidth != null) ? this.ColWidth.Clone() as double[] : null;
+            var oldHolLW = (this.HolLW != null) ? this.HolLW.Clone() as double[, ]: null;
+            var oldVtcLW = (this.VtcLW != null) ? this.VtcLW.Clone() as double[,] : null;
 
             //** Init Cell
             this.Cell = new string[_rows, _cols];
@@ -126,7 +126,7 @@ namespace PDF_Manager.Printing
                 this.RowHeight[i] = oldRowHeight[i];
 
             //** Init ColWidth
-            this.ColWidth = new double[this.CellCols];
+            this.ColWidth = new double[_cols];
             for (int j = 0; j < this.CellCols; ++j)
                 this.ColWidth[j] = oldColWidth[j];
 
@@ -135,14 +135,16 @@ namespace PDF_Manager.Printing
             for (int i = 0; i < this.CellRows; ++i)
                 this.SetHolLW(i, this.HolLW[i, 0]);
             for (int i = this.CellRows; i <= _rows; ++i)
-                this.SetHolLW(i, Table.DEFAULT_LINE_WIDTH);
+                for (int j = 0; j < _cols; ++j)
+                    this.HolLW[i, j] = Table.DEFAULT_LINE_WIDTH;
 
             //** Init Vertical Line Width
             this.VtcLW = new double[_rows, _cols + 1];
             for (int j = 0; j < this.CellCols; ++j)
                 this.SetVtcLW(j, this.VtcLW[0, j]);
             for (int j = this.CellCols; j <= _cols; ++j)
-                this.SetVtcLW(j, Table.DEFAULT_LINE_WIDTH);                
+                for (int i = 0; i < _rows; ++i)
+                    this.VtcLW[i, j] = Table.DEFAULT_LINE_WIDTH;
 
             //** Row, Col Count
             this.CellRows = _rows;
@@ -160,10 +162,12 @@ namespace PDF_Manager.Printing
         {
             set
             {
-                if (value != null)
-                    this.Cell[row, col] = value;
+                this.Cell[row, col] = value;
             }
-            get { return this.Cell[row, col]; }
+            get 
+            { 
+                return this.Cell[row, col]; 
+            }
         }
 
         /// <summary>
@@ -184,10 +188,10 @@ namespace PDF_Manager.Printing
         {
             double result = 0;
             for (int i = 0; i < this.CellRows; ++i)
-                if(this.RowHeight[i] != double.NaN)
-                    result += this.RowHeight[i];
+                if(this.RowHeight[i] == double.NaN || this.RowHeight[i] <= 0)
+                    result += this.LineSpacing3;
                 else
-                    result += printManager.LineSpacing3;
+                    result += this.RowHeight[i];
             return result;
         }
 
@@ -252,37 +256,48 @@ namespace PDF_Manager.Printing
             #region Base Info
             
             XSize textSize2 = _mc.MeasureString(" ");
+
             XSize[,] textSize1 = new XSize[this.Rows, this.Columns];
-            for (int i = 0; i <= this.CellRows; ++i)
+            for (int i = 0; i < this.CellRows; ++i)
                 for (int j = 0; j < this.CellCols; ++j)
+                {
+                    if (this.Cell[i, j] == null)
+                        continue;
                     textSize1[i, j] = _mc.MeasureString(this.Cell[i, j]);
+                }
 
             ///////////////////////////////////////////////
             for (int i = 0; i < this.CellRows; ++i)
-                if (this.RowHeight[i] == double.NaN)
+            {
+                if (this.RowHeight[i] == double.NaN || this.RowHeight[i] <= 0)
                     this.RowHeight[i] = this.LineSpacing3;
+            }
 
             ///////////////////////////////////////////////
             for (int j = 0; j < this.CellCols; ++j)
-                if (this.ColWidth[j] == double.NaN)
+            {
+                if (this.ColWidth[j] == double.NaN || this.ColWidth[j] <= 0)
                     for (int i = 0; i < this.CellRows; ++i)
                         this.ColWidth[j] = Math.Max(this.ColWidth[j], textSize1[i, j].Width + textSize2.Width);
-
+            }
             ///////////////////////////////////////////////
-            XPoint[,] point = new XPoint[this.CellRows, this.CellCols];
+            XPoint[,] point = new XPoint[this.CellRows + 1, this.CellCols + 1];
             try
             {
                 double y1 = _mc.currentPos.Y;
                 for (int i = 0; i <= this.CellRows; ++i)
                 {
+                    if (0 < i)
+                        y1 += this.RowHeight[i - 1];
+
                     double x1 = _mc.currentPos.X;
                     for (int j = 0; j <= this.CellCols; ++j)
                     {
+                        if(0 < j)
+                            x1 += this.ColWidth[j - 1];
                         point[i, j].Y = y1;
                         point[i, j].X = x1;
-                        x1 += this.ColWidth[j];
                     }
-                    y1 += this.RowHeight[i];
                 }
             }
             catch { Text.PrtText(_mc, "Error: PrintTable() - Base Info"); }
@@ -294,12 +309,14 @@ namespace PDF_Manager.Printing
                 for (int i = 0; i <= this.CellRows; ++i)
                     for (int j = 0; j < this.CellCols; ++j)
                         if (HolLW[i, j] != double.NaN)
-                            Shape.DrawLine(_mc, point[i, j], point[i, j + 1], HolLW[i, j]);
+                            if (0 < HolLW[i, j])
+                                Shape.DrawLine(_mc, point[i, j], point[i, j + 1], HolLW[i, j]);
 
                 for (int i = 0; i < CellRows; ++i)
                     for (int j = 0; j <= CellCols; ++j)
                         if (VtcLW[i, j] != double.NaN)
-                            Shape.DrawLine(_mc, point[i, j], point[i + 1, j], VtcLW[i, j]);
+                            if (0 < VtcLW[i, j])
+                                Shape.DrawLine(_mc, point[i, j], point[i + 1, j], VtcLW[i, j]);
             }
             catch
             {
@@ -317,7 +334,7 @@ namespace PDF_Manager.Printing
                         if (this.Cell[i, j] == null)
                             continue;
 
-                        if (this.Cell[i, j].Length > 0)
+                        if (this.Cell[i, j].Length == 0)
                             continue;
 
                         double XPos = 0;
@@ -328,19 +345,19 @@ namespace PDF_Manager.Printing
                         switch (AlignY[i, j])
                         {
                             case "T":
-                                YPos = point[i - 1, j].Y;
-                                break;
-                            case "B":
                                 YPos = point[i, j].Y;
                                 break;
+                            case "B":
+                                YPos = point[i + 1, j].Y;
+                                break;
                             default: // case "C"
-                                YPos = point[i, j].Y - ((RowHeight[i] + textSize1[i, j].Height) / 2);
+                                YPos = (point[i, j].Y + point[i + 1, j].Y) / 2;
                                 break;
                         }
                         switch (AlignX[i, j])
                         {
                             case "L":
-                                XPos = point[i, j - 1].X + textSize2.Width;
+                                XPos = point[i, j].X + textSize2.Width;
                                 switch (AlignY[i, j]){
                                     case "T": align = XStringFormats.TopLeft;   
                                         break;
@@ -351,7 +368,7 @@ namespace PDF_Manager.Printing
                                 }
                                 break;
                             case "R":
-                                XPos = point[i, j].X - textSize2.Width;
+                                XPos = point[i, j + 1].X - textSize2.Width;
                                 switch (AlignY[i, j]) {
                                     case "T": align = XStringFormats.TopRight;
                                         break;
@@ -362,7 +379,7 @@ namespace PDF_Manager.Printing
                                 }
                                 break;
                             default: // case "C"
-                                XPos = point[i, j - 1].X + (ColWidth[j] - textSize1[i, j].Width) / 2;
+                                XPos = (point[i, j].X + point[i, j + 1].X) / 2;
                                 switch (AlignY[i, j]) {
                                     case "T": align = XStringFormats.TopCenter;
                                         break;
