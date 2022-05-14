@@ -59,15 +59,7 @@ namespace PDF_Manager.Printing
         private string title;
         // 2次元か3次元か
         private int dimension;
-        // 項目タイトル
-        private string[,] header_content;
-        // ヘッダーのx方向の余白
-        private double[] header_Xspacing;
-        // ボディーのx方向の余白
-        private double[] body_Xspacing;
-        // ボディーの文字位置
-        private XStringFormat[] body_align;
-
+        // テーブル
         private Table myTable;
 
         /// <summary>
@@ -75,99 +67,111 @@ namespace PDF_Manager.Printing
         /// </summary>
         private int printInit(PdfDocument mc, PrintData data)
         {
-            int cols = (this.dimension == 3) ? 8 : 9;
-            this.myTable = new Table(2, cols);
-
-
-
-
-
-
-
-
-            var X1 = printManager.H1PosX; //表題を印字するX位置  px ピクセル
-
             int columns = 0; // 列数で３次元の場合は2列、2次元の場合は3列
 
             this.dimension = data.dimension;
             if (this.dimension == 3)
             {   // 3次元
                 columns = 2;
-                this.header_Xspacing = new double[] {
-                    X1, X1 + 70, X1 + 140, X1 + 210, X1 + 280, X1 + 350, X1 + 420, X1 + 490
-                };
-                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
 
+                int cols = columns * 4;
+
+                //テーブルの作成
+                this.myTable = new Table(2, cols);
+
+                // テーブルの幅
+                for (var i=0; i < cols; i++)
+                    this.myTable.ColWidth[i] = 80;
+                this.myTable.ColWidth[0] = 40; // 格点No
+                this.myTable.ColWidth[4] = this.myTable.ColWidth[0];
+
+                // ヘッダー
                 switch (data.language)
                 {
                     case "en":
                         this.title = "Node Data";
-                        this.header_content = new string[,] {
-                            { "Node", "", "", "", "Node", "", "", "", },
-                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
-                        };
+                        this.myTable[0, 0] = "Node";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X";
+                        this.myTable[1, 2] = "Y";
+                        this.myTable[1, 3] = "Z";
                         break;
 
                     case "cn":
                         this.title = "节点";
-                        this.header_content = new string[,] {
-                            { "节点", "", "", "", "节点", "", "", "", },
-                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
-                        };
+                        this.myTable[0, 0] = "节点";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X";
+                        this.myTable[1, 2] = "Y";
+                        this.myTable[1, 3] = "Z";
                         break;
 
                     default:
                         this.title = "格点データ";
-                        this.header_content = new string[,] {
-                            { "格点", "", "", "", "格点", "", "", "", },
-                            { "No", "X", "Y", "Z", "No", "X", "Y", "Z" }
-                        };
+                        this.myTable[0, 0] = "格点";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X";
+                        this.myTable[1, 2] = "Y";
+                        this.myTable[1, 3] = "Z";
                         break;
                 }
-                this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
-                };
+                this.myTable[0, 4] = this.myTable[0, 0];
+                this.myTable[1, 4] = this.myTable[1, 0];
+                this.myTable[1, 5] = this.myTable[1, 1];
+                this.myTable[1, 6] = this.myTable[1, 2];
+                this.myTable[1, 7] = this.myTable[1, 3];
             }
             else
             {   // 2次元
                 columns = 3;
-                this.header_Xspacing = new double[] {
-                    X1, X1 + 60, X1 + 120, X1 + 180, X1 + 240, X1 + 300, X1 + 360, X1 + 420, X1 + 480 
-                };
-                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; } );
 
+                int cols = columns * 3;
+
+                //テーブルの作成
+                this.myTable = new Table(2, cols);
+
+                // テーブルの幅
+                for (var i = 0; i < cols; i++)
+                    this.myTable.ColWidth[i] = 80;
+                this.myTable.ColWidth[0] = 40; // 格点No
+                this.myTable.ColWidth[3] = this.myTable.ColWidth[0];
+                this.myTable.ColWidth[6] = this.myTable.ColWidth[0];
+
+                // ヘッダー
                 switch (data.language)
                 {
                     case "en":
                         this.title = "Node Data";
-                        this.header_content = new string[,] {
-                            { "Node", "", "", "Node", "", "", "Node", "", "" },
-                            { "No", "X", "Y", "No", "X", "Y", "No", "X", "Y" }
-                        };
+                        this.myTable[0, 0] = "Node";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X";
+                        this.myTable[1, 2] = "Y";
                         break;
 
                     case "cn":
                         this.title = "节点";
-                        this.header_content = new string[,] {
-                            { "节点", "", "", "节点", "", "", "节点", "", "" },
-                            { "No", "X", "Y", "No", "X", "Y", "No", "X", "Y" }
-                        };
+                        this.myTable[0, 0] = "节点";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X";
+                        this.myTable[1, 2] = "Y";
                         break;
 
                     default:
                         this.title = "格点データ";
-                        this.header_content = new string[,] {
-                            { "格点", "", "", "格点", "", "", "格点", "", "" },
-                            { "No", "X", "Y", "No", "X", "Y", "No", "X", "Y" }
-                        };
+                        this.myTable[0, 0] = "格点";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X";
+                        this.myTable[1, 2] = "Y";
                         break;
                 }
-                this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight,
-                };
+                this.myTable[0, 3] = this.myTable[0, 0];
+                this.myTable[1, 3] = this.myTable[1, 0];
+                this.myTable[1, 4] = this.myTable[1, 1];
+                this.myTable[1, 5] = this.myTable[1, 2];
+                this.myTable[0, 6] = this.myTable[0, 0];
+                this.myTable[1, 6] = this.myTable[1, 0];
+                this.myTable[1, 7] = this.myTable[1, 1];
+                this.myTable[1, 8] = this.myTable[1, 2];
             }
 
             return columns;
@@ -182,7 +186,7 @@ namespace PDF_Manager.Printing
         /// <returns>印刷する用の配列</returns>
         private List<string[]> getPageContents(Dictionary<string, Vector3> target, int rows, int columns)
         {
-            int count = this.header_content.GetLength(1);
+            int count = this.myTable.Columns;
             int c = count / columns;
 
             // 行コンテンツを生成
@@ -224,7 +228,9 @@ namespace PDF_Manager.Printing
             int columns = this.printInit(mc, data);
 
             // 印刷可能な行数
-            var printRows = printManager.getPrintRowCount(mc, this.header_content);
+            // タイトルの印字高さ + 改行高
+            double H1 = printManager.FontHeight + printManager.LineSpacing2;
+            var printRows = myTable.getPrintRowCount(mc, H1);
 
             // 行コンテンツを生成
             var page = new List<List<string[]>>();
@@ -268,13 +274,57 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printContent(mc, page, new string[] { this.title },
-                                      this.header_content, this.header_Xspacing,
-                                      this.body_Xspacing, this.body_align);
+            this.printContent(mc, page, this.title, myTable);
 
         }
 
 
+        /// <summary>
+        /// 印刷を行う
+        /// </summary>
+        /// <param name="mc">キャンパス</param>
+        /// <param name="page">印字内容</param>
+        /// <param name="title">タイトル</param>
+        /// <param name="tbl">表</param>
+        public void printContent(PdfDocument mc, List<List<string[]>> page, string title, Table HeaderTable)
+        {
+            // 表の印刷
+            for(var i=0; i<page.Count; i++)
+            {
+                var table = page[i];
+                if (0 < i)
+                    mc.NewPage(); // 2ページ目以降は改ページする
+
+                // タイトルの印字
+                mc.setCurrentX(printManager.H1PosX);
+                Text.PrtText(mc, title);
+                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+
+                // 表の作成
+                var tbl = HeaderTable.Clone();
+                tbl.ReDim(tbl.Rows + table.Count, tbl.Columns);
+
+                int r = tbl.Rows;
+                foreach (var line in table)
+                {
+                    for (int c = 0; c < line.Length; c++)
+                    {
+                        var str = line[c];
+                        if (str == null)
+                            continue;
+                        if (str.Length <= 0)
+                            continue;
+                        tbl[r, c] = str;
+                    }
+                }
+
+                // 表の印刷
+                tbl.PrintTable(mc);
+            }
+
+            // 最後の改行
+            mc.addCurrentY(printManager.LineSpacing1);
+        }
         #endregion
 
 
