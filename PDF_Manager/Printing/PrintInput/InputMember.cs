@@ -54,14 +54,8 @@ namespace PDF_Manager.Printing
         private string title;
         // 2次元か3次元か
         private int dimension;
-        // 項目タイトル
-        private string[,] header_content;
-        // ヘッダーのx方向の余白
-        private double[] header_Xspacing;
-        // ボディーのx方向の余白
-        private double[] body_Xspacing;
-        // ボディーの文字位置
-        private XStringFormat[] body_align;
+        // テーブル
+        private Table myTable;
         // 節点情報
         private InputNode Node = null;
         // 材料情報
@@ -73,86 +67,129 @@ namespace PDF_Manager.Printing
         /// </summary>
         private void printInit(PdfDocument mc, PrintData data)
         {
-            var X1 = printManager.H1PosX; //表題を印字するX位置  px ピクセル
-
             this.dimension = data.dimension;
+
             if (this.dimension == 3)
             {   // 3次元
-                this.header_Xspacing = new double[] {
-                    X1, X1 + 50, X1 + 100, X1 + 170, X1 + 220, X1 + 300, X1 + 400
-                };
-                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
+
+                //テーブルの作成
+                this.myTable = new Table(2, 7);
+
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 要素No
+                this.myTable.ColWidth[1] = 45.0; // 格点No
+                this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[3] = 45.0; // 部材長
+                this.myTable.ColWidth[4] = 45.0; // 材料番号    
+                this.myTable.ColWidth[5] = 45.0; // コードアングル    
+                this.myTable.ColWidth[6] = 45.0; // 材料名称
 
                 switch (data.language)
                 {
                     case "en":
                         this.title = "Member Data";
-                        this.header_content = new string[,] {
-                            { "", "Node", "", "Distance", "Material No.", "Angle of Rotation" , "Name of Material"},
-                            { "No", "Node-I", "Node-J", "(m)", "", "(°)" , ""}
-                        };
+                        this.myTable[1, 0] = "No";
+                        this.myTable[0, 1] = "Node";
+                        this.myTable[1, 1] = "Node-I";
+                        this.myTable[1, 2] = "Node-J";
+                        this.myTable[0, 3] = "Distance";
+                        this.myTable[1, 3] = "(m)";
+                        this.myTable[0, 4] = "Material No";
+                        this.myTable[0, 5] = "Angle of Rotation";
+                        this.myTable[1, 5] = "(°)";
+                        this.myTable[0, 6] = "Name of Material";
                         break;
 
                     case "cn":
                         this.title = "构件";
-                        this.header_content = new string[,] {
-                            { "", "节点", "", "构件长", "材料编码", "转动角度" , "材料名称"},
-                            { "No", "I端", "J端", "(m)", "", "(°)" , ""}
-                        };
+                        this.myTable[1, 0] = "No";
+                        this.myTable[0, 1] = "节点";
+                        this.myTable[1, 1] = "I端";
+                        this.myTable[1, 2] = "J端";
+                        this.myTable[0, 3] = "构件长";
+                        this.myTable[1, 3] = "(m)";
+                        this.myTable[0, 4] = "材料编码";
+                        this.myTable[0, 5] = "转动角度";
+                        this.myTable[1, 5] = "(°)";
+                        this.myTable[0, 6] = "材料名称";
                         break;
 
                     default:
                         this.title = "部材データ";
-                        this.header_content = new string[,] {
-                            { "", "節点", "", "L", "材料番号", "コードアングル" , "材料名称"},
-                            { "No", "I端", "J端", "(m)", "", "(°)" , ""}
-                        };
+                        this.myTable[1, 0] = "No";
+                        this.myTable[0, 1] = "節点";
+                        this.myTable[1, 1] = "I端";
+                        this.myTable[1, 2] = "J端";
+                        this.myTable[0, 3] = "L";
+                        this.myTable[1, 3] = "(m)";
+                        this.myTable[0, 4] = "材料番号";
+                        this.myTable[0, 5] = "コードアングル";
+                        this.myTable[1, 5] = "(°)";
+                        this.myTable[0, 6] = "材料名称";
                         break;
                 }
-                this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomRight, XStringFormats.BottomLeft
-                };
+
+                // 表題の文字位置
+                this.myTable.AlignX[0, 6] = "L";    // 左寄せ
 
             }
             else
             {   // 2次元
-                this.header_Xspacing = new double[] {
-                    X1, X1 + 50, X1 + 100, X1 + 170, X1 + 220, X1 + 300
-                };
-                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
+
+                //テーブルの作成
+                this.myTable = new Table(2, 6);
+
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 要素No
+                this.myTable.ColWidth[1] = 45.0; // 格点No
+                this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[3] = 45.0; // 部材長
+                this.myTable.ColWidth[4] = 45.0; // 材料番号    
+                this.myTable.ColWidth[5] = 45.0; // 材料名称
 
                 switch (data.language)
                 {
                     case "en":
                         this.title = "Member Data";
-                        this.header_content = new string[,] {
-                            { "", "Node", "", "Distance", "Material No.",  "Name of Material"},
-                            { "No", "Node-I", "Node-J", "(m)", "" , ""}
-                        };
+                        this.myTable[1, 0] = "No";
+                        this.myTable[0, 1] = "Node";
+                        this.myTable[1, 1] = "Node-I";
+                        this.myTable[1, 2] = "Node-J";
+                        this.myTable[0, 3] = "Distance";
+                        this.myTable[1, 3] = "(m)";
+                        this.myTable[0, 4] = "Material No";
+                        this.myTable[0, 5] = "Name of Material";
                         break;
 
                     case "cn":
                         this.title = "构件";
-                        this.header_content = new string[,] {
-                            { "", "节点", "", "构件长", "材料编码" , "材料名称"},
-                            { "No", "I端", "J端", "(m)", "" , ""}
-                        };
+                        this.myTable[1, 0] = "No";
+                        this.myTable[0, 1] = "节点";
+                        this.myTable[1, 1] = "I端";
+                        this.myTable[1, 2] = "J端";
+                        this.myTable[0, 3] = "构件长";
+                        this.myTable[1, 3] = "(m)";
+                        this.myTable[0, 4] = "材料编码";
+                        this.myTable[0, 5] = "材料名称";
                         break;
 
                     default:
                         this.title = "部材データ";
-                        this.header_content = new string[,] {
-                            { "", "節点", "", "L", "材料番号" , "材料名称"},
-                            { "No", "I端", "J端", "(m)", "",  ""}
-                        };
+                        this.myTable[1, 0] = "No";
+                        this.myTable[0, 1] = "節点";
+                        this.myTable[1, 1] = "I端";
+                        this.myTable[1, 2] = "J端";
+                        this.myTable[0, 3] = "L";
+                        this.myTable[1, 3] = "(m)";
+                        this.myTable[0, 4] = "材料番号";
+                        this.myTable[0, 5] = "材料名称";
                         break;
                 }
-                this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomLeft
-                };
+
+                // 表題の文字位置
+                this.myTable.AlignX[0, 5] = "L";    // 左寄せ
 
             }
-
         }
 
 
@@ -164,14 +201,14 @@ namespace PDF_Manager.Printing
         /// <returns>印刷する用の配列</returns>
         private List<string[]> getPageContents(Dictionary<string, Member> target)
         {
-            int count = this.header_content.GetLength(1);
+            int count = this.myTable.Columns;
 
             // 行コンテンツを生成
             var table = new List<string[]>();
 
             for (var i = 0; i < target.Count; i++)
             {
-                var lines = new string[count];
+                var lines = new string[this.myTable.Columns];
 
                 string No = target.ElementAt(i).Key;
                 Member item = target.ElementAt(i).Value;
@@ -217,7 +254,8 @@ namespace PDF_Manager.Printing
             this.printInit(mc, data);
 
             // 印刷可能な行数
-            var printRows = printManager.getPrintRowCount(mc, this.header_content);
+            double H1 = printManager.FontHeight + printManager.LineSpacing2; // タイトルの印字高さ + 改行高
+            var printRows = myTable.getPrintRowCount(mc, H1);
 
             // 行コンテンツを生成
             var page = new List<List<string[]>>();
@@ -258,12 +296,61 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printContent(mc, page, new string[] { this.title },
-                                      this.header_content, this.header_Xspacing,
-                                      this.body_Xspacing, this.body_align);
- 
+            this.printContent(mc, page, this.title, myTable);
+
         }
-        
+
+        /// <summary>
+        /// 印刷を行う
+        /// </summary>
+        /// <param name="mc">キャンパス</param>
+        /// <param name="page">印字内容</param>
+        /// <param name="title">タイトル</param>
+        /// <param name="tbl">表</param>
+        public void printContent(PdfDocument mc, List<List<string[]>> page, string title, Table HeaderTable)
+        {
+            // 表の印刷
+            for (var i = 0; i < page.Count; i++)
+            {
+                var table = page[i];
+                if (0 < i)
+                    mc.NewPage(); // 2ページ目以降は改ページする
+
+                // タイトルの印字
+                mc.setCurrentX(printManager.H1PosX);
+                Text.PrtText(mc, title);
+                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+
+                // 表の作成
+                var tbl = HeaderTable.Clone();
+                tbl.ReDim(tbl.Rows + table.Count, tbl.Columns);
+
+                int r = HeaderTable.Rows;
+                foreach (var line in table)
+                {
+                    for (int c = 0; c < line.Length; c++)
+                    {
+                        var str = line[c];
+                        if (str == null)
+                            continue;
+                        if (str.Length <= 0)
+                            continue;
+                        tbl[r, c] = str;
+                        tbl.AlignX[r, c] = "R";
+                    }
+                    tbl.AlignX[r, line.Length-1] = "L"; // 材料名称は 左寄せ
+                    r++;
+                }
+
+                tbl.RowHeight[2] = printManager.LineSpacing2;
+
+                // 表の印刷
+                tbl.PrintTable(mc);
+            }
+
+            // 最後の改行
+            mc.addCurrentY(printManager.LineSpacing1);
+        }
         #endregion
 
 

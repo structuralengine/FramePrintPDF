@@ -70,9 +70,9 @@ public class PrintInput
         // 入力データ
         // 格点
         ((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
-        /*
         // 部材
         ((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
+        /*
         // 材料
         ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
 

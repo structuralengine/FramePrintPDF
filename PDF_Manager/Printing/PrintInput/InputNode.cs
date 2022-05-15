@@ -228,8 +228,7 @@ namespace PDF_Manager.Printing
             int columns = this.printInit(mc, data);
 
             // 印刷可能な行数
-            // タイトルの印字高さ + 改行高
-            double H1 = printManager.FontHeight + printManager.LineSpacing2;
+            double H1 = printManager.FontHeight + printManager.LineSpacing2; // タイトルの印字高さ + 改行高
             var printRows = myTable.getPrintRowCount(mc, H1);
 
             // 行コンテンツを生成
