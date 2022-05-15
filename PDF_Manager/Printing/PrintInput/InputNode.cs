@@ -81,8 +81,8 @@ namespace PDF_Manager.Printing
 
                 // テーブルの幅
                 for (var i=0; i < cols; i++)
-                    this.myTable.ColWidth[i] = 80.0;
-                this.myTable.ColWidth[0] = 40.0; // 格点No
+                    this.myTable.ColWidth[i] = 65.0;
+                this.myTable.ColWidth[0] = 45.0; // 格点No
                 this.myTable.ColWidth[4] = this.myTable.ColWidth[0];
 
                 // ヘッダー
@@ -132,8 +132,8 @@ namespace PDF_Manager.Printing
 
                 // テーブルの幅
                 for (var i = 0; i < cols; i++)
-                    this.myTable.ColWidth[i] = 80;
-                this.myTable.ColWidth[0] = 40; // 格点No
+                    this.myTable.ColWidth[i] = 60;
+                this.myTable.ColWidth[0] = 45; // 格点No
                 this.myTable.ColWidth[3] = this.myTable.ColWidth[0];
                 this.myTable.ColWidth[6] = this.myTable.ColWidth[0];
 
@@ -315,9 +315,12 @@ namespace PDF_Manager.Printing
                         if (str.Length <= 0)
                             continue;
                         tbl[r, c] = str;
+                        tbl.AlignX[r, c] = "R";
                     }
                     r++;
                 }
+
+                tbl.RowHeight[2] = printManager.LineSpacing2;
 
                 // 表の印刷
                 tbl.PrintTable(mc);

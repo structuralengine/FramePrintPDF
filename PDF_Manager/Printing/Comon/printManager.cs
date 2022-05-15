@@ -48,7 +48,7 @@ namespace PDF_Manager.Printing.Comon
         /// 中くらい（タイトル後など）の改行高さ
         ///  pt ポイント
         /// </summary>
-        public static double LineSpacing2 = printManager.FontHeight + 2;
+        public static double LineSpacing2 = printManager.FontHeight * 1.5;
 
         // 数値を文字列に変換する
         public static string toString(object data, int round = 0, string style = null)

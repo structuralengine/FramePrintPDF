@@ -255,8 +255,6 @@ namespace PDF_Manager.Printing
         {
             #region Base Info
             
-            XSize textSize2 = _mc.MeasureString(" ");
-
             XSize[,] textSize1 = new XSize[this.Rows, this.Columns];
             for (int i = 0; i < this.CellRows; ++i)
                 for (int j = 0; j < this.CellCols; ++j)
@@ -278,7 +276,7 @@ namespace PDF_Manager.Printing
             {
                 if (this.ColWidth[j] == double.NaN || this.ColWidth[j] <= 0)
                     for (int i = 0; i < this.CellRows; ++i)
-                        this.ColWidth[j] = Math.Max(this.ColWidth[j], textSize1[i, j].Width + textSize2.Width);
+                        this.ColWidth[j] = Math.Max(this.ColWidth[j], textSize1[i, j].Width);
             }
             ///////////////////////////////////////////////
             XPoint[,] point = new XPoint[this.CellRows + 1, this.CellCols + 1];
@@ -344,37 +342,34 @@ namespace PDF_Manager.Printing
 
                         switch (AlignY[i, j])
                         {
-                            case "T":
-                                YPos = point[i, j].Y;
+                            case "T": YPos = point[i, j].Y;
                                 break;
-                            case "B":
-                                YPos = point[i + 1, j].Y;
+                            case "C": YPos = (point[i, j].Y + point[i + 1, j].Y) / 2;
                                 break;
-                            default: // case "C"
-                                YPos = (point[i, j].Y + point[i + 1, j].Y) / 2;
+                            default:  YPos = point[i + 1, j].Y;
                                 break;
                         }
                         switch (AlignX[i, j])
                         {
                             case "L":
-                                XPos = point[i, j].X + textSize2.Width;
+                                XPos = point[i, j].X;
                                 switch (AlignY[i, j]){
                                     case "T": align = XStringFormats.TopLeft;   
                                         break;
-                                    case "B": align = XStringFormats.BottomLeft; 
+                                    case "C": align = XStringFormats.CenterLeft;
                                         break;
-                                    default:  align = XStringFormats.CenterLeft;
+                                    default: align = XStringFormats.BottomLeft;
                                         break;
                                 }
                                 break;
                             case "R":
-                                XPos = point[i, j + 1].X - textSize2.Width;
+                                XPos = point[i, j + 1].X;
                                 switch (AlignY[i, j]) {
                                     case "T": align = XStringFormats.TopRight;
                                         break;
-                                    case "B": align = XStringFormats.BottomRight;
+                                    case "C": align = XStringFormats.CenterRight;
                                         break;
-                                    default:  align = XStringFormats.CenterRight;
+                                    default: align = XStringFormats.BottomRight;
                                         break;
                                 }
                                 break;
@@ -383,9 +378,9 @@ namespace PDF_Manager.Printing
                                 switch (AlignY[i, j]) {
                                     case "T": align = XStringFormats.TopCenter;
                                         break;
-                                    case "B": align = XStringFormats.BottomCenter;
+                                    case "C": align = XStringFormats.Center;
                                         break;
-                                    default:  align = XStringFormats.Center;
+                                    default: align = XStringFormats.BottomCenter;
                                         break;
                                 }
                                 break;

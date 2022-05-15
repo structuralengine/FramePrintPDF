@@ -67,7 +67,7 @@ namespace PDF_Manager.Printing
         // 材料情報
         private InputElement Element = null;
 
-        /*
+        
         /// <summary>
         /// 印刷前の初期化処理
         /// </summary>
@@ -263,7 +263,7 @@ namespace PDF_Manager.Printing
                                       this.body_Xspacing, this.body_align);
  
         }
-        */
+        
         #endregion
 
 
