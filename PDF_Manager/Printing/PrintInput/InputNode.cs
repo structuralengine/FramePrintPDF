@@ -184,13 +184,16 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
-        private List<string[]> getPageContents(Dictionary<string, Vector3> target, int rows, int columns)
+        private Table getPageContents(Dictionary<string, Vector3> target, int rows, int columns)
         {
+            int r = this.myTable.Rows;
+
             int count = this.myTable.Columns;
             int c = count / columns;
 
             // 行コンテンツを生成
-            var table = new List<string[]>();
+            var table = this.myTable.Clone();
+            table.ReDim(row: r + rows);
 
             for (var i = 0; i < rows; i++)
             {
@@ -206,14 +209,23 @@ namespace PDF_Manager.Printing
                     string No = target.ElementAt(index).Key;
                     Vector3 item = target.ElementAt(index).Value;
 
-                    lines[0 + c * j] = No;
-                    lines[1 + c * j] = printManager.toString(item.x, 3);
-                    lines[2 + c * j] = printManager.toString(item.y, 3);
+                    table[r + i, 0 + c * j] = No;
+                    table.AlignX[r + i, 0 + c * j] = "R";
+                    table[r + i, 1 + c * j] = printManager.toString(item.x, 3);
+                    table.AlignX[r + i, 1 + c * j] = "R";
+                    table[r + i, 2 + c * j] = printManager.toString(item.y, 3);
+                    table.AlignX[r + i, 2 + c * j] = "R";
                     if (this.dimension == 3)
-                        lines[3 + c * j] = printManager.toString(item.z, 3);
+                    {
+                        table[r + i, 3 + c * j] = printManager.toString(item.z, 3);
+                        table.AlignX[r + i, 3 + c * j] = "R";
+
+                    }
                 }
-                table.Add(lines);
             }
+
+            table.RowHeight[2] = printManager.LineSpacing2;
+
             return table;
         }
 
@@ -228,11 +240,10 @@ namespace PDF_Manager.Printing
             int columns = this.printInit(mc, data);
 
             // 印刷可能な行数
-            double H1 = printManager.FontHeight + printManager.LineSpacing2; // タイトルの印字高さ + 改行高
-            var printRows = myTable.getPrintRowCount(mc, H1);
+            var printRows = myTable.getPrintRowCount(mc);
 
             // 行コンテンツを生成
-            var page = new List<List<string[]>>();
+            var page = new List<Table>();
 
             // 1ページ目に入る行数
             int rows = printRows[0];
@@ -273,61 +284,10 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            this.printContent(mc, page, this.title, myTable);
+            printManager.printTableContents(mc, page, this.title);
 
         }
 
-
-        /// <summary>
-        /// 印刷を行う
-        /// </summary>
-        /// <param name="mc">キャンパス</param>
-        /// <param name="page">印字内容</param>
-        /// <param name="title">タイトル</param>
-        /// <param name="tbl">表</param>
-        public void printContent(PdfDocument mc, List<List<string[]>> page, string title, Table HeaderTable)
-        {
-            // 表の印刷
-            for(var i=0; i<page.Count; i++)
-            {
-                var table = page[i];
-                if (0 < i)
-                    mc.NewPage(); // 2ページ目以降は改ページする
-
-                // タイトルの印字
-                mc.setCurrentX(printManager.H1PosX);
-                Text.PrtText(mc, title);
-                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
-
-                // 表の作成
-                var tbl = HeaderTable.Clone();
-                tbl.ReDim(tbl.Rows + table.Count, tbl.Columns);
-
-                int r = HeaderTable.Rows;
-                foreach (var line in table)
-                {
-                    for (int c = 0; c < line.Length; c++)
-                    {
-                        var str = line[c];
-                        if (str == null)
-                            continue;
-                        if (str.Length <= 0)
-                            continue;
-                        tbl[r, c] = str;
-                        tbl.AlignX[r, c] = "R";
-                    }
-                    r++;
-                }
-
-                tbl.RowHeight[2] = printManager.LineSpacing2;
-
-                // 表の印刷
-                tbl.PrintTable(mc);
-            }
-
-            // 最後の改行
-            mc.addCurrentY(printManager.LineSpacing1);
-        }
         #endregion
 
 

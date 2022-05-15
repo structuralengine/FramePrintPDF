@@ -79,10 +79,10 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[0] = 45.0; // 要素No
                 this.myTable.ColWidth[1] = 45.0; // 格点No
                 this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
-                this.myTable.ColWidth[3] = 45.0; // 部材長
-                this.myTable.ColWidth[4] = 45.0; // 材料番号    
+                this.myTable.ColWidth[3] = 60.0; // 部材長
+                this.myTable.ColWidth[4] = 60.0; // 材料番号    
                 this.myTable.ColWidth[5] = 45.0; // コードアングル    
-                this.myTable.ColWidth[6] = 45.0; // 材料名称
+                this.myTable.ColWidth[6] = 70.0; // 材料名称
 
                 switch (data.language)
                 {
@@ -94,10 +94,11 @@ namespace PDF_Manager.Printing
                         this.myTable[1, 2] = "Node-J";
                         this.myTable[0, 3] = "Distance";
                         this.myTable[1, 3] = "(m)";
-                        this.myTable[0, 4] = "Material No";
-                        this.myTable[0, 5] = "Angle of Rotation";
-                        this.myTable[1, 5] = "(°)";
-                        this.myTable[0, 6] = "Name of Material";
+                        this.myTable[0, 4] = "Material";
+                        this.myTable[1, 4] = "No";
+                        this.myTable[0, 5] = "Angle of";
+                        this.myTable[1, 5] = "Rotation";
+                        this.myTable[0, 6] = "    Name of Material";
                         break;
 
                     case "cn":
@@ -111,7 +112,7 @@ namespace PDF_Manager.Printing
                         this.myTable[0, 4] = "材料编码";
                         this.myTable[0, 5] = "转动角度";
                         this.myTable[1, 5] = "(°)";
-                        this.myTable[0, 6] = "材料名称";
+                        this.myTable[0, 6] = "    材料名称";
                         break;
 
                     default:
@@ -125,7 +126,7 @@ namespace PDF_Manager.Printing
                         this.myTable[0, 4] = "材料番号";
                         this.myTable[0, 5] = "コードアングル";
                         this.myTable[1, 5] = "(°)";
-                        this.myTable[0, 6] = "材料名称";
+                        this.myTable[0, 6] = "    材料名称";
                         break;
                 }
 
@@ -143,9 +144,9 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[0] = 45.0; // 要素No
                 this.myTable.ColWidth[1] = 45.0; // 格点No
                 this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
-                this.myTable.ColWidth[3] = 45.0; // 部材長
-                this.myTable.ColWidth[4] = 45.0; // 材料番号    
-                this.myTable.ColWidth[5] = 45.0; // 材料名称
+                this.myTable.ColWidth[3] = 60.0; // 部材長
+                this.myTable.ColWidth[4] = 60.0; // 材料番号    
+                this.myTable.ColWidth[5] = 70.0; // 材料名称
 
                 switch (data.language)
                 {
@@ -157,8 +158,9 @@ namespace PDF_Manager.Printing
                         this.myTable[1, 2] = "Node-J";
                         this.myTable[0, 3] = "Distance";
                         this.myTable[1, 3] = "(m)";
-                        this.myTable[0, 4] = "Material No";
-                        this.myTable[0, 5] = "Name of Material";
+                        this.myTable[0, 4] = "Material";
+                        this.myTable[1, 4] = "No";
+                        this.myTable[0, 5] = "    Name of Material";
                         break;
 
                     case "cn":
@@ -170,7 +172,7 @@ namespace PDF_Manager.Printing
                         this.myTable[0, 3] = "构件长";
                         this.myTable[1, 3] = "(m)";
                         this.myTable[0, 4] = "材料编码";
-                        this.myTable[0, 5] = "材料名称";
+                        this.myTable[0, 5] = "    材料名称";
                         break;
 
                     default:
@@ -182,7 +184,7 @@ namespace PDF_Manager.Printing
                         this.myTable[0, 3] = "L";
                         this.myTable[1, 3] = "(m)";
                         this.myTable[0, 4] = "材料番号";
-                        this.myTable[0, 5] = "材料名称";
+                        this.myTable[0, 5] = "    材料名称";
                         break;
                 }
 
@@ -199,39 +201,45 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
-        private List<string[]> getPageContents(Dictionary<string, Member> target)
+        private Table getPageContents(Dictionary<string, Member> target)
         {
+            int r = this.myTable.Rows;
+            int rows = target.Count;
+
             int count = this.myTable.Columns;
 
             // 行コンテンツを生成
-            var table = new List<string[]>();
+            var table = this.myTable.Clone();
+            table.ReDim(row: r + rows);
 
-            for (var i = 0; i < target.Count; i++)
+            for (var i = 0; i < rows; i++)
             {
-                var lines = new string[this.myTable.Columns];
-
                 string No = target.ElementAt(i).Key;
                 Member item = target.ElementAt(i).Value;
 
                 int j = 0;
-                lines[j] = No;
+                table[r + i, j] = No;
+                table.AlignX[r + i, j] = "R";
                 j++;
-                lines[j] = printManager.toString(item.ni);
+                table[r + i, j] = printManager.toString(item.ni);
+                table.AlignX[r + i, j] = "R";
                 j++;
-                lines[j] = printManager.toString(item.nj);
+                table[r + i, j] = printManager.toString(item.nj);
+                table.AlignX[r + i, j] = "R";
                 j++;
-                lines[j] = printManager.toString(this.GetMemberLength(No), 3);
+                table[r + i, j] = printManager.toString(this.GetMemberLength(No), 3);
+                table.AlignX[r + i, j] = "R";
                 j++;
-                lines[j] = printManager.toString(item.e);
+                table[r + i, j] = printManager.toString(item.e) + "  ";
+                table.AlignX[r + i, j] = "R";
                 j++;
-                if (this.dimension == 3)
-                {
-                    lines[j] = printManager.toString(item.cg, 3);
+                if (this.dimension == 3) {
+                    table[r + i, j] = printManager.toString(item.cg, 3);
+                    table.AlignX[r + i, j] = "R";
                     j++;
                 }
-                lines[j] = printManager.toString(this.Element.GetElementName(item.e));
-                j++;
-                table.Add(lines);
+                table[r + i, j] = "    " + printManager.toString(this.Element.GetElementName(item.e));
+                table.AlignX[r + i, j] = "L";
             }
             return table;
         }
@@ -254,11 +262,10 @@ namespace PDF_Manager.Printing
             this.printInit(mc, data);
 
             // 印刷可能な行数
-            double H1 = printManager.FontHeight + printManager.LineSpacing2; // タイトルの印字高さ + 改行高
-            var printRows = myTable.getPrintRowCount(mc, H1);
+            var printRows = myTable.getPrintRowCount(mc);
 
             // 行コンテンツを生成
-            var page = new List<List<string[]>>();
+            var page = new List<Table>();
 
             // 1ページ目に入る行数
             int rows = printRows[0];
@@ -296,61 +303,10 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            this.printContent(mc, page, this.title, myTable);
+            printManager.printTableContents(mc, page, this.title);
 
         }
 
-        /// <summary>
-        /// 印刷を行う
-        /// </summary>
-        /// <param name="mc">キャンパス</param>
-        /// <param name="page">印字内容</param>
-        /// <param name="title">タイトル</param>
-        /// <param name="tbl">表</param>
-        public void printContent(PdfDocument mc, List<List<string[]>> page, string title, Table HeaderTable)
-        {
-            // 表の印刷
-            for (var i = 0; i < page.Count; i++)
-            {
-                var table = page[i];
-                if (0 < i)
-                    mc.NewPage(); // 2ページ目以降は改ページする
-
-                // タイトルの印字
-                mc.setCurrentX(printManager.H1PosX);
-                Text.PrtText(mc, title);
-                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
-
-                // 表の作成
-                var tbl = HeaderTable.Clone();
-                tbl.ReDim(tbl.Rows + table.Count, tbl.Columns);
-
-                int r = HeaderTable.Rows;
-                foreach (var line in table)
-                {
-                    for (int c = 0; c < line.Length; c++)
-                    {
-                        var str = line[c];
-                        if (str == null)
-                            continue;
-                        if (str.Length <= 0)
-                            continue;
-                        tbl[r, c] = str;
-                        tbl.AlignX[r, c] = "R";
-                    }
-                    tbl.AlignX[r, line.Length-1] = "L"; // 材料名称は 左寄せ
-                    r++;
-                }
-
-                tbl.RowHeight[2] = printManager.LineSpacing2;
-
-                // 表の印刷
-                tbl.PrintTable(mc);
-            }
-
-            // 最後の改行
-            mc.addCurrentY(printManager.LineSpacing1);
-        }
         #endregion
 
 

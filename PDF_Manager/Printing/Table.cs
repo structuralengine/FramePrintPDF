@@ -90,10 +90,16 @@ namespace PDF_Manager.Printing
         /// <summary>
         /// 行を追加する
         /// </summary>
-        /// <param name="_rows">行数</param>
-        /// <param name="_cols">列数</param>
-        public void ReDim(int _rows, int _cols)
+        /// <param name="row">行数</param>
+        /// <param name="col">列数</param>
+        public void ReDim(int row = -1, int col = -1)
         {
+            if (row < 0)
+                row = this.Rows;
+            if (col < 0)
+                col = this.Columns;
+
+
             // 昔の情報を取っておく
             var oldCell = (this.Cell != null) ? this.Cell.Clone() as string[,] : null;
             var oldAlignX = (this.AlignX != null) ? this.AlignX.Clone() as string[,] : null;
@@ -104,51 +110,51 @@ namespace PDF_Manager.Printing
             var oldVtcLW = (this.VtcLW != null) ? this.VtcLW.Clone() as double[,] : null;
 
             //** Init Cell
-            this.Cell = new string[_rows, _cols];
+            this.Cell = new string[row, col];
             for (int i = 0; i < this.CellRows; ++i)
                 for (int j = 0; j < this.CellCols; ++j)
                     this.Cell[i, j] = oldCell[i, j];
 
             //** Init Align
-            this.AlignX = new string[_rows, _cols];
+            this.AlignX = new string[row, col];
             for (int i = 0; i < this.CellRows; ++i)
                 for (int j = 0; j < this.CellCols; ++j)
                     this.AlignX[i, j] = oldAlignX[i, j];
 
-            this.AlignY = new string[_rows, _cols];
+            this.AlignY = new string[row, col];
             for (int i = 0; i < this.CellRows; ++i)
                 for (int j = 0; j < this.CellCols; ++j)
                     this.AlignY[i, j] = oldAlignY[i, j];
 
             //** Init RowHeight
-            this.RowHeight = new double[_rows];
+            this.RowHeight = new double[row];
             for (int i = 0; i < this.CellRows; ++i)
                 this.RowHeight[i] = oldRowHeight[i];
 
             //** Init ColWidth
-            this.ColWidth = new double[_cols];
+            this.ColWidth = new double[col];
             for (int j = 0; j < this.CellCols; ++j)
                 this.ColWidth[j] = oldColWidth[j];
 
             //** Init Holizonal Line Width
-            this.HolLW = new double[_rows + 1, _cols];
+            this.HolLW = new double[row + 1, col];
             for (int i = 0; i < this.CellRows; ++i)
                 this.SetHolLW(i, this.HolLW[i, 0]);
-            for (int i = this.CellRows; i <= _rows; ++i)
-                for (int j = 0; j < _cols; ++j)
+            for (int i = this.CellRows; i <= row; ++i)
+                for (int j = 0; j < col; ++j)
                     this.HolLW[i, j] = Table.DEFAULT_LINE_WIDTH;
 
             //** Init Vertical Line Width
-            this.VtcLW = new double[_rows, _cols + 1];
+            this.VtcLW = new double[row, col + 1];
             for (int j = 0; j < this.CellCols; ++j)
                 this.SetVtcLW(j, this.VtcLW[0, j]);
-            for (int j = this.CellCols; j <= _cols; ++j)
-                for (int i = 0; i < _rows; ++i)
+            for (int j = this.CellCols; j <= col; ++j)
+                for (int i = 0; i < row; ++i)
                     this.VtcLW[i, j] = Table.DEFAULT_LINE_WIDTH;
 
             //** Row, Col Count
-            this.CellRows = _rows;
-            this.CellCols = _cols;
+            this.CellRows = row;
+            this.CellCols = col;
 
         }
 
@@ -226,7 +232,7 @@ namespace PDF_Manager.Printing
         /// return[0] = 1ページ目の印刷可能行数, 
         /// return[1] = 2ページ目以降の印刷可能行数
         /// </returns>
-        internal int[] getPrintRowCount(PdfDocument mc, double H1)
+        internal int[] getPrintRowCount(PdfDocument mc)
         {
             // 表題の印字高さ + 改行高
             double H2 = this.GetTableHeight();
@@ -236,7 +242,7 @@ namespace PDF_Manager.Printing
 
             // 2ページ目以降（ページ全体を使ってよい場合）の行数
             double Hx = mc.currentPageSize.Height;
-            Hx -= H1;
+            Hx -= printManager.H1;
             Hx -= H2;
             int rows2 = (int)(Hx / H3); // 切り捨て
 

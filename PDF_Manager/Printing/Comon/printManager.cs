@@ -83,5 +83,38 @@ namespace PDF_Manager.Printing.Comon
             return result;
         }
 
+        /// <summary>
+        /// タイトルの印字高さ + 改行高
+        /// </summary>
+        public static double H1 = printManager.FontHeight + printManager.LineSpacing2;
+
+        /// <summary>
+        /// 印刷を行う
+        /// </summary>
+        /// <param name="mc">キャンパス</param>
+        /// <param name="page">印字内容</param>
+        /// <param name="title">タイトル</param>
+        /// <param name="tbl">表</param>
+        public static void printTableContents(PdfDocument mc, List<Table> page, string title)
+        {
+            // 表の印刷
+            for (var i = 0; i < page.Count; i++)
+            {
+                //var table = page[i];
+                if (0 < i)
+                    mc.NewPage(); // 2ページ目以降は改ページする
+
+                // タイトルの印字
+                mc.setCurrentX(printManager.H1PosX);
+                Text.PrtText(mc, title);
+                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+
+                // 表の印刷
+                page[i].PrintTable(mc);
+            }
+
+            // 最後の改行
+            mc.addCurrentY(printManager.LineSpacing1);
+        }
     }
 }
