@@ -195,6 +195,8 @@ namespace PDF_Manager.Printing
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
+            table.RowHeight[r] = printManager.LineSpacing2; // 表題と body の間
+
             for (var i = 0; i < rows; i++)
             {
                 var lines = new string[count];
@@ -210,10 +212,10 @@ namespace PDF_Manager.Printing
                     Vector3 item = target.ElementAt(index).Value;
 
                     table[r + i, 0 + c * j] = No;
-                    table.AlignX[r + i, 0 + c * j] = "R";
                     table[r + i, 1 + c * j] = printManager.toString(item.x, 3);
-                    table.AlignX[r + i, 1 + c * j] = "R";
                     table[r + i, 2 + c * j] = printManager.toString(item.y, 3);
+                    table.AlignX[r + i, 0 + c * j] = "R";
+                    table.AlignX[r + i, 1 + c * j] = "R";
                     table.AlignX[r + i, 2 + c * j] = "R";
                     if (this.dimension == 3)
                     {
@@ -223,8 +225,6 @@ namespace PDF_Manager.Printing
                     }
                 }
             }
-
-            table.RowHeight[2] = printManager.LineSpacing2;
 
             return table;
         }
@@ -284,7 +284,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printTableContents(mc, page, this.title);
+            printManager.printTableContents(mc, page, new string[] { this.title });
 
         }
 

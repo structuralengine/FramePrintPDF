@@ -50,8 +50,9 @@ namespace PDF_Manager.Printing.Comon
         /// </summary>
         public static double LineSpacing2 = printManager.FontHeight * 1.5;
 
+
         // 数値を文字列に変換する
-        public static string toString(object data, int round = 0, string style = null)
+        public static string toString(object data, int round = 0,  string style = "F")
         {
             if (data == null)
                 return "";
@@ -59,29 +60,24 @@ namespace PDF_Manager.Printing.Comon
             string result = data.ToString();
 
             double tmp;
+
             if(double.TryParse(result, out tmp))
             {   // 数値の場合 四捨五入等の処理を行う
+
                 if (double.IsNaN(tmp))
                 {
                     result = "";
-                }
-                else if (style == null)
+                } 
+                else
                 {
-                    var digit = "F" + round.ToString();
-                    result = Double.IsNaN(Math.Round(tmp, round, MidpointRounding.AwayFromZero)) ? "" : tmp.ToString(digit);
-                    if (StringInfo.ParseCombiningCharacters(result).Length > round + 5)
-                    {
-                        result = tmp.ToString("E2", CultureInfo.CreateSpecificCulture("en-US"));
-                    }
+                    string digit = style + round.ToString();
+                    result = tmp.ToString(digit);
                 }
-                else if (style == "E")
-                {
-                    result = Double.IsNaN(Math.Round(tmp, round, MidpointRounding.AwayFromZero)) ? "" : tmp.ToString("E2", CultureInfo.CreateSpecificCulture("en-US"));
-                }
-            } 
-
+            }
             return result;
         }
+
+
 
         /// <summary>
         /// タイトルの印字高さ + 改行高
@@ -95,7 +91,7 @@ namespace PDF_Manager.Printing.Comon
         /// <param name="page">印字内容</param>
         /// <param name="title">タイトル</param>
         /// <param name="tbl">表</param>
-        public static void printTableContents(PdfDocument mc, List<Table> page, string title)
+        public static void printTableContents(PdfDocument mc, List<Table> page, string[] titles)
         {
             // 表の印刷
             for (var i = 0; i < page.Count; i++)
@@ -106,8 +102,11 @@ namespace PDF_Manager.Printing.Comon
 
                 // タイトルの印字
                 mc.setCurrentX(printManager.H1PosX);
-                Text.PrtText(mc, title);
-                mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                foreach(var title in titles)
+                {
+                    Text.PrtText(mc, title);
+                    mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                }
 
                 // 表の印刷
                 page[i].PrintTable(mc);

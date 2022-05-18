@@ -73,19 +73,12 @@ namespace PDF_Manager.Printing
 
 
         #region 印刷処理
-        /*
         // タイトル
         private string title;
         // 2次元か3次元か
         private int dimension;
-        // 項目タイトル
-        private string[,] header_content;
-        // ヘッダーのx方向の余白
-        private double[] header_Xspacing;
-        // ボディーのx方向の余白
-        private double[] body_Xspacing;
-        // ボディーの文字位置
-        private XStringFormat[] body_align;
+        // テーブル
+        private Table myTable;
 
         /// <summary>
         /// 印刷前の初期化処理
@@ -97,80 +90,127 @@ namespace PDF_Manager.Printing
             this.dimension = data.dimension;
             if (this.dimension == 3)
             {   // 3次元
-                this.header_Xspacing = new double[] {
-                    X1, X1 + 50, X1 + 110, X1 + 170, X1 + 230, X1 + 300, X1 + 360, X1 + 420
-                };
-                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
+
+                //テーブルの作成
+                this.myTable = new Table(2, 8);
+
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 材料番号 
+                for(int i=1; i<8; ++i)
+                    this.myTable.ColWidth[i] = 60.0;
 
                 switch (data.language)
                 {
                     case "en":
                         this.title = "Material Data";
-                        this.header_content = new string[,] {
-                            {"No","Area","Elastic","Shear Elastic","CTE","Inertia","","Torsion Constant" },
-                            {"","A(m2)","E(kN/m2)","G(kN/m2)","","IY(m4)","IZ(m4)","" }
-                        };
+                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 1] = "Area";
+                        this.myTable[1, 1] = "A(m2)";
+                        this.myTable[0, 2] = "Elastic";
+                        this.myTable[1, 2] = "E(kN/m2)";
+                        this.myTable[0, 3] = "Shear Elastic";
+                        this.myTable[1, 3] = "G(kN/m2)";
+                        this.myTable[0, 4] = "CTE";
+                        this.myTable[0, 5] = "　　Inertia";
+                        this.myTable[1, 5] = "IY(m4)";
+                        this.myTable[1, 6] = "IZ(m4)";
+                        this.myTable[0, 7] = "Torsion Constant";
                         break;
 
                     case "cn":
                         this.title = "材料";
-                        this.header_content = new string[,] {
-                            {"No","截面面积","弹性系数","剪力弹性系数","膨胀系数","截面二次力矩","","扭转常数" },
-                            {"","A(m2)","E(kN/m2)","G(kN/m2)","","IY(m4)","IZ(m4)","" }
-                        };
+                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 1] = "截面面积";
+                        this.myTable[1, 1] = "A(m2)";
+                        this.myTable[0, 2] = "弹性系数";
+                        this.myTable[1, 2] = "E(kN/m2)";
+                        this.myTable[0, 3] = "剪力弹性系数";
+                        this.myTable[1, 3] = "G(kN/m2)";
+                        this.myTable[0, 4] = "膨胀系数";
+                        this.myTable[0, 5] = "　　截面二次力矩";
+                        this.myTable[1, 5] = "IY(m4)";
+                        this.myTable[1, 6] = "IZ(m4)";
+                        this.myTable[0, 7] = "扭转常数";
                         break;
 
                     default:
                         this.title = "材料データ";
-                        this.header_content = new string[,] {
-                            {"No","断面積","弾性係数","せん断弾性係数","膨張係数","断面二次モーメント","","ねじり剛性" },
-                            {"","A(m2)","E(kN/m2)","G(kN/m2)","","y軸周り(m4)","z軸周り(m4)","" }
-                        };
+                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 1] = "断面積";
+                        this.myTable[1, 1] = "A(m2)";
+                        this.myTable[0, 2] = "弾性係数";
+                        this.myTable[1, 2] = "E(kN/m2)";
+                        this.myTable[0, 3] = "せん断弾性係数";
+                        this.myTable[1, 3] = "G(kN/m2)";
+                        this.myTable[0, 4] = "膨張係数";
+                        this.myTable[0, 5] = "　　断面二次モーメント";
+                        this.myTable[1, 5] = "IY(m4)";
+                        this.myTable[1, 6] = "IZ(m4)";
+                        this.myTable[0, 7] = "ねじり剛性";
                         break;
                 }
-                this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, 
-                    XStringFormats.BottomRight, XStringFormats.BottomCenter, XStringFormats.BottomRight, 
-                    XStringFormats.BottomRight, XStringFormats.BottomRight
-                };
+
+                // 表題の文字位置
+                this.myTable.AlignX[0, 5] = "L";    // 左寄せ
 
             }
             else
             {   // 2次元
-                this.header_Xspacing = new double[] {
-                    X1, X1 + 75, X1 + 170, X1 + 250, X1 + 350, X1 + 300
-                };
-                this.body_Xspacing = Array.ConvertAll(this.header_Xspacing, (double x) => { return x + 15; });
+
+                //テーブルの作成
+                this.myTable = new Table(2, 6);
+
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 材料番号 
+                this.myTable.ColWidth[1] = 70.0;
+                this.myTable.ColWidth[2] = 70.0;
+                this.myTable.ColWidth[3] = 70.0;
+                this.myTable.ColWidth[4] = 100.0;
 
                 switch (data.language)
                 {
                     case "en":
                         this.title = "Material Data";
-                        this.header_content = new string[,] {
-                            {"No","Area","Elastic","CTE","Inertia","Name of Material" },
-                            {"","A(m2)","E(kN/m2)","","(m4)","" }
-                        };
+                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 1] = "Area";
+                        this.myTable[1, 1] = "A(m2)";
+                        this.myTable[0, 2] = "Elastic";
+                        this.myTable[1, 2] = "E(kN/m2)";
+                        this.myTable[0, 3] = "CTE";
+                        this.myTable[0, 4] = "Inertia";
+                        this.myTable[1, 4] = "I(m4)";
+                        this.myTable[0, 5] = "    Name of Material";
                         break;
 
                     case "cn":
                         this.title = "材料";
-                        this.header_content = new string[,] {
-                            {"No","截面面积","弹性系数","膨胀系数","截面二次力矩","材料名称" },
-                            {"","A(m2)","E(kN/m2)","","(m4)","" }
-                        };
+                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 1] = "截面面积";
+                        this.myTable[1, 1] = "A(m2)";
+                        this.myTable[0, 2] = "弹性系数";
+                        this.myTable[1, 2] = "E(kN/m2)";
+                        this.myTable[0, 3] = "膨胀系数";
+                        this.myTable[0, 4] = "截面二次力矩";
+                        this.myTable[1, 4] = "I(m4)";
+                        this.myTable[0, 5] = "    材料名称";
                         break;
 
                     default:
                         this.title = "材料データ";
-                        this.header_content = new string[,] {
-                            {"No","断面積","弾性係数","膨張係数","断面二次モーメント","材料名称", },
-                            {"","A(m2)","E(kN/m2)","","(m4)","" }
-                        };
+                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 1] = "断面積";
+                        this.myTable[1, 1] = "A(m2)";
+                        this.myTable[0, 2] = "弾性係数";
+                        this.myTable[1, 2] = "E(kN/m2)";
+                        this.myTable[0, 3] = "膨張係数";
+                        this.myTable[0, 4] = "断面二次ﾓｰﾒﾝﾄ";
+                        this.myTable[1, 4] = "I(m4)";
+                        this.myTable[0, 5] = "    材料名称";
                         break;
                 }
-                this.body_align = new XStringFormat[] {
-                    XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomRight, XStringFormats.BottomLeft
-                };
+
+                // 表題の文字位置
+                this.myTable.AlignX[0, 5] = "L";    // 左寄せ
 
             }
 
@@ -182,84 +222,95 @@ namespace PDF_Manager.Printing
         /// </summary>
         /// <param name="target">印刷対象の配列</param>
         /// <returns>印刷する用の配列</returns>
-        private List<string[]> getPageContents3D(Dictionary<string, Element> target)
+        private Table getPageContents(Dictionary<string, Element> target)
         {
-            int count = this.header_content.GetLength(1);
+            int r = this.myTable.Rows;
+            int rows = target.Count;
+
+            int count = this.myTable.Columns;
 
             // 行コンテンツを生成
-            var table = new List<string[]>();
+            var table = this.myTable.Clone();
 
-            for (var i = 0; i < target.Count; i++)
+            if (this.dimension == 3)
             {
-                string No = target.ElementAt(i).Key;
-                Element item = target.ElementAt(i).Value;
+                table.ReDim(row: r + rows * 2);
 
-                // 1行目
-                var lines = new string[count];
-                lines[0] = No;
-                lines[1] = printManager.toString(this.GetElementName(No));
-                table.Add(lines);
+                for (var i = 0; i < rows; i++)
+                {
+                    string No = target.ElementAt(i).Key;
+                    Element item = target.ElementAt(i).Value;
 
-                // 2行目
-                lines = new string[count];
-                int j = 1;
-                lines[j] = printManager.toString(item.A, 4);
-                j++;
-                lines[j] = printManager.toString(item.E, 2, "E");
-                j++;
-                lines[j] = printManager.toString(item.G, 2, "E");
-                j++;
-                lines[j] = printManager.toString(item.Xp, 2, "E");
-                j++;
-                lines[j] = printManager.toString(item.Iy, 6);
-                j++;
-                lines[j] = printManager.toString(item.Iz, 6);
-                j++;
-                lines[j] = printManager.toString(item.J, 6);
-                j++;
-                table.Add(lines);
+                    // 1行目
+                    var lines = new string[count];
+                    table[r, 0] = No;
+                    table.AlignX[r, 0] = "R";
+
+                    table[r, 1] = "　" + printManager.toString(this.GetElementName(No)); // 材料名称
+                    table.AlignX[r, 1] = "L";
+                    r++;
+
+                    // 2行目
+                    table[r, 1] = (item.A < 999) ? printManager.toString(item.A, 4) : printManager.toString(item.A);
+                    table.AlignX[r, 1] = "R";
+
+                    table[r, 2] = printManager.toString(item.E, 2, "E");
+                    table.AlignX[r, 2] = "R";
+
+                    table[r, 3] = printManager.toString(item.G, 2, "E");
+                    table.AlignX[r, 3] = "R";
+
+                    table[r, 4] = printManager.toString(item.Xp, 2, "E");
+                    table.AlignX[r, 4] = "R";
+
+                    table[r, 5] = (item.Iy < 999) ? printManager.toString(item.Iy, 6) : printManager.toString(item.Iy);
+                    table.AlignX[r, 5] = "R";
+
+                    table[r, 6] = (item.Iz < 999) ? printManager.toString(item.Iz, 6) : printManager.toString(item.Iz);
+                    table.AlignX[r, 6] = "R";
+
+                    table[r, 7] = (item.J < 999) ? printManager.toString(item.J, 6) : printManager.toString(item.J);
+                    table.AlignX[r, 7] = "R";
+
+                    r++;
+                }
+            }
+            else
+            {
+                table.ReDim(row: r + rows);
+                for (var i = 0; i < rows; i++)
+                {
+                    string No = target.ElementAt(i).Key;
+                    Element item = target.ElementAt(i).Value;
+
+                    table[r, 0] = No;
+                    table.AlignX[r, 0] = "R";
+
+                    table[r, 1] = printManager.toString(item.A, 4);
+                    table.AlignX[r, 1] = "R";
+
+                    table[r, 2] = printManager.toString(item.E, 2, "E");
+                    table.AlignX[r, 2] = "R";
+
+                    table[r, 3] = printManager.toString(item.Xp, 2, "E");
+                    table.AlignX[r, 3] = "R";
+
+                    table[r, 4] = printManager.toString(item.Iz, 6);
+                    table.AlignX[r, 4] = "R";
+
+                    table[r, 5] = "    " + printManager.toString(this.GetElementName(No)); // 材料名称
+                    table.AlignX[r, 5] = "L";
+
+                    r++;
+                }
 
             }
+
+            table.RowHeight[2] = printManager.LineSpacing2; // 表題と body の間
+
             return table;
         }
-        /// <summary>
-        /// 1ページに入れるコンテンツを集計する
-        /// </summary>
-        /// <param name="target">印刷対象の配列</param>
-        /// <returns>印刷する用の配列</returns>
-        private List<string[]> getPageContents2D(Dictionary<string, Element> target)
-        {
-            int count = this.header_content.GetLength(1);
 
-            // 行コンテンツを生成
-            var table = new List<string[]>();
-
-            for (var i = 0; i < target.Count; i++)
-            {
-                string No = target.ElementAt(i).Key;
-                Element item = target.ElementAt(i).Value;
-
-                // 1行目
-                var lines = new string[count];
-                int j = 0;
-                lines[j] = No;
-                j++;
-                lines[j] = printManager.toString(item.A, 4);
-                j++;
-                lines[j] = printManager.toString(item.E, 2, "E");
-                j++;
-                lines[j] = printManager.toString(item.Xp, 2, "E");
-                j++;
-                lines[j] = printManager.toString(item.Iz, 6);
-                j++;
-                lines[j] = printManager.toString(this.GetElementName(No));
-                j++;
-
-                table.Add(lines);
-
-            }
-            return table;
-        }
 
         /// <summary>
         /// 印刷する
@@ -272,8 +323,13 @@ namespace PDF_Manager.Printing
             this.printInit(mc, data);
 
             // 印刷可能な行数
-            var printRows = printManager.getPrintRowCount(mc, this.header_content);
+            var printRows = myTable.getPrintRowCount(mc);
 
+            if(this.dimension == 3)
+            {   // 3次元は、１データにつき２行なので印刷可能な行数は半分になる
+                for(var i=0; i<printRows.Length; ++i)
+                    printRows[i] = (int)(printRows[i] / 2);
+            }
 
             // 集計開始
             foreach(var tmp0 in this.elements)
@@ -282,7 +338,7 @@ namespace PDF_Manager.Printing
                 var titles = new string[] { this.title, typeNo };
 
                 // 行コンテンツを生成
-                var page = new List<List<string[]>>();
+                var page = new List<Table>();
 
                 // 1ページ目に入る行数
                 int rows = printRows[0];
@@ -302,8 +358,8 @@ namespace PDF_Manager.Printing
 
                     if (tmp2.Count > 0)
                     {
-                        var table = (this.dimension == 3) ? this.getPageContents3D(tmp2):
-                                                            this.getPageContents2D(tmp2);
+                        var table =  this.getPageContents(tmp2);
+
                         page.Add(table);
                     }
                     else if (tmp1.Count <= 0)
@@ -320,13 +376,11 @@ namespace PDF_Manager.Printing
                 }
 
                 // 表の印刷
-                printManager.printContent(mc, page, titles,
-                                          this.header_content, this.header_Xspacing,
-                                          this.body_Xspacing, this.body_align);
+                printManager.printTableContents(mc, page, titles);
+
             }
 
         }
-        */
         #endregion
 
 

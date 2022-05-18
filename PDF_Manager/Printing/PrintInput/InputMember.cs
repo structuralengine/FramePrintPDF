@@ -212,35 +212,40 @@ namespace PDF_Manager.Printing
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
+            table.RowHeight[r] = printManager.LineSpacing2;
+
             for (var i = 0; i < rows; i++)
             {
                 string No = target.ElementAt(i).Key;
                 Member item = target.ElementAt(i).Value;
 
                 int j = 0;
-                table[r + i, j] = No;
-                table.AlignX[r + i, j] = "R";
+                table[r, j] = No;
+                table.AlignX[r, j] = "R";
                 j++;
-                table[r + i, j] = printManager.toString(item.ni);
-                table.AlignX[r + i, j] = "R";
+                table[r, j] = printManager.toString(item.ni);
+                table.AlignX[r, j] = "R";
                 j++;
-                table[r + i, j] = printManager.toString(item.nj);
-                table.AlignX[r + i, j] = "R";
+                table[r, j] = printManager.toString(item.nj);
+                table.AlignX[r, j] = "R";
                 j++;
-                table[r + i, j] = printManager.toString(this.GetMemberLength(No), 3);
-                table.AlignX[r + i, j] = "R";
+                table[r, j] = printManager.toString(this.GetMemberLength(No), 3);
+                table.AlignX[r, j] = "R";
                 j++;
-                table[r + i, j] = printManager.toString(item.e) + "  ";
-                table.AlignX[r + i, j] = "R";
+                table[r, j] = printManager.toString(item.e) + "  ";
+                table.AlignX[r, j] = "R";
                 j++;
                 if (this.dimension == 3) {
-                    table[r + i, j] = printManager.toString(item.cg, 3);
-                    table.AlignX[r + i, j] = "R";
+                    table[r, j] = printManager.toString(item.cg, 3);
+                    table.AlignX[r, j] = "R";
                     j++;
                 }
-                table[r + i, j] = "    " + printManager.toString(this.Element.GetElementName(item.e));
-                table.AlignX[r + i, j] = "L";
+                table[r, j] = "    " + printManager.toString(this.Element.GetElementName(item.e));
+                table.AlignX[r, j] = "L";
+
+                r++;
             }
+
             return table;
         }
 
@@ -303,7 +308,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printTableContents(mc, page, this.title);
+            printManager.printTableContents(mc, page, new string[] { this.title });
 
         }
 
