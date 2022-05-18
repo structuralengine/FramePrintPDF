@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using PDF_Manager.Comon;
+using PDF_Manager.Printing.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -73,121 +74,372 @@ namespace PDF_Manager.Printing
         }
 
 
-    /*
-    private Dictionary<string, object> value = new Dictionary<string, object>();
-    List<string> title = new List<string>();
-    List<List<string[]>> data = new List<List<string[]>>();
+        #region 印刷処理
+        // タイトル
+        private string title;
+        // 2次元か3次元か
+        private int dimension;
+        // テーブル
+        private Table myTable;
 
-
-        string language = (string)pd.printDatas["language"];
-
-        // 集まったデータはすべてここに格納する
-        title = new List<string>();
-        data = new List<List<string[]>>();
-
-
-        for (int i = 0; i < target.Count; i++)
+        /// <summary>
+        /// 印刷前の初期化処理
+        /// </summary>
+        private void printInit(PdfDocument mc, PrintData data)
         {
-            JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
+            this.dimension = data.dimension;
 
-            // タイトルを入れる．
-            switch (language)
-            {
-                case "ja":
-                    title.Add("タイプ" + target.ElementAt(i).Key);
-                    break;
-                case "en":
-                    title.Add("Type" + target.ElementAt(i).Key);
-                    break;
+            if (this.dimension == 3)
+            {   // 3次元
 
-            }
+                //テーブルの作成
+                this.myTable = new Table(3, 7);
 
-            List<string[]> table = new List<string[]>();
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 格点No
+                this.myTable.ColWidth[1] = 45.0;
+                this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[3] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[4] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[5] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[6] = this.myTable.ColWidth[1];
 
-            if (mc.dimension == 3)
-            {
-                for (int j = 0; j < Elem.Count; j++)
+                switch (data.language)
                 {
-                    JToken item = Elem[j];
+                    case "en":
+                        this.title = "Support DATA";
+                        this.myTable[0, 0] = "Node";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "TX";
+                        this.myTable[2, 1] = "(kN/m)";
+                        this.myTable[0, 2] = "Displacement Restraint";
+                        this.myTable[1, 2] = "TY";
+                        this.myTable[2, 2] = "(kN/m)";
+                        this.myTable[1, 3] = "TZ";
+                        this.myTable[2, 3] = "(kN/m)";
 
-                    string[] line = new String[7];
+                        this.myTable[1, 4] = "MX";
+                        this.myTable[2, 4] = "(kN・m/rad)";
+                        this.myTable[0, 5] = "Rotational Restraint";
+                        this.myTable[1, 5] = "MY";
+                        this.myTable[2, 5] = "(kN・m/rad)";
+                        this.myTable[1, 6] = "MZ";
+                        this.myTable[2, 6] = "(kN・m/rad)";
 
-                    line[0] = dataManager.TypeChange(item["n"]);
-                    line[1] = dataManager.TypeChange(item["tx"]);
-                    line[2] = dataManager.TypeChange(item["ty"]);
-                    line[3] = dataManager.TypeChange(item["tz"]);
-                    line[4] = dataManager.TypeChange(item["rx"]);
-                    line[5] = dataManager.TypeChange(item["ry"]);
-                    line[6] = dataManager.TypeChange(item["rz"]);
+                        break;
 
-                    table.Add(line);
+                    case "cn":
+                        this.title = "支点";
+                        this.myTable[0, 0] = "节点";
+                        this.myTable[1, 0] = "编码";
+                        this.myTable[1, 1] = "X方向";
+                        this.myTable[2, 1] = "(kN/m)";
+                        this.myTable[0, 2] = "位移约束";
+                        this.myTable[1, 2] = "Y方向";
+                        this.myTable[2, 2] = "(kN/m)";
+                        this.myTable[1, 3] = "Z方向";
+                        this.myTable[2, 3] = "(kN/m)";
+
+                        this.myTable[1, 4] = "围绕X轴";
+                        this.myTable[2, 4] = "(kN・m/rad)";
+                        this.myTable[0, 5] = "旋转约束";
+                        this.myTable[1, 5] = "围绕Y轴";
+                        this.myTable[2, 5] = "(kN・m/rad)";
+                        this.myTable[1, 6] = "围绕Z轴";
+                        this.myTable[2, 6] = "(kN・m/rad)";
+                        break;
+
+                    default:
+                        this.title = "支点データ";
+                        this.myTable[0, 0] = "格点";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "X方向";
+                        this.myTable[2, 1] = "(kN/m)";
+                        this.myTable[0, 2] = "変位拘束";
+                        this.myTable[1, 2] = "Y方向";
+                        this.myTable[2, 2] = "(kN/m)";
+                        this.myTable[1, 3] = "Z方向";
+                        this.myTable[2, 3] = "(kN/m)";
+
+                        this.myTable[1, 4] = "X軸回り";
+                        this.myTable[2, 4] = "(kN・m/rad)";
+                        this.myTable[0, 5] = "回転拘束";
+                        this.myTable[1, 5] = "Y軸回り";
+                        this.myTable[2, 5] = "(kN・m/rad)";
+                        this.myTable[1, 6] = "Z軸回り";
+                        this.myTable[2, 6] = "(kN・m/rad)";
+                        break;
                 }
-                data.Add(table);
+
             }
-            else if(mc.dimension == 2)
-            {
-                int bottomCell = mc.bottomCell * 2;
+            else
+            {   // 2次元
 
-                // 全部の行数
-                var row = Elem.Count;
+                //テーブルの作成
+                this.myTable = new Table(3, 7);
 
-                var page = 0;
-                //var body = new ArrayList()
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 格点No
+                this.myTable.ColWidth[1] = 45.0;
+                this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[3] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[4] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[5] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[6] = this.myTable.ColWidth[1];
 
-                while (true)
+
+                switch (data.language)
                 {
-                    if (row > bottomCell)
+                    case "en":
+                        this.title = "Support Data";
+                        this.myTable[1, 0] = "Node";
+                        this.myTable[2, 0] = "No";
+                        this.myTable[1, 1] = "TX";
+                        this.myTable[2, 1] = "(kN/m)";
+                        this.myTable[1, 2] = "TY";
+                        this.myTable[2, 2] = "(kN/m)";
+                        this.myTable[1, 3] = "MZ";
+                        this.myTable[2, 3] = "(kN・m/rad)";
+                        break;
+
+                    case "cn":
+                        this.title = "支点";
+                        this.myTable[1, 0] = "节点";
+                        this.myTable[2, 0] = "编码";
+                        this.myTable[1, 1] = "TX";
+                        this.myTable[2, 1] = "(kN/m)";
+                        this.myTable[1, 2] = "TY";
+                        this.myTable[2, 2] = "(kN/m)";
+                        this.myTable[1, 3] = "MZ";
+                        this.myTable[2, 3] = "(kN・m/rad)";
+                        break;
+
+                    default:
+                        this.title = "支点データ";
+                        this.myTable[1, 0] = "節点";
+                        this.myTable[2, 0] = "编码";
+                        this.myTable[1, 1] = "TX";
+                        this.myTable[2, 1] = "(kN/m)";
+                        this.myTable[1, 2] = "TY";
+                        this.myTable[2, 2] = "(kN/m)";
+                        this.myTable[1, 3] = "MZ";
+                        this.myTable[2, 3] = "(kN・m/rad)";
+                        break;
+                }
+
+                this.myTable[1, 4] = this.myTable[1, 1];
+                this.myTable[2, 4] = this.myTable[2, 1];
+                this.myTable[1, 5] = this.myTable[1, 2];
+                this.myTable[2, 5] = this.myTable[2, 2];
+                this.myTable[1, 6] = this.myTable[1, 3];
+                this.myTable[2, 6] = this.myTable[2, 3];
+
+            }
+        }
+
+
+        /// <summary>
+        /// 1ページに入れるコンテンツを集計する
+        /// </summary>
+        /// <param name="target">印刷対象の配列</param>
+        /// <param name="rows">行数</param>
+        /// <returns>印刷する用の配列</returns>
+        private Table getPageContents(Dictionary<string, Member> target)
+        {
+            int r = this.myTable.Rows;
+            int rows = target.Count;
+
+            int count = this.myTable.Columns;
+
+            // 行コンテンツを生成
+            var table = this.myTable.Clone();
+            table.ReDim(row: r + rows);
+
+            table.RowHeight[r] = printManager.LineSpacing2;
+
+            for (var i = 0; i < rows; i++)
+            {
+                string No = target.ElementAt(i).Key;
+                Member item = target.ElementAt(i).Value;
+
+                int j = 0;
+                table[r, j] = No;
+                table.AlignX[r, j] = "R";
+                j++;
+                table[r, j] = printManager.toString(item.ni);
+                table.AlignX[r, j] = "R";
+                j++;
+                table[r, j] = printManager.toString(item.nj);
+                table.AlignX[r, j] = "R";
+                j++;
+                table[r, j] = printManager.toString(this.GetMemberLength(No), 3);
+                table.AlignX[r, j] = "R";
+                j++;
+                table[r, j] = printManager.toString(item.e) + "  ";
+                table.AlignX[r, j] = "R";
+                j++;
+                if (this.dimension == 3)
+                {
+                    table[r, j] = printManager.toString(item.cg, 3);
+                    table.AlignX[r, j] = "R";
+                    j++;
+                }
+                table[r, j] = "    " + printManager.toString(this.Element.GetElementName(item.e));
+                table.AlignX[r, j] = "L";
+
+                r++;
+            }
+
+            return table;
+        }
+
+
+        /// <summary>
+        /// 印刷する
+        /// </summary>
+        /// <param name="mc"></param>
+        public void printPDF(PdfDocument mc, PrintData data)
+        {
+            // 部材長を取得できる状態にする
+            this.Node = (InputNode)data.printDatas[InputNode.KEY];
+
+            // 材料名称を取得できる状態にする
+            this.Element = (InputElement)data.printDatas[InputElement.KEY];
+
+
+            // タイトル などの初期化
+            this.printInit(mc, data);
+
+            // 印刷可能な行数
+            var printRows = myTable.getPrintRowCount(mc);
+
+            // 行コンテンツを生成
+            var page = new List<Table>();
+
+            // 1ページ目に入る行数
+            int rows = printRows[0];
+
+            // 集計開始
+            var tmp1 = new Dictionary<string, Member>(this.members); // clone
+            while (true)
+            {
+                // 1ページに納まる分のデータをコピー
+                var tmp2 = new Dictionary<string, Member>();
+                for (int i = 0; i < rows; i++)
+                {
+                    if (tmp1.Count <= 0)
+                        break;
+                    tmp2.Add(tmp1.First().Key, tmp1.First().Value);
+                    tmp1.Remove(tmp1.First().Key);
+                }
+
+                if (tmp2.Count > 0)
+                {
+                    var table = this.getPageContents(tmp2);
+                    page.Add(table);
+                }
+                else if (tmp1.Count <= 0)
+                {
+                    break;
+                }
+                else
+                { // 印刷するものもない
+                    mc.NewPage();
+                }
+
+                // 2ページ以降に入る行数
+                rows = printRows[1];
+            }
+
+            // 表の印刷
+            printManager.printTableContents(mc, page, new string[] { this.title });
+
+        }
+
+        #endregion
+
+
+        /*
+        private Dictionary<string, object> value = new Dictionary<string, object>();
+        List<string> title = new List<string>();
+        List<List<string[]>> data = new List<List<string[]>>();
+
+
+            string language = (string)pd.printDatas["language"];
+
+            // 集まったデータはすべてここに格納する
+            title = new List<string>();
+            data = new List<List<string[]>>();
+
+
+            for (int i = 0; i < target.Count; i++)
+            {
+                JArray Elem = JArray.FromObject(target.ElementAt(i).Value);
+
+                // タイトルを入れる．
+                switch (language)
+                {
+                    case "ja":
+                        title.Add("タイプ" + target.ElementAt(i).Key);
+                        break;
+                    case "en":
+                        title.Add("Type" + target.ElementAt(i).Key);
+                        break;
+
+                }
+
+                List<string[]> table = new List<string[]>();
+
+                if (mc.dimension == 3)
+                {
+                    for (int j = 0; j < Elem.Count; j++)
                     {
-                        List<string[]> body = new List<string[]>();
-                        var half = bottomCell / 2;
-                        for (var l = 0; l < half; l++)
-                        {
-                            //　各行の配列開始位置を取得する（左段/右段)
-                            var j = bottomCell * page + l;
-                            var k = bottomCell * page + bottomCell / 2 + l;
-                            //　各行のデータを取得する（左段/右段)
-                            var targetValue_l = Elem[j];
+                        JToken item = Elem[j];
 
-                            string[] line = new String[8];
-                            line[0] = dataManager.TypeChange(targetValue_l["n"]);
-                            line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
-                            line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
-                            line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
+                        string[] line = new String[7];
 
-                            var targetValue_r = Elem[k];
-                            line[4] = dataManager.TypeChange(targetValue_r["n"]);
-                            line[5] = dataManager.TypeChange(targetValue_r["tx"], 3);
-                            line[6] = dataManager.TypeChange(targetValue_r["ty"], 3);
-                            line[7] = dataManager.TypeChange(targetValue_r["rz"], 3);
-                            body.Add(line);
-                        }
-                        data.Add(body);
-                        row -= bottomCell;
-                        page++;
+                        line[0] = dataManager.TypeChange(item["n"]);
+                        line[1] = dataManager.TypeChange(item["tx"]);
+                        line[2] = dataManager.TypeChange(item["ty"]);
+                        line[3] = dataManager.TypeChange(item["tz"]);
+                        line[4] = dataManager.TypeChange(item["rx"]);
+                        line[5] = dataManager.TypeChange(item["ry"]);
+                        line[6] = dataManager.TypeChange(item["rz"]);
+
+                        table.Add(line);
                     }
-                    else
+                    data.Add(table);
+                }
+                else if(mc.dimension == 2)
+                {
+                    int bottomCell = mc.bottomCell * 2;
+
+                    // 全部の行数
+                    var row = Elem.Count;
+
+                    var page = 0;
+                    //var body = new ArrayList()
+
+                    while (true)
                     {
-                        List<string[]> body = new List<string[]>();
-
-                        row = row % 2 == 0 ? row / 2 : row / 2 + 1;
-
-                        for (var l = 0; l < row; l++)
+                        if (row > bottomCell)
                         {
-                            //　各行の配列開始位置を取得する（左段/右段)
-                            var j = bottomCell * page + l;
-                            var k = j + row;
-                            //　各行のデータを取得する（左段)
-                            var targetValue_l = Elem[j];
-
-                            string[] line = new String[8];
-                            line[0] = dataManager.TypeChange(targetValue_l["n"]);
-                            line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
-                            line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
-                            line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
-
-                            try
+                            List<string[]> body = new List<string[]>();
+                            var half = bottomCell / 2;
+                            for (var l = 0; l < half; l++)
                             {
-                                //　各行のデータを取得する（右段)
+                                //　各行の配列開始位置を取得する（左段/右段)
+                                var j = bottomCell * page + l;
+                                var k = bottomCell * page + bottomCell / 2 + l;
+                                //　各行のデータを取得する（左段/右段)
+                                var targetValue_l = Elem[j];
+
+                                string[] line = new String[8];
+                                line[0] = dataManager.TypeChange(targetValue_l["n"]);
+                                line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
+                                line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
+                                line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
+
                                 var targetValue_r = Elem[k];
                                 line[4] = dataManager.TypeChange(targetValue_r["n"]);
                                 line[5] = dataManager.TypeChange(targetValue_r["tx"], 3);
@@ -195,22 +447,56 @@ namespace PDF_Manager.Printing
                                 line[7] = dataManager.TypeChange(targetValue_r["rz"], 3);
                                 body.Add(line);
                             }
-                            catch
-                            {
-                                line[4] = "";
-                                line[5] = "";
-                                line[6] = "";
-                                line[7] = "";
-                                body.Add(line);
-                            }
+                            data.Add(body);
+                            row -= bottomCell;
+                            page++;
                         }
-                        data.Add(body);
-                        break;
+                        else
+                        {
+                            List<string[]> body = new List<string[]>();
+
+                            row = row % 2 == 0 ? row / 2 : row / 2 + 1;
+
+                            for (var l = 0; l < row; l++)
+                            {
+                                //　各行の配列開始位置を取得する（左段/右段)
+                                var j = bottomCell * page + l;
+                                var k = j + row;
+                                //　各行のデータを取得する（左段)
+                                var targetValue_l = Elem[j];
+
+                                string[] line = new String[8];
+                                line[0] = dataManager.TypeChange(targetValue_l["n"]);
+                                line[1] = dataManager.TypeChange(targetValue_l["tx"], 3);
+                                line[2] = dataManager.TypeChange(targetValue_l["ty"], 3);
+                                line[3] = dataManager.TypeChange(targetValue_l["rz"], 3);
+
+                                try
+                                {
+                                    //　各行のデータを取得する（右段)
+                                    var targetValue_r = Elem[k];
+                                    line[4] = dataManager.TypeChange(targetValue_r["n"]);
+                                    line[5] = dataManager.TypeChange(targetValue_r["tx"], 3);
+                                    line[6] = dataManager.TypeChange(targetValue_r["ty"], 3);
+                                    line[7] = dataManager.TypeChange(targetValue_r["rz"], 3);
+                                    body.Add(line);
+                                }
+                                catch
+                                {
+                                    line[4] = "";
+                                    line[5] = "";
+                                    line[6] = "";
+                                    line[7] = "";
+                                    body.Add(line);
+                                }
+                            }
+                            data.Add(body);
+                            break;
+                        }
                     }
                 }
             }
-        }
-        */
+            */
 
         /*
         public void printPDF(PdfDoc mc)

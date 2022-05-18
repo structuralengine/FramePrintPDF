@@ -103,7 +103,7 @@ namespace PDF_Manager.Printing
 
                     case "cn":
                         this.title = "构件";
-                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 0] = "编码";
                         this.myTable[0, 1] = "节点";
                         this.myTable[1, 1] = "I端";
                         this.myTable[1, 2] = "J端";

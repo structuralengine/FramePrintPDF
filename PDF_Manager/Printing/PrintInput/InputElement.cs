@@ -184,7 +184,7 @@ namespace PDF_Manager.Printing
 
                     case "cn":
                         this.title = "材料";
-                        this.myTable[0, 0] = "No";
+                        this.myTable[0, 0] = "编码";
                         this.myTable[0, 1] = "截面面积";
                         this.myTable[1, 1] = "A(m2)";
                         this.myTable[0, 2] = "弹性系数";
