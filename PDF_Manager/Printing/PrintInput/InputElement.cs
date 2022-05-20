@@ -227,8 +227,6 @@ namespace PDF_Manager.Printing
             int r = this.myTable.Rows;
             int rows = target.Count;
 
-            int count = this.myTable.Columns;
-
             // 行コンテンツを生成
             var table = this.myTable.Clone();
 
@@ -242,7 +240,6 @@ namespace PDF_Manager.Printing
                     Element item = target.ElementAt(i).Value;
 
                     // 1行目
-                    var lines = new string[count];
                     table[r, 0] = No;
                     table.AlignX[r, 0] = "R";
 

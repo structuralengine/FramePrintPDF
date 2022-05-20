@@ -52,7 +52,7 @@ namespace PDF_Manager.Printing.Comon
 
 
         // 数値を文字列に変換する
-        public static string toString(object data, int round = 0,  string style = "F")
+        public static string toString(object data, int round = -1,  string style = "F")
         {
             if (data == null)
                 return "";
@@ -68,7 +68,7 @@ namespace PDF_Manager.Printing.Comon
                 {
                     result = "";
                 } 
-                else
+                else if(0 <= round)
                 {
                     string digit = style + round.ToString();
                     result = tmp.ToString(digit);

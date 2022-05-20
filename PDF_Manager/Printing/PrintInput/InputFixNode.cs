@@ -244,53 +244,106 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
-        private Table getPageContents(Dictionary<string, Member> target)
+        private Table getPageContents3D(List<FixNode> target)
         {
             int r = this.myTable.Rows;
             int rows = target.Count;
-
-            int count = this.myTable.Columns;
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
-            table.RowHeight[r] = printManager.LineSpacing2;
-
             for (var i = 0; i < rows; i++)
             {
-                string No = target.ElementAt(i).Key;
-                Member item = target.ElementAt(i).Value;
+                FixNode item = target[i];
 
-                int j = 0;
-                table[r, j] = No;
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.ni);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.nj);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(this.GetMemberLength(No), 3);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.e) + "  ";
-                table.AlignX[r, j] = "R";
-                j++;
-                if (this.dimension == 3)
-                {
-                    table[r, j] = printManager.toString(item.cg, 3);
-                    table.AlignX[r, j] = "R";
-                    j++;
-                }
-                table[r, j] = "    " + printManager.toString(this.Element.GetElementName(item.e));
-                table.AlignX[r, j] = "L";
+                table[r, 0] = printManager.toString(item.n);
+                table.AlignX[r, 0] = "R";
+
+                table[r, 1] = printManager.toString(item.tx); 
+                table.AlignX[r, 1] = "R";
+
+                table[r, 2] = printManager.toString(item.ty);
+                table.AlignX[r, 2] = "R";
+
+                table[r, 3] = printManager.toString(item.tz);
+                table.AlignX[r, 3] = "R";
+
+                table[r, 4] = printManager.toString(item.rx);
+                table.AlignX[r, 4] = "R";
+
+                table[r, 5] = printManager.toString(item.ry);
+                table.AlignX[r, 5] = "R";
+
+                table[r, 6] = printManager.toString(item.rz);
+                table.AlignX[r, 6] = "R";
 
                 r++;
             }
 
+            table.RowHeight[2] = printManager.LineSpacing2; // 表題と body の間
+
             return table;
+        }
+
+
+        /// <summary>
+        /// 1ページに入れるコンテンツを集計する
+        /// </summary>
+        /// <param name="target">印刷対象の配列</param>
+        /// <param name="rows">行数</param>
+        /// <returns>印刷する用の配列</returns>
+        private List<Table> getPageContents2D(Dictionary<int, List<FixNode>> target)
+        {
+            int r = this.myTable.Rows;
+            int table_count = Convert.ToInt32(Math.Ceiling((double)target.Count / 2)); // テーブルの数は、タイプの数 / 2
+
+            var tables = new List<Table>();
+
+            for (var j=0; j<table_count; ++j)
+            { 
+                int TypeNo = target.ElementAt(j).Key;
+                List<FixNode> item = target.ElementAt(j).Value;
+
+                // 行コンテンツを生成
+                var table = this.myTable.Clone();
+                table.ReDim(row: r + rows);
+
+                for (var i = 0; i < rows; i++)
+                {
+
+                    FixNode item = target[i];
+
+                    table[r, 0] = printManager.toString(item.n);
+                    table.AlignX[r, 0] = "R";
+
+                    table[r, 1] = printManager.toString(item.tx);
+                    table.AlignX[r, 1] = "R";
+
+                    table[r, 2] = printManager.toString(item.ty);
+                    table.AlignX[r, 2] = "R";
+
+                    table[r, 3] = printManager.toString(item.tz);
+                    table.AlignX[r, 3] = "R";
+
+                    table[r, 4] = printManager.toString(item.rx);
+                    table.AlignX[r, 4] = "R";
+
+                    table[r, 5] = printManager.toString(item.ry);
+                    table.AlignX[r, 5] = "R";
+
+                    table[r, 6] = printManager.toString(item.rz);
+                    table.AlignX[r, 6] = "R";
+
+                    r++;
+                }
+
+                table.RowHeight[2] = printManager.LineSpacing2; // 表題と body の間
+
+                tables.Add(table);
+            }
+
+            return tables;
         }
 
 
