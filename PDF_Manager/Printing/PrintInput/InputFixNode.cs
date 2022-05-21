@@ -293,6 +293,7 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
+        /*
         private List<Table> getPageContents2D(Dictionary<int, List<FixNode>> target)
         {
             int r = this.myTable.Rows;
@@ -345,7 +346,7 @@ namespace PDF_Manager.Printing
 
             return tables;
         }
-
+        */
 
         /// <summary>
         /// 印刷する
@@ -353,6 +354,7 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+            /*
             // 部材長を取得できる状態にする
             this.Node = (InputNode)data.printDatas[InputNode.KEY];
 
@@ -406,7 +408,7 @@ namespace PDF_Manager.Printing
 
             // 表の印刷
             printManager.printTableContents(mc, page, new string[] { this.title });
-
+            */
         }
 
         #endregion
