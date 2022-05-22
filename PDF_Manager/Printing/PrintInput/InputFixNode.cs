@@ -454,14 +454,13 @@ namespace PDF_Manager.Printing
                         typeNo2 = string.Format("Type{0}", tmp02.Key); 
                     }
 
-
                     // 行コンテンツを生成
                     var page = new List<Table>();
 
                     // 印刷可能な行数
                     var printRows = this.myTable.getPrintRowCount(mc, 2);
 
-                    var tmp1 = new List<FixNode>(tmp0.Value);
+                    var tmp1 = new List<FixNode>(tmp01.Value);
                     // 1ページ目に入る行数
                     int rows = printRows[0];
 
