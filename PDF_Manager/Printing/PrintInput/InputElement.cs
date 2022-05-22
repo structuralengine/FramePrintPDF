@@ -320,7 +320,7 @@ namespace PDF_Manager.Printing
             this.printInit(mc, data);
 
             // 印刷可能な行数
-            var printRows = myTable.getPrintRowCount(mc);
+            var printRows = myTable.getPrintRowCount(mc, 2);
 
             if(this.dimension == 3)
             {   // 3次元は、１データにつき２行なので印刷可能な行数は半分になる

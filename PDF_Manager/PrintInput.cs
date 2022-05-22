@@ -74,20 +74,18 @@ public class PrintInput
         ((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
         // 材料
         ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
-
-        /*
         // 支点
         ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
+
+        /*
         mc = InputJoint.printPDF(mc, data);           // 結合
         mc = InputNoticePoints.printPDF(mc, data);    // 着目点
         mc = InputFixMember.printPDF(mc,data);        // バネ
         mc = InputShell.printPDF(mc, data);           // シェル
-        */
 
         // 荷重名称 
         ((InputLoadName)data.printDatas[InputLoadName.KEY]).printPDF(mc, data);
 
-        /*
         mc = InputLoad.printPDF(mc, data);            // 荷重強度 
         mc = InputDefine.printPDF(mc, data);          // 組み合わせDefine
         mc = InputCombine.printPDF(mc, data);         // 組み合わせCombine

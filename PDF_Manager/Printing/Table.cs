@@ -232,7 +232,7 @@ namespace PDF_Manager.Printing
         /// return[0] = 1ページ目の印刷可能行数, 
         /// return[1] = 2ページ目以降の印刷可能行数
         /// </returns>
-        internal int[] getPrintRowCount(PdfDocument mc)
+        internal int[] getPrintRowCount(PdfDocument mc, int titles_count = 1)
         {
             // 表題の印字高さ + 改行高
             double H2 = this.GetTableHeight();
@@ -243,6 +243,10 @@ namespace PDF_Manager.Printing
             // 2ページ目以降（ページ全体を使ってよい場合）の行数
             double Hx = mc.currentPageSize.Height;
             Hx -= printManager.H1;
+            //for (var i = 0; i < titles_count; ++i){
+            //    Hx -= printManager.FontHeight;
+            //    Hx -= printManager.LineSpacing2;
+            //}
             Hx -= H2;
             int rows2 = (int)(Hx / H3); // 切り捨て
 
