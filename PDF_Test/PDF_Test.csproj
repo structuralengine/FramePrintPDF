@@ -10,6 +10,6 @@
     <ProjectReference Include="..\PDF_Manager\PDF_Manager.csproj" />
   </ItemGroup>
 
-  <ProjectExtensions><VisualStudio><UserProperties testdata_4test001_1json__JsonSchema="https://appsemble.app/api.json" /></VisualStudio></ProjectExtensions>
+  <ProjectExtensions><VisualStudio><UserProperties testdata_4test001_1json__JsonSchema="https://appsemble.app/api.json" testdata_4test008_1json__JsonSchema="https://appsemble.app/api.json" /></VisualStudio></ProjectExtensions>
 
 </Project>

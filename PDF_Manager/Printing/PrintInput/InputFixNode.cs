@@ -217,7 +217,7 @@ namespace PDF_Manager.Printing
                     default:
                         this.title = "支点データ";
                         this.myTable[1, 0] = "節点";
-                        this.myTable[2, 0] = "编码";
+                        this.myTable[2, 0] = "No";
                         this.myTable[1, 1] = "TX";
                         this.myTable[2, 1] = "(kN/m)";
                         this.myTable[1, 2] = "TY";
@@ -365,7 +365,7 @@ namespace PDF_Manager.Printing
 
             return tables;
         }
-        
+
 
         /// <summary>
         /// 印刷する
@@ -441,7 +441,7 @@ namespace PDF_Manager.Printing
             {   // 2次元
                 var titles = new string[] { this.title };
 
-                for (var k=0; k<this.fixnodes.Count; k+=2)
+                for (var k = 0; k < this.fixnodes.Count; k += 2)
                 {
                     var tmp01 = this.fixnodes.ElementAt(k);
                     var typeNo1 = string.Format("Type{0}", tmp01.Key); // タイプ番号
@@ -449,9 +449,10 @@ namespace PDF_Manager.Printing
                     var tmp02 = new KeyValuePair<int, List<FixNode>>();
                     var typeNo2 = "";
 
-                    if (k < this.fixnodes.Count) {
+                    if (k < this.fixnodes.Count)
+                    {
                         tmp02 = this.fixnodes.ElementAt(k + 1);
-                        typeNo2 = string.Format("Type{0}", tmp02.Key); 
+                        typeNo2 = string.Format("Type{0}", tmp02.Key);
                     }
 
                     // 行コンテンツを生成
@@ -508,7 +509,7 @@ namespace PDF_Manager.Printing
                 }
 
             }
-
+        }
         #endregion
 
 

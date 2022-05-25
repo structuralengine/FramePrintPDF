@@ -82,16 +82,22 @@ public class PrintInput
         mc = InputNoticePoints.printPDF(mc, data);    // 着目点
         mc = InputFixMember.printPDF(mc,data);        // バネ
         mc = InputShell.printPDF(mc, data);           // シェル
-
+        */
         // 荷重名称 
         ((InputLoadName)data.printDatas[InputLoadName.KEY]).printPDF(mc, data);
-
+        /*
         mc = InputLoad.printPDF(mc, data);            // 荷重強度 
         mc = InputDefine.printPDF(mc, data);          // 組み合わせDefine
         mc = InputCombine.printPDF(mc, data);         // 組み合わせCombine
         mc = InputPickup.printPDF(mc, data);          // 組み合わせピックアップ
 
+        */
+
+
         // 計算結果データ
+        // 変位量
+        //((ResultDisg)data.printDatas[ResultDisg.KEY]).printPDF(mc, data);
+        /*
         mc = ResultDisg.printPDF(mc, data);
         mc = ResultDisgCombine.printPDF(mc, data);
         mc = ResultDisgPickup.printPDF(mc, data);
