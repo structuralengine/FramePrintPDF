@@ -269,7 +269,12 @@ namespace PDF_Manager.Printing
             for(int j=0; j< this.disgs.Count; ++j)
             {   // ケース番号のループ
                 var key = this.disgs.ElementAt(j).Key;  // ケース番号
-                var tmp1 = new List<Disg>((List<Disg>)this.disgs.ElementAt(j).Value); 
+                var tmp1 = new List<Disg>((List<Disg>)this.disgs.ElementAt(j).Value);
+
+                var caseNo = this.disgnames.ElementAt(j).Key;
+                var caseName = this.disgnames.ElementAt(j).Value;
+
+
 
                 while (true)
                 {
@@ -286,6 +291,7 @@ namespace PDF_Manager.Printing
                     if (tmp2.Count > 0)
                     {
                         var table = this.getPageContents(tmp2);
+                        // table[0,0] = caseNo + caseName; // こんかんじで
                         page.Add(table);
                     }
                     else if (tmp1.Count <= 0)
