@@ -109,10 +109,6 @@ namespace PDF_Manager.Printing
         private int dimension;
         ///テーブル
         private Table myTable;
-        ///節点情報
-        private InputNode Node = null;
-        ///材料情報
-        private InputElement Element = null;
 
 
         ///印刷前の初期化処理
@@ -125,7 +121,7 @@ namespace PDF_Manager.Printing
             {///3次元
 
                 ///テーブルの作成
-                this.myTable = new Table(2, 9);
+                this.myTable = new Table(3, 9);
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 45.0;//Case
@@ -256,7 +252,6 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
-
             // タイトル などの初期化
             this.printInit(mc, data);
 
@@ -270,40 +265,42 @@ namespace PDF_Manager.Printing
             int rows = printRows[0];
 
             // 集計開始
-            var tmp1 = new Dictionary<string, object>(this.disgs); // clone
-            var tmp3 = new Dictionary<string, string>(this.disgnames);
 
-            while (true)
-            {
-                // 1ページに納まる分のデータをコピー
-                var tmp2 = new Dictionary<int, ResultDisg>();
-                for (int i = 0; i < rows; i++)
+            for(int j=0; j< this.disgs.Count; ++j)
+            {   // ケース番号のループ
+                var key = this.disgs.ElementAt(j).Key;  // ケース番号
+                var tmp1 = new List<Disg>((List<Disg>)this.disgs.ElementAt(j).Value); 
+
+                while (true)
                 {
-                    if (tmp1.Count <= 0)
+                    // 1ページに納まる分のデータをコピー
+                    var tmp2 = new List<Disg>();
+                    for (int i = 0; i < rows; i++)
+                    {
+                        if (tmp1.Count <= 0)
+                            break;
+                        tmp2.Add(tmp1.First());
+                        tmp1.Remove(tmp1.First());
+                    }
+
+                    if (tmp2.Count > 0)
+                    {
+                        var table = this.getPageContents(tmp2);
+                        page.Add(table);
+                    }
+                    else if (tmp1.Count <= 0)
+                    {
                         break;
-                    tmp2.Add(tmp1.First().Key, tmp1.First().Value);
-                    tmp1.Remove(tmp1.First().Key);
-                }
+                    }
+                    else
+                    { // 印刷するものもない
+                        mc.NewPage();
+                    }
 
-                if (tmp2.Count > 0)
-                {
-                    var table = this.getPageContents(tmp2);
-                    page.Add(table);
+                    // 2ページ以降に入る行数
+                    rows = printRows[1];
                 }
-                else if (tmp1.Count <= 0)
-                {
-                    break;
-                }
-                else
-                { // 印刷するものもない
-                    mc.NewPage();
-                }
-
-                // 2ページ以降に入る行数
-                rows = printRows[1];
             }
-
-
 
             // 表の印刷
             printManager.printTableContents(mc, page, new string[] { this.title });
