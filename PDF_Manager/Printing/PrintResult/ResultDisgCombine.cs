@@ -85,7 +85,7 @@ namespace PDF_Manager.Printing
 
                     var ds = new Disg();
 
-                    ds.n = dataManager.toString(elist.ElementAt(j).Key);
+                    ds.id = dataManager.toString(elist.ElementAt(j).Key);
                     ds.dx = dataManager.parseDouble(item["dx"]);
                     ds.dy = dataManager.parseDouble(item["dy"]);
                     ds.dz = dataManager.parseDouble(item["dz"]);

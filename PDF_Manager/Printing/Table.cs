@@ -63,6 +63,8 @@ namespace PDF_Manager.Printing
         public int Rows { get { return this.CellRows; } }
         public int Columns { get { return this.CellCols; } }
 
+        public object Alignx { get; internal set; }
+
         public string[,] AlignY;    // T:Top, B:Bottm, C:Center
         public string[,] AlignX;    // R:Right, L:Left, C:Center
         public double[,] HolLW;     // Holizonal Line Width
