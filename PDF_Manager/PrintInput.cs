@@ -66,6 +66,13 @@ public class PrintInput
             diaLoad.printPDF(mc, data);                        // 格点
             return mc; // 荷重図の指定があったらその他の出力はしない
         }
+        // 断面力図
+        if (data.printDatas["diagramFsec"] != null)
+        {
+            InputDiagramLoad diaFsec = (InputdiagramFsec)data.printDatas[InputdiagramFsec.KEY];
+            diaFsec.printPDF(mc, data);                        // 格点
+            return mc; // 断面力図の指定があったらその他の出力はしない
+        }
 
         // 入力データ
         // 格点
