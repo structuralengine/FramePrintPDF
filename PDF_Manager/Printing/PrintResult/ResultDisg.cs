@@ -188,7 +188,7 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 5);
+                this.myTable = new Table(4, 6);
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 80.0;//節点No
