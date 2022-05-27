@@ -123,6 +123,16 @@ namespace PDF_Manager.Printing
                 ///テーブルの作成
                 this.myTable = new Table(4, 7);
 
+                //int r = this.myTable.Rows;
+
+                //int rows = target.Count;
+
+                //// 行コンテンツを生成
+                //var table = this.myTable.Clone();
+                //table.ReDim(row: r + rows);
+
+                //table.RowHeight[r] = printManager.LineSpacing2;
+
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 15.0;//節点No
                 this.myTable.ColWidth[1] = 80.0;//X方向の移動量
@@ -133,34 +143,37 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[6] = 80.0;//Z軸周りの回転量
 
                 this.myTable.AlignX[0, 0] = "L";
-                //this.myTable.Alignx[1, 0] = "L";
-                //this.myTable.Alignx[1, 1] = "L";
-                //this.myTable.Alignx[1, 2] = "L";
-                //this.myTable.Alignx[1, 3] = "L";
-                //this.myTable.Alignx[1, 4] = "L";
-                //this.myTable.Alignx[1, 5] = "L";
-                //this.myTable.Alignx[1, 6] = "L";
-                //this.myTable.Alignx[2, 0] = "L";
-                //this.myTable.Alignx[2, 1] = "L";
-                //this.myTable.Alignx[2, 2] = "L";
-                //this.myTable.Alignx[2, 3] = "L";
-                //this.myTable.Alignx[2, 4] = "L";
-                //this.myTable.Alignx[2, 5] = "L";
-                //this.myTable.Alignx[2, 6] = "L";
-                //this.myTable.Alignx[3, 0] = "L";
-                //this.myTable.Alignx[3, 1] = "L";
-                //this.myTable.Alignx[3, 2] = "L";
-                //this.myTable.Alignx[3, 3] = "L";
-                //this.myTable.Alignx[3, 4] = "L";
-                //this.myTable.Alignx[3, 5] = "L";
-                //this.myTable.Alignx[3, 6] = "L";
+                this.myTable.AlignX[1, 0] = "L";
+                this.myTable.AlignX[2, 0] = "L";
+                this.myTable.AlignX[3, 0] = "L";
+                this.myTable.AlignX[1, 1] = "R";
+                this.myTable.AlignX[2, 1] = "R";
+                this.myTable.AlignX[3, 1] = "R";
+                this.myTable.AlignX[1, 2] = "R";
+                this.myTable.AlignX[2, 2] = "R";
+                this.myTable.AlignX[3, 2] = "R";
+                this.myTable.AlignX[1, 3] = "R";
+                this.myTable.AlignX[2, 3] = "R";
+                this.myTable.AlignX[3, 3] = "R";
+                this.myTable.AlignX[1, 4] = "R";
+                this.myTable.AlignX[2, 4] = "R";
+                this.myTable.AlignX[3, 4] = "R";
+                this.myTable.AlignX[1, 5] = "R";
+                this.myTable.AlignX[2, 5] = "R";
+                this.myTable.AlignX[3, 5] = "R";
+                this.myTable.AlignX[1, 6] = "R";
+                this.myTable.AlignX[2, 6] = "R";
+                this.myTable.AlignX[3, 6] = "R";
+
+
+
 
                 switch (data.language)
                 {
                     default:
                         this.title = "変位量データ";
                         this.myTable[1, 0] = "節点";
-                        this.myTable[2, 0] = "No";
+                        this.myTable[2, 0] = "　No";
                         this.myTable[1, 1] = "X方向の";
                         this.myTable[2, 1] = "移動量";
                         this.myTable[3, 1] = "(mm)";
@@ -188,7 +201,7 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 6);
+                this.myTable = new Table(4, 5);
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 80.0;//節点No
@@ -197,31 +210,42 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[3] = 80.0;//X軸周りの回転量
                 this.myTable.ColWidth[4] = 80.0;//Y軸周りの回転量
 
-                this.myTable.AlignX[1,0] = "L";
-                this.myTable.AlignX[1,1] = "L";
-                this.myTable.AlignX[1,2] = "L";
-                this.myTable.AlignX[1,3] = "L";
-                this.myTable.AlignX[1,4] = "L";
-
+                this.myTable.AlignX[0, 0] = "L";
+                this.myTable.AlignX[1, 0] = "R";
+                this.myTable.AlignX[2, 0] = "R";
+                this.myTable.AlignX[3, 0] = "R";
+                this.myTable.AlignX[1, 1] = "R";
+                this.myTable.AlignX[2, 1] = "R";
+                this.myTable.AlignX[3, 1] = "R";
+                this.myTable.AlignX[1, 2] = "R";
+                this.myTable.AlignX[2, 2] = "R";
+                this.myTable.AlignX[3, 2] = "R";
+                this.myTable.AlignX[1, 3] = "R";
+                this.myTable.AlignX[2, 3] = "R";
+                this.myTable.AlignX[3, 3] = "R";
+                this.myTable.AlignX[1, 4] = "R";
+                this.myTable.AlignX[2, 4] = "R";
+                this.myTable.AlignX[3, 4] = "R";
 
                 switch (data.language)
                 {
                     default:
                         this.title = "変位量データ";
+                        this.title = "変位量データ";
                         this.myTable[1, 0] = "節点";
-                        this.myTable[2, 0] = "No";
+                        this.myTable[2, 0] = "　No";
                         this.myTable[1, 1] = "X方向の";
                         this.myTable[2, 1] = "移動量";
                         this.myTable[3, 1] = "(mm)";
                         this.myTable[1, 2] = "Y方向の";
                         this.myTable[2, 2] = "移動量";
                         this.myTable[3, 2] = "(mm)";
-                        this.myTable[1, 4] = "X軸周りの";
+                        this.myTable[1, 3] = "X軸周りの";
+                        this.myTable[2, 3] = "回転量";
+                        this.myTable[3, 3] = "(mmrad)";
+                        this.myTable[1, 4] = "Y軸周りの";
                         this.myTable[2, 4] = "回転量";
                         this.myTable[3, 4] = "(mmrad)";
-                        this.myTable[1, 5] = "Y軸周りの";
-                        this.myTable[2, 5] = "回転量";
-                        this.myTable[3, 5] = "(mmrad)";
                         break;
                 }
 
@@ -244,6 +268,8 @@ namespace PDF_Manager.Printing
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
+            table.RowHeight[1] = 20;
+
             table.RowHeight[r] = printManager.LineSpacing2;
 
             for (var i = 0; i < rows; i++)
@@ -260,16 +286,10 @@ namespace PDF_Manager.Printing
                 table[r, j] = printManager.toString(item.dy, 4);
                 table.AlignX[r, j] = "R";
                 j++;
-                table[r, j] = printManager.toString(item.dz, 4);
-                table.AlignX[r, j] = "R";
-                j++;
                 table[r, j] = printManager.toString(item.rx, 4);
                 table.AlignX[r, j] = "R";
                 j++;
                 table[r, j] = printManager.toString(item.ry, 4);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.rz, 4);
                 table.AlignX[r, j] = "R";
                 j++;
 

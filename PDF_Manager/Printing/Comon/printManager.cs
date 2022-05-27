@@ -84,6 +84,7 @@ namespace PDF_Manager.Printing.Comon
         /// </summary>
         public static double H1 = printManager.FontHeight + printManager.LineSpacing2;
 
+
         /// <summary>
         /// 印刷を行う
         /// </summary>
@@ -105,7 +106,9 @@ namespace PDF_Manager.Printing.Comon
                 foreach(var title in titles)
                 {
                     Text.PrtText(mc, title);
-                    mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                    //mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                    mc.addCurrentY(printManager.LineSpacing2);
+
                 }
 
                 // 表の印刷
