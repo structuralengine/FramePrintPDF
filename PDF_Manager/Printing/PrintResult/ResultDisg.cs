@@ -201,19 +201,18 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 5);
+                this.myTable = new Table(4, 4);
 
                 ///テーブルの幅
-                this.myTable.ColWidth[0] = 80.0;//節点No
+                this.myTable.ColWidth[0] = 15.0;//節点No
                 this.myTable.ColWidth[1] = 80.0;//X方向の移動量
                 this.myTable.ColWidth[2] = 80.0;//Y方向の移動量
-                this.myTable.ColWidth[3] = 80.0;//X軸周りの回転量
-                this.myTable.ColWidth[4] = 80.0;//Y軸周りの回転量
+                this.myTable.ColWidth[3] = 80.0;//回転量
 
                 this.myTable.AlignX[0, 0] = "L";
-                this.myTable.AlignX[1, 0] = "R";
-                this.myTable.AlignX[2, 0] = "R";
-                this.myTable.AlignX[3, 0] = "R";
+                this.myTable.AlignX[1, 0] = "L";
+                this.myTable.AlignX[2, 0] = "L";
+                this.myTable.AlignX[3, 0] = "L";
                 this.myTable.AlignX[1, 1] = "R";
                 this.myTable.AlignX[2, 1] = "R";
                 this.myTable.AlignX[3, 1] = "R";
@@ -223,9 +222,6 @@ namespace PDF_Manager.Printing
                 this.myTable.AlignX[1, 3] = "R";
                 this.myTable.AlignX[2, 3] = "R";
                 this.myTable.AlignX[3, 3] = "R";
-                this.myTable.AlignX[1, 4] = "R";
-                this.myTable.AlignX[2, 4] = "R";
-                this.myTable.AlignX[3, 4] = "R";
 
                 switch (data.language)
                 {
@@ -240,12 +236,8 @@ namespace PDF_Manager.Printing
                         this.myTable[1, 2] = "Y方向の";
                         this.myTable[2, 2] = "移動量";
                         this.myTable[3, 2] = "(mm)";
-                        this.myTable[1, 3] = "X軸周りの";
                         this.myTable[2, 3] = "回転量";
                         this.myTable[3, 3] = "(mmrad)";
-                        this.myTable[1, 4] = "Y軸周りの";
-                        this.myTable[2, 4] = "回転量";
-                        this.myTable[3, 4] = "(mmrad)";
                         break;
                 }
 
@@ -288,10 +280,6 @@ namespace PDF_Manager.Printing
                 j++;
                 table[r, j] = printManager.toString(item.rx, 4);
                 table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.ry, 4);
-                table.AlignX[r, j] = "R";
-                j++;
 
                 r++;
             }
