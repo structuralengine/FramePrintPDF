@@ -115,6 +115,8 @@ namespace PDF_Manager.Printing
         ///
         private void printInit(PdfDocument mc, PrintData data)
         {
+            int columns = 0; // 列数で３次元の場合は2列、2次元の場合は3列
+
             this.dimension = data.dimension;
 
             if (this.dimension == 3)
@@ -201,13 +203,28 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 4);
+                //this.myTable = new Table(4, 4);
 
-                ///テーブルの幅
-                this.myTable.ColWidth[0] = 15.0;//節点No
-                this.myTable.ColWidth[1] = 80.0;//X方向の移動量
-                this.myTable.ColWidth[2] = 80.0;//Y方向の移動量
-                this.myTable.ColWidth[3] = 80.0;//回転量
+                /////テーブルの幅
+                //this.myTable.ColWidth[0] = 15.0;//節点No
+                //this.myTable.ColWidth[1] = 80.0;//X方向の移動量
+                //this.myTable.ColWidth[2] = 80.0;//Y方向の移動量
+                //this.myTable.ColWidth[3] = 80.0;//回転量
+
+                columns = 4;
+
+                int cols = columns * 2;
+
+                //テーブルの作成
+                this.myTable = new Table(4, cols);
+
+                // テーブルの幅
+                for (var i = 0; i < cols; i++)
+                    this.myTable.ColWidth[i] = 90;
+                this.myTable.ColWidth[0] = 15; // 格点No
+                this.myTable.ColWidth[1] = 80;
+                this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[3] = this.myTable.ColWidth[1];
 
                 this.myTable.AlignX[0, 0] = "L";
                 this.myTable.AlignX[1, 0] = "L";
@@ -222,6 +239,24 @@ namespace PDF_Manager.Printing
                 this.myTable.AlignX[1, 3] = "R";
                 this.myTable.AlignX[2, 3] = "R";
                 this.myTable.AlignX[3, 3] = "R";
+
+                this.myTable[0, 3] = this.myTable[0, 0];
+                this.myTable[1, 3] = this.myTable[1, 0];
+                this.myTable[1, 4] = this.myTable[1, 1];
+                this.myTable[1, 5] = this.myTable[1, 2];
+
+                this.myTable[1, 4] = this.myTable[1, 0];
+                this.myTable[2, 4] = this.myTable[2, 0];
+                this.myTable[3, 4] = this.myTable[3, 0];
+                this.myTable[1, 5] = this.myTable[1, 1];
+                this.myTable[2, 5] = this.myTable[2, 1];
+                this.myTable[3, 5] = this.myTable[3, 1];
+                this.myTable[1, 6] = this.myTable[1, 2];
+                this.myTable[2, 6] = this.myTable[2, 2];
+                this.myTable[3, 6] = this.myTable[3, 2];
+                this.myTable[2, 7] = this.myTable[2, 3];
+                this.myTable[3, 7] = this.myTable[3, 3];
+
 
                 switch (data.language)
                 {
@@ -272,7 +307,7 @@ namespace PDF_Manager.Printing
                 table[r, j] = printManager.toString(item.id);
                 table.AlignX[r, j] = "R";
                 j++;
-                table[r, j] = printManager.toString(item.dx,4);
+                table[r, j] = printManager.toString(item.dx, 4);
                 table.AlignX[r, j] = "R";
                 j++;
                 table[r, j] = printManager.toString(item.dy, 4);
@@ -307,7 +342,7 @@ namespace PDF_Manager.Printing
 
             // 集計開始
 
-            for(int j=0; j< this.disgs.Count; ++j)
+            for (int j = 0; j < this.disgs.Count; ++j)
             {   // ケース番号のループ
                 var key = this.disgs.ElementAt(j).Key;  // ケース番号
                 var tmp1 = new List<Disg>((List<Disg>)this.disgs.ElementAt(j).Value);
@@ -332,7 +367,7 @@ namespace PDF_Manager.Printing
                     if (tmp2.Count > 0)
                     {
                         var table = this.getPageContents(tmp2);
-                        table[0,0] = caseNo + caseName; // こんかんじで
+                        table[0, 0] = caseNo + caseName; // こんかんじで
                         page.Add(table);
 
                     }
@@ -340,6 +375,7 @@ namespace PDF_Manager.Printing
                     {
                         break;
                     }
+
                     else
                     { // 印刷するものもない
                         mc.NewPage();
@@ -358,6 +394,11 @@ namespace PDF_Manager.Printing
 
 
 }
+
+
+
+
+
 //target.Remove("name");
 
 ////LLのとき
