@@ -213,7 +213,7 @@ namespace PDF_Manager.Printing
 
                 columns = 4;
 
-                int cols = columns * 2;
+                int cols = columns * 2; //改行数の設定
 
                 //テーブルの作成
                 this.myTable = new Table(4, cols);
