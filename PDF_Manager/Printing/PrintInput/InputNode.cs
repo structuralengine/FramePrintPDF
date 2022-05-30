@@ -77,7 +77,7 @@ namespace PDF_Manager.Printing
                 int cols = columns * 4;
 
                 //テーブルの作成
-                this.myTable = new Table(2, cols);
+                this.myTable = new Table(4, cols);
 
                 // テーブルの幅
                 for (var i=0; i < cols; i++)
@@ -270,8 +270,8 @@ namespace PDF_Manager.Printing
                     int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
                     rows = Math.Min(rows, rs);
 
-                    var table = this.getPageContents(tmp2, rows, columns);
-                    page.Add(table);
+                    //var table = this.getPageContents(tmp2, rows, columns);
+                    //page.Add(table);
                 }
                 else if (tmp1.Count <= 0)
                 {

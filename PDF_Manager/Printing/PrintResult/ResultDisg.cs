@@ -4,6 +4,8 @@ using PDF_Manager.Printing;
 using PDF_Manager.Printing.Comon;
 using System.Collections.Generic;
 using System.Linq;
+using PdfSharpCore.Drawing;
+using System;
 
 namespace PDF_Manager.Printing
 {
@@ -213,7 +215,7 @@ namespace PDF_Manager.Printing
 
                 columns = 4;
 
-                int cols = columns * 2; //改行数の設定
+                int cols = columns * 2; //全体の列数の設定
 
                 //テーブルの作成
                 this.myTable = new Table(4, cols);
@@ -285,11 +287,11 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
-        private Table getPageContents(List<Disg> target)
+        private Table getPageContents(Dictionary<string, object> target, int rows, int columns)
         {
             int r = this.myTable.Rows;
-
-            int rows = target.Count;
+            int count = this.myTable.Columns;
+            int c = count / columns;
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
@@ -299,22 +301,54 @@ namespace PDF_Manager.Printing
 
             table.RowHeight[r] = printManager.LineSpacing2;
 
+
             for (var i = 0; i < rows; i++)
             {
-                var item = target[i];
+                var lines = new string[count];
 
-                int j = 0;
-                table[r, j] = printManager.toString(item.id);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.dx, 4);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.dy, 4);
-                table.AlignX[r, j] = "R";
-                j++;
-                table[r, j] = printManager.toString(item.rx, 4);
-                table.AlignX[r, j] = "R";
+                for (var j = 0; j < columns; j++)
+                {
+                    int index = i + (rows * j);
+
+                    if (target.Count <= index)
+                        continue;
+
+                    string No = target.ElementAt(index).Key;
+                    object item = target.ElementAt(index).Value;
+
+                    table[r + i, 0 + c * j] = No;
+                    //table[r + i, 1 + c * j] = printManager.toString(item.x, 3);
+                    //table[r + i, 2 + c * j] = printManager.toString(item.y, 3);
+                    table.AlignX[r + i, 0 + c * j] = "R";
+                    table.AlignX[r + i, 1 + c * j] = "R";
+                    table.AlignX[r + i, 2 + c * j] = "R";
+                    //if (this.dimension == 3)
+                    //{
+                    //    table[r + i, 3 + c * j] = printManager.toString(item.z, 3);
+                    //    table.AlignX[r + i, 3 + c * j] = "R";
+
+                    //}
+                }
+            }
+
+            return table;
+
+            for (var i = 0; i < rows; i++)
+            {
+                //var item = target[i];
+
+                //int j = 0;
+                //table[r, j] = printManager.toString(item.id);
+                //table.AlignX[r, j] = "R";
+                //j++;
+                //table[r, j] = printManager.toString(item.dx, 4);
+                //table.AlignX[r, j] = "R";
+                //j++;
+                //table[r, j] = printManager.toString(item.dy, 4);
+                //table.AlignX[r, j] = "R";
+                //j++;
+                //table[r, j] = printManager.toString(item.rx, 4);
+                //table.AlignX[r, j] = "R";
 
                 r++;
             }
@@ -328,7 +362,11 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+            if (this.disgs.Count == 0)
+                return;
+
             // タイトル などの初期化
+            int columns = 3;
             this.printInit(mc, data);
 
             // 印刷可能な行数
@@ -366,9 +404,13 @@ namespace PDF_Manager.Printing
 
                     if (tmp2.Count > 0)
                     {
-                        var table = this.getPageContents(tmp2);
-                        table[0, 0] = caseNo + caseName; // こんかんじで
-                        page.Add(table);
+                        //全データを１ページに印刷したらどうなるか
+                        int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
+                        rows = Math.Min(rows, rs);
+
+                        //var table = this.getPageContents(tmp2, rows, columns);
+                        //table[0, 0] = caseNo + caseName; // こんかんじで
+                        //page.Add(table);
 
                     }
                     else if (tmp1.Count <= 0)
