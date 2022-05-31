@@ -133,27 +133,6 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[6] = 80.0;//Z軸周りの回転量
 
                 this.myTable.AlignX[0, 0] = "L";
-                //this.myTable.Alignx[1, 0] = "L";
-                //this.myTable.Alignx[1, 1] = "L";
-                //this.myTable.Alignx[1, 2] = "L";
-                //this.myTable.Alignx[1, 3] = "L";
-                //this.myTable.Alignx[1, 4] = "L";
-                //this.myTable.Alignx[1, 5] = "L";
-                //this.myTable.Alignx[1, 6] = "L";
-                //this.myTable.Alignx[2, 0] = "L";
-                //this.myTable.Alignx[2, 1] = "L";
-                //this.myTable.Alignx[2, 2] = "L";
-                //this.myTable.Alignx[2, 3] = "L";
-                //this.myTable.Alignx[2, 4] = "L";
-                //this.myTable.Alignx[2, 5] = "L";
-                //this.myTable.Alignx[2, 6] = "L";
-                //this.myTable.Alignx[3, 0] = "L";
-                //this.myTable.Alignx[3, 1] = "L";
-                //this.myTable.Alignx[3, 2] = "L";
-                //this.myTable.Alignx[3, 3] = "L";
-                //this.myTable.Alignx[3, 4] = "L";
-                //this.myTable.Alignx[3, 5] = "L";
-                //this.myTable.Alignx[3, 6] = "L";
 
                 switch (data.language)
                 {
@@ -188,7 +167,7 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 5);
+                this.myTable = new Table(4, 6);
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 80.0;//節点No
@@ -216,12 +195,19 @@ namespace PDF_Manager.Printing
                         this.myTable[1, 2] = "Y方向の";
                         this.myTable[2, 2] = "移動量";
                         this.myTable[3, 2] = "(mm)";
-                        this.myTable[1, 4] = "X軸周りの";
-                        this.myTable[2, 4] = "回転量";
-                        this.myTable[3, 4] = "(mmrad)";
-                        this.myTable[1, 5] = "Y軸周りの";
-                        this.myTable[2, 5] = "回転量";
-                        this.myTable[3, 5] = "(mmrad)";
+                        this.myTable[2, 3] = "回転量";
+                        this.myTable[3, 3] = "(mmrad)";
+                        this.myTable[1, 4] = "節点";
+                        this.myTable[2, 4] = "No";
+                        this.myTable[1, 5] = "X方向の";
+                        this.myTable[2, 5] = "移動量";
+                        this.myTable[3, 5] = "(mm)";
+                        this.myTable[1, 6] = "Y方向の";
+                        this.myTable[2, 6] = "移動量";
+                        this.myTable[3, 6] = "(mm)";
+                        this.myTable[2, 7] = "回転量";
+                        this.myTable[3, 7] = "(mmrad)";
+
                         break;
                 }
 
@@ -298,7 +284,6 @@ namespace PDF_Manager.Printing
             int rows = printRows[0];
 
             // 集計開始
-
             for(int j=0; j< this.disgs.Count; ++j)
             {   // ケース番号のループ
                 var key = this.disgs.ElementAt(j).Key;  // ケース番号
@@ -306,8 +291,6 @@ namespace PDF_Manager.Printing
 
                 var caseNo = this.disgnames.ElementAt(j).Key;
                 var caseName = this.disgnames.ElementAt(j).Value;
-
-
 
                 while (true)
                 {
@@ -324,7 +307,7 @@ namespace PDF_Manager.Printing
                     if (tmp2.Count > 0)
                     {
                         var table = this.getPageContents(tmp2);
-                        table[0,0] = caseNo + caseName; // こんかんじで
+                        table[0,0] = caseNo + caseName; 
                         page.Add(table);
 
                     }

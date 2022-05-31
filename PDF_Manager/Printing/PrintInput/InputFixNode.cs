@@ -176,7 +176,7 @@ namespace PDF_Manager.Printing
             {   // 2次元
 
                 //テーブルの作成
-                this.myTable = new Table(3, 7);
+                this.myTable = new Table(3, 8);
 
                 // テーブルの幅
                 this.myTable.ColWidth[0] = 45.0; // 格点No
@@ -186,6 +186,7 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[4] = this.myTable.ColWidth[1];
                 this.myTable.ColWidth[5] = this.myTable.ColWidth[1];
                 this.myTable.ColWidth[6] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[7] = this.myTable.ColWidth[1];
 
 
                 switch (data.language)
@@ -226,13 +227,14 @@ namespace PDF_Manager.Printing
                         this.myTable[2, 3] = "(kN・m/rad)";
                         break;
                 }
-
-                this.myTable[1, 4] = this.myTable[1, 1];
-                this.myTable[2, 4] = this.myTable[2, 1];
-                this.myTable[1, 5] = this.myTable[1, 2];
-                this.myTable[2, 5] = this.myTable[2, 2];
-                this.myTable[1, 6] = this.myTable[1, 3];
-                this.myTable[2, 6] = this.myTable[2, 3];
+                this.myTable[1, 4] = this.myTable[1, 0];
+                this.myTable[2, 4] = this.myTable[2, 0];
+                this.myTable[1, 5] = this.myTable[1, 1];
+                this.myTable[2, 5] = this.myTable[2, 1];
+                this.myTable[1, 6] = this.myTable[1, 2];
+                this.myTable[2, 6] = this.myTable[2, 2];
+                this.myTable[1, 7] = this.myTable[1, 3];
+                this.myTable[2, 7] = this.myTable[2, 3];
 
             }
         }
@@ -292,78 +294,59 @@ namespace PDF_Manager.Printing
         /// <param name="target">印刷対象の配列</param>
         /// <param name="rows">行数</param>
         /// <returns>印刷する用の配列</returns>
-        private List<Table> getPageContents2D(Dictionary<int, List<FixNode>> target)
+        private Table getPageContents2D(List<FixNode> item1, List<FixNode> item2)
         {
-            int r = this.myTable.Rows;
-            int table_count = Convert.ToInt32(Math.Ceiling((double)target.Count / 2)); // テーブルの数は、タイプの数÷2
+            int header_rows = this.myTable.Rows;
+            int rows = Math.Max(item1.Count, item2.Count);
 
-            var tables = new List<Table>();
+            // 行コンテンツを生成
+            var table = this.myTable.Clone();
+            table.ReDim(row: header_rows + rows);
 
-            for (var j=0; j<table_count; j+=2)
-            { 
-                // 表の左側
-                int TypeNo1 = target.ElementAt(j).Key;
-                List<FixNode> item1 = target.ElementAt(j).Value;
+            // 表の左側
+            int r = header_rows;
+            for (var i = 0; i < item1.Count; i++)
+            {
+                FixNode item = item1[i];
 
-                // 表の右側
-                int TypeNo2 = -1;
-                List<FixNode> item2 = new List<FixNode>();
-                if (j <= target.Count) {
-                    TypeNo2 = target.ElementAt(j + 1).Key;
-                    item2 = target.ElementAt(j + 1).Value;
-                }
+                table[r, 0] = printManager.toString(item.n);
+                table.AlignX[r, 0] = "R";
 
-                // 表の行数を決定
-                int rows = Math.Max(item1.Count, item2.Count); // 表の右側と左側の大きい方
+                table[r, 1] = printManager.toString(item.tx);
+                table.AlignX[r, 1] = "R";
 
-                // 行コンテンツを生成
-                var table = this.myTable.Clone();
-                table.ReDim(row: r + rows);
+                table[r, 2] = printManager.toString(item.ty);
+                table.AlignX[r, 2] = "R";
 
-                // 表の左側
-                for (var i = 0; i < item1.Count; i++)
-                {
-                    FixNode item = item1[i];
-
-                    table[r, 0] = printManager.toString(item.n);
-                    table.AlignX[r, 0] = "R";
-
-                    table[r, 1] = printManager.toString(item.tx);
-                    table.AlignX[r, 1] = "R";
-
-                    table[r, 2] = printManager.toString(item.ty);
-                    table.AlignX[r, 2] = "R";
-
-                    table[r, 3] = printManager.toString(item.rz);
-                    table.AlignX[r, 3] = "R";
-                }
-
-                // 表の左側
-                for (var i = 0; i < item2.Count; i++)
-                {
-                    FixNode item = item2[i];
-
-                    table[r, 0] = printManager.toString(item.n);
-                    table.AlignX[r, 4] = "R";
-
-                    table[r, 1] = printManager.toString(item.tx);
-                    table.AlignX[r, 5] = "R";
-
-                    table[r, 2] = printManager.toString(item.ty);
-                    table.AlignX[r, 6] = "R";
-
-                    table[r, 3] = printManager.toString(item.rz);
-                    table.AlignX[r, 7] = "R";
-                }
-
+                table[r, 3] = printManager.toString(item.rz);
+                table.AlignX[r, 3] = "R";
                 r++;
-
-                table.RowHeight[2] = printManager.LineSpacing2; // 表題と body の間
-
-                tables.Add(table);
             }
 
-            return tables;
+            // 表の右側
+            r = header_rows;
+            for (var i = 0; i < item2.Count; i++)
+            {
+                FixNode item = item2[i];
+
+                table[r, 4] = printManager.toString(item.n);
+                table.AlignX[r, 4] = "R";
+
+                table[r, 5] = printManager.toString(item.tx);
+                table.AlignX[r, 5] = "R";
+
+                table[r, 6] = printManager.toString(item.ty);
+                table.AlignX[r, 6] = "R";
+
+                table[r, 7] = printManager.toString(item.rz);
+                table.AlignX[r, 7] = "R";
+                r++;
+            }
+
+            table.RowHeight[3] = printManager.LineSpacing2; // 表題と body の間
+
+            return table;
+
         }
 
 
@@ -384,13 +367,14 @@ namespace PDF_Manager.Printing
                     var typeNo = string.Format("Type{0}", tmp0.Key); // タイプ番号
                     var titles = new string[] { this.title, typeNo };
 
+                    var tmp1 = new List<FixNode>(tmp0.Value);
+
                     // 行コンテンツを生成
                     var page = new List<Table>();
 
                     // 印刷可能な行数
                     var printRows = this.myTable.getPrintRowCount(mc, 2);
 
-                    var tmp1 = new List<FixNode>(tmp0.Value);
                     // 1ページ目に入る行数
                     int rows = printRows[0];
 
@@ -444,16 +428,15 @@ namespace PDF_Manager.Printing
                 for (var k = 0; k < this.fixnodes.Count; k += 2)
                 {
                     var tmp01 = this.fixnodes.ElementAt(k);
-                    var typeNo1 = string.Format("Type{0}", tmp01.Key); // タイプ番号
+                    var typeNo1 = string.Format("Type{0}", tmp01.Key); // 表の左のタイプ番号
 
-                    var tmp02 = new KeyValuePair<int, List<FixNode>>();
-                    var typeNo2 = "";
+                    var tmp02 = (k < this.fixnodes.Count) ? this.fixnodes.ElementAt(k + 1) : new KeyValuePair<int, List<FixNode>>();
+                    var typeNo2 = string.Format("Type{0}", tmp02.Key); // 表の右のタイプ番号
 
-                    if (k < this.fixnodes.Count)
-                    {
-                        tmp02 = this.fixnodes.ElementAt(k + 1);
-                        typeNo2 = string.Format("Type{0}", tmp02.Key);
-                    }
+                    var tmp1 = new List<FixNode>(tmp01.Value);
+                    var tmp2 = new List<FixNode>(tmp02.Value);
+
+                    int body_rows = Math.Max(tmp1.Count, tmp2.Count);
 
                     // 行コンテンツを生成
                     var page = new List<Table>();
@@ -461,11 +444,10 @@ namespace PDF_Manager.Printing
                     // 印刷可能な行数
                     var printRows = this.myTable.getPrintRowCount(mc, 2);
 
-                    var tmp1 = new List<FixNode>(tmp01.Value);
                     // 1ページ目に入る行数
                     int rows = printRows[0];
 
-                    if (printRows[0] < tmp1.Count / 2)
+                    if (printRows[0] < body_rows / 2)
                     { // もし行の半分がページに入らなければ、改ページする
                         mc.NewPage();
                         printRows = this.myTable.getPrintRowCount(mc, 2);
@@ -475,19 +457,28 @@ namespace PDF_Manager.Printing
                     while (true)
                     {
                         // 1ページに納まる分のデータをコピー
-                        var tmp2 = new List<FixNode>();
+                        var tmp3 = new List<FixNode>();
                         for (int i = 0; i < rows; i++)
                         {
                             if (tmp1.Count <= 0)
                                 break;
-                            tmp2.Add(tmp1.First());
+                            tmp3.Add(tmp1.First());
                             tmp1.Remove(tmp1.First());
                         }
-
-                        if (tmp2.Count > 0)
+                        var tmp4 = new List<FixNode>();
+                        for (int i = 0; i < rows; i++)
                         {
-                            var table = this.getPageContents3D(tmp2);
+                            if (tmp2.Count <= 0)
+                                break;
+                            tmp4.Add(tmp2.First());
+                            tmp2.Remove(tmp2.First());
+                        }
 
+                        if (tmp3.Count > 0 || tmp4.Count > 0)
+                        {
+                            var table = this.getPageContents2D(tmp3, tmp4);
+                            table[0, 2] = typeNo1; 
+                            table[0, 5] = typeNo2;
                             page.Add(table);
                         }
                         else if (tmp1.Count <= 0)
