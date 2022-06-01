@@ -275,8 +275,8 @@ namespace PDF_Manager.Printing
                 }
                 else if (tmp1.Count <= 0)
                 {
-                    break;
-                }
+                break;
+            }
                 else
                 { // 印刷するものもない
                     mc.NewPage();
@@ -284,10 +284,10 @@ namespace PDF_Manager.Printing
 
                 // 2ページ以降に入る行数
                 rows = printRows[1];
-            }
+        }
 
-            // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+        // 表の印刷
+        printManager.printTableContents(mc, page, new string[] { this.title });
 
         }
 
