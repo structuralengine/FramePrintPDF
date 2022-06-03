@@ -335,9 +335,9 @@ namespace PDF_Manager.Printing
 
                         table[r + i, 0 + c * j] = printManager.toString(item.id);
                         table.AlignX[r + i, 0 + c * j] = "R";
-                        table[r + i, 1 + c * j] = printManager.toString(item.rx, 4);
+                        table[r + i, 1 + c * j] = printManager.toString(item.dx, 4);
                         table.AlignX[r + i, 1 + c * j] = "R";
-                        table[r + i, 2 + c * j] = printManager.toString(item.ry, 4);
+                        table[r + i, 2 + c * j] = printManager.toString(item.dy, 4);
                         table.AlignX[r + i, 2 + c * j] = "R";
                         table[r + i, 3 + c * j] = printManager.toString(item.rz, 4);
                         table.AlignX[r + i, 3 + c * j] = "R";
@@ -355,6 +355,10 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+
+            if (this.disgs.Count == 0)
+                return;
+
             // タイトル などの初期化
             this.printInit(mc, data);
 

@@ -104,6 +104,8 @@ public class PrintInput
         // 計算結果データ
         // 変位量
         ((ResultDisg)data.printDatas[ResultDisg.KEY]).printPDF(mc, data);
+        ((ResultReac)data.printDatas[ResultReac.KEY]).printPDF(mc, data);
+
         /*
         mc = ResultDisg.printPDF(mc, data);
         mc = ResultDisgCombine.printPDF(mc, data);

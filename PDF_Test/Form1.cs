@@ -24,7 +24,7 @@ namespace PDF_Test
         {
             // 読み込みたいテキストを開く
             // using (StreamReader st = new StreamReader(@"../../../TestData/test001.json", Encoding.GetEncoding("UTF-8")))
-            using (StreamReader st = new StreamReader(@"../../../TestData/test008.json", Encoding.GetEncoding("shift-jis")))
+            using (StreamReader st = new StreamReader(@"../../../TestData/test009.json", Encoding.GetEncoding("shift-jis")))
             {
                 // テキストファイルをString型で読み込みコンソールに表示
                 String line = st.ReadToEnd();
@@ -36,6 +36,11 @@ namespace PDF_Test
 
                 MessageBox.Show("ｵﾜﾀ＼(^o^)／");
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
