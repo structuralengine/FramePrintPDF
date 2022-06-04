@@ -87,7 +87,7 @@ namespace PDF_Manager.Printing
 
                     var re = new Reac();
 
-                    re.n = dataManager.toString(elist.ElementAt(j).Key);
+                    re.id = dataManager.toString(elist.ElementAt(j).Key);
                     re.tx = dataManager.parseDouble(item["tx"]);
                     re.ty = dataManager.parseDouble(item["ty"]);
                     re.tz = dataManager.parseDouble(item["tz"]);

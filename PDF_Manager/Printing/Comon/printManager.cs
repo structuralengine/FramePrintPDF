@@ -98,6 +98,7 @@ namespace PDF_Manager.Printing.Comon
             for (var i = 0; i < page.Count; i++)
             {
                 //var table = page[i];
+
                 if (0 < i)
                     mc.NewPage(); // 2ページ目以降は改ページする
 

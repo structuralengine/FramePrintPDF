@@ -275,8 +275,8 @@ namespace PDF_Manager.Printing
                 }
                 else if (tmp1.Count <= 0)
                 {
-                break;
-            }
+                    break;
+                }
                 else
                 { // 印刷するものもない
                     mc.NewPage();
