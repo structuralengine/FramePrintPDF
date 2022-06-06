@@ -11,6 +11,13 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "diagramFsec";
 
+        // レイアウト
+        enum Layout
+        {
+            Default,
+            SpritVertical,
+            SpritHorizontal
+        }
         // 軸線スケール
         private double scaleX;
         private double scaleY;
@@ -30,9 +37,9 @@ namespace PDF_Manager.Printing
         private InputMember Member = null;
         // 材料情報
         private InputElement Element = null;
+        //
 
-
-        public InputDiagramFsec(Dictionary<string, object> value, Dictionary<string, object> printDatas) 
+        public InputDiagramFsec(Dictionary<string, object> value) 
         {
             if (!value.ContainsKey(KEY))
                 return;
@@ -49,16 +56,8 @@ namespace PDF_Manager.Printing
             this.posY = dataManager.parseDouble(target, "posY");
 
             // 文字サイズ
-            this.fontSize = target.ContainsKey("fontSize") ? (double)target["fontSize"] : 9;
+            this.fontSize = dataManager.parseDouble(target, "fontSize");
 
-            // 部材長を取得できる状態にする
-            this.Node = (InputNode)printDatas[InputNode.KEY];
-
-            // 要素を取得できる状態にする
-            this.Member = (InputMember)printDatas[InputMember.KEY];
-
-            // 材料名称を取得できる状態にする
-            this.Element = (InputElement)printDatas[InputElement.KEY];
 
         }
 
@@ -71,8 +70,35 @@ namespace PDF_Manager.Printing
         public void printPDF(PdfDocument mc, PrintData data)
         {
 
+            // 部材長を取得できる状態にする
+            this.Node = (InputNode)data.printDatas[InputNode.KEY];
+
+            // 要素を取得できる状態にする
+            this.Member = (InputMember)data.printDatas[InputMember.KEY];
+
+            // 材料名称を取得できる状態にする
+            this.Element = (InputElement)data.printDatas[InputElement.KEY];
+
+            // 
+            var comon = new diagramManager(mc);
+
+            // 骨組みを印字する
+            this.printFrame(comon);
         }
 
+
+        private void printFrame(diagramManager comon)
+        {
+            foreach(var n in this.Node.Nodes)
+            {
+                var id = n.Key;
+                var p = n.Value;
+                var x = p.x * this.scaleX;
+                var y = -p.y * this.scaleY;
+
+                comon.printNode(x, y);
+            }
+        }
 
     }
 }

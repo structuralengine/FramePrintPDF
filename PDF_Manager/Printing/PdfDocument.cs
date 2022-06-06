@@ -13,7 +13,7 @@ namespace PDF_Manager.Printing
     internal class PdfDocument
     {
         private PdfSharpCore.Pdf.PdfDocument document;
-        private TrimMargins Margine;     // マージン
+        public TrimMargins Margine;     // マージン
         private PdfPage currentPage;     // 現在のページ
 
         public XGraphics gfx;   // 描画するための
@@ -143,14 +143,21 @@ namespace PDF_Manager.Printing
                     break;
             }
 
-            // マージンを設定する
+            this.setDefaultMargine();
+
+            this.NewPage();
+        }
+
+        /// <summary>
+        /// マージンを設定する
+        /// </summary>
+        private void setDefaultMargine()
+        {
             this.Margine = new TrimMargins();
             this.Margine.Top = 25;
             this.Margine.Left = 35;
             this.Margine.Right = 25;
             this.Margine.Bottom = 25;
-
-            this.NewPage();
         }
 
         /// <summary>

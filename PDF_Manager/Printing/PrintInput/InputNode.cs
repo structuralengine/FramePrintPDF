@@ -295,6 +295,15 @@ namespace PDF_Manager.Printing
 
 
         #region 他のモジュールのヘルパー関数
+
+        // 格点データの取得
+        public Dictionary<string, Vector3> Nodes
+        {
+            get{
+                return this.nodes;
+            }
+        }
+
         /// <summary>
         /// 節点座標を返す
         /// </summary>

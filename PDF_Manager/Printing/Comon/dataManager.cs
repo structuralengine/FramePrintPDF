@@ -62,7 +62,7 @@ namespace PDF_Manager.Comon
         }
         static public double parseDouble(Dictionary<string,object> dict, string key)
         {
-            if (dict.ContainsKey("key"))
+            if (dict.ContainsKey(key))
             {
                 object data = dict[key];
                 return dataManager.parseDouble(data);

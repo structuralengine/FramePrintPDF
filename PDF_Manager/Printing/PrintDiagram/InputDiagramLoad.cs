@@ -11,7 +11,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "diagramLoad";
 
-        public InputDiagramLoad(Dictionary<string, object> value, Dictionary<string, object> data) 
+        public InputDiagramLoad(Dictionary<string, object> value) 
         {
             if (!value.ContainsKey(KEY))
                 return;
