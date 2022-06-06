@@ -127,7 +127,7 @@ namespace PDF_Manager.Printing
         {
             // PDF保存（カレントディレクトリ）
             //document.Save(filename);
-            document.Save("D:\\work\\sasaco\\PDF_generate\\bin\\Debug\\netcoreapp3.1\\work\\Test.pdf");
+            document.Save(@"C:/Users/sasai/Documents/FramePrintPDF/PDF_Test/bin/Test.pdf");
 
         }
 

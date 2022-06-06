@@ -212,6 +212,8 @@ namespace PDF_Manager.Printing
 
             for (int i = 0; i < title.Count; i++)
             {
+                bool isPrintTitle = false;
+
                 // 部材荷重の印刷
                 if (data[i][0] != null)
                 {
@@ -224,6 +226,7 @@ namespace PDF_Manager.Printing
                         mc.CurrentColumn(0);
                         mc.PrintContent(title[i], 0);
                         mc.CurrentRow(2);
+                        isPrintTitle = true;
 
                         // ヘッダーの印刷
                         mc.Header(headerM_content, headerM_Xspacing);
@@ -254,12 +257,13 @@ namespace PDF_Manager.Printing
                     mc.TypeCount(i, 5, data[i][1].Count, title[i]);
 
                     // 節点荷重のみの時に，タイプ番号を表示する
-                    if (data[i][0] == null)
+                    if (isPrintTitle == false)
                     {
                         // タイプの印刷
                         mc.CurrentColumn(0);
                         mc.PrintContent(title[i], 0);
                         mc.CurrentRow(2);
+                        isPrintTitle = true;
                     }
 
                     // ヘッダーの印刷
