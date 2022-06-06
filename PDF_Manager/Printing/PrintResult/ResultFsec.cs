@@ -386,9 +386,7 @@ namespace PDF_Manager.Printing
             int rows = printRows[0];
 
             // 集計開始
-            if (dimension == 3)　　//３次元
-            {
-                for (int j = 0; j < this.fsecs.Count; ++j)
+            for (int j = 0; j < this.fsecs.Count; ++j)
                 {   // ケース番号のループ
                     var key = this.fsecs.ElementAt(j).Key;  // ケース番号
                     var tmp1 = new List<Fsec>((List<Fsec>)this.fsecs.ElementAt(j).Value);
@@ -426,57 +424,8 @@ namespace PDF_Manager.Printing
                         // 2ページ以降に入る行数
                         rows = printRows[1];
                     }
-                }
             }
-            else　　//２次元
-            {
-                for (int j = 0; j < this.fsecs.Count; ++j)
-                {   // ケース番号のループ
-                    var key = this.fsecs.ElementAt(j).Key;  // ケース番号
-                    var tmp1 = new List<Fsec>((List<Fsec>)this.fsecs.ElementAt(j).Value);
-
-                    var caseNo = this.fsecnames.ElementAt(j).Key;
-                    var caseName = this.fsecnames.ElementAt(j).Value;
-
-                    while (true)
-                    {
-                        // 1ページに納まる分のデータをコピー
-                        var tmp2 = new List<Fsec>();
-                        int columns = 2;
-
-                        for (int i = 0; i < columns * rows; i++)
-                        {
-                            if (tmp1.Count <= 0)
-                                break;
-                            tmp2.Add(tmp1.First());
-                            tmp1.Remove(tmp1.First());
-                        }
-
-                        if (tmp2.Count > 0)
-                        {
-                            int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
-                            rows = Math.Min(rows, rs);
-
-                            var table = this.getPageContents(tmp2);
-                            table[0, 0] = caseNo + caseName;
-                            page.Add(table);
-
-                        }
-                        else if (tmp1.Count <= 0)
-                        {
-                            break;
-                        }
-                        else
-                        { // 印刷するものもない
-                            mc.NewPage();
-                        }
-
-                        // 2ページ以降に入る行数
-                        rows = printRows[1];
-                    }
-                }
-
-            }
+            
 
             // 表の印刷
             printManager.printTableContents(mc, page, new string[] { this.title });
