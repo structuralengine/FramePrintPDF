@@ -16,6 +16,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace PDF_Manager.Printing
 {
@@ -139,14 +140,14 @@ namespace PDF_Manager.Printing
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 15.0;//要素No
-                this.myTable.ColWidth[1] = 15.0;//節点No
-                this.myTable.ColWidth[2] = 15.0;//着目位置
-                this.myTable.ColWidth[3] = 80.0;//軸方向力
-                this.myTable.ColWidth[4] = 80.0;//Y方向のせん断力
-                this.myTable.ColWidth[5] = 80.0;//Z方向のせん断力
-                this.myTable.ColWidth[6] = 80.0;//ねじりﾓｰﾒﾝﾄ
-                this.myTable.ColWidth[7] = 80.0;//Y軸周りの曲げモーメント
-                this.myTable.ColWidth[8] = 80.0;//Z軸周りの曲げモーメント
+                this.myTable.ColWidth[1] = 40.0;//節点No
+                this.myTable.ColWidth[2] = 60.0;//着目位置
+                this.myTable.ColWidth[3] = 65.0;//軸方向力
+                this.myTable.ColWidth[4] = 65.0;//Y方向のせん断力
+                this.myTable.ColWidth[5] = 65.0;//Z方向のせん断力
+                this.myTable.ColWidth[6] = 65.0;//ねじりﾓｰﾒﾝﾄ
+                this.myTable.ColWidth[7] = 65.0;//Y軸周りの曲げモーメント
+                this.myTable.ColWidth[8] = 65.0;//Z軸周りの曲げモーメント
 
                 this.myTable.RowHeight[1] = printManager.LineSpacing2;
 
@@ -158,19 +159,26 @@ namespace PDF_Manager.Printing
                 this.myTable.AlignX[1, 4] = "R";
                 this.myTable.AlignX[1, 5] = "R";
                 this.myTable.AlignX[1, 6] = "R";
-                this.myTable.AlignX[2, 0] = "L";
+                this.myTable.AlignX[1, 7] = "R";
+                this.myTable.AlignX[1, 8] = "R";
+                this.myTable.AlignX[2, 0] = "R";
                 this.myTable.AlignX[2, 1] = "R";
                 this.myTable.AlignX[2, 2] = "R";
                 this.myTable.AlignX[2, 3] = "R";
                 this.myTable.AlignX[2, 4] = "R";
                 this.myTable.AlignX[2, 5] = "R";
                 this.myTable.AlignX[2, 6] = "R";
+                this.myTable.AlignX[2, 7] = "R";
+                this.myTable.AlignX[2, 8] = "R";
                 this.myTable.AlignX[3, 1] = "R";
                 this.myTable.AlignX[3, 2] = "R";
                 this.myTable.AlignX[3, 3] = "R";
                 this.myTable.AlignX[3, 4] = "R";
                 this.myTable.AlignX[3, 5] = "R";
                 this.myTable.AlignX[3, 6] = "R";
+                this.myTable.AlignX[3, 7] = "R";
+                this.myTable.AlignX[3, 8] = "R";
+
 
 
 
@@ -211,12 +219,12 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 6);
+                this.myTable = new Table(3, 6);
 
                 ///テーブルの幅
-                this.myTable.ColWidth[0] = 20.0;//要素No
-                this.myTable.ColWidth[1] = 20.0;//節点No
-                this.myTable.ColWidth[2] = 20.0;//着目位置
+                this.myTable.ColWidth[0] = 15.0;//要素No
+                this.myTable.ColWidth[1] = 40.0;//節点No
+                this.myTable.ColWidth[2] = 65.0;//着目位置
                 this.myTable.ColWidth[3] = 72.5;//X軸周りの回転量
                 this.myTable.ColWidth[4] = 72.5;
                 this.myTable.ColWidth[5] = 72.5;
@@ -224,7 +232,7 @@ namespace PDF_Manager.Printing
                 this.myTable.RowHeight[1] = printManager.LineSpacing2;
 
                 this.myTable.AlignX[0, 0] = "L";
-                this.myTable.AlignX[1, 0] = "R";
+                this.myTable.AlignX[1, 0] = "L";
                 this.myTable.AlignX[1, 1] = "R";
                 this.myTable.AlignX[1, 2] = "R";
                 this.myTable.AlignX[1, 3] = "R";
@@ -236,29 +244,24 @@ namespace PDF_Manager.Printing
                 this.myTable.AlignX[2, 3] = "R";
                 this.myTable.AlignX[2, 4] = "R";
                 this.myTable.AlignX[2, 5] = "R";
-                this.myTable.AlignX[3, 1] = "R";
-                this.myTable.AlignX[3, 2] = "R";
-                this.myTable.AlignX[3, 3] = "R";
-                this.myTable.AlignX[3, 4] = "R";
-                this.myTable.AlignX[3, 5] = "R";
 
                 switch (data.language)
                 {
                     default:
 
                         this.title = "断面力データ";
-                        this.myTable[0, 0] = "部材";
-                        this.myTable[1, 0] = "No";
-                        this.myTable[0, 1] = "節点";
-                        this.myTable[1, 1] = "No";
-                        this.myTable[0, 2] = "着目位置";
-                        this.myTable[1, 2] = "(m)";
-                        this.myTable[0, 3] = "軸方向力";
-                        this.myTable[1, 3] = "(kN)";
-                        this.myTable[0, 4] = "せん断力";
-                        this.myTable[1, 4] = "(kN)";
-                        this.myTable[0, 5] = "曲げﾓｰﾒﾝﾄ";
-                        this.myTable[1, 5] = "(kN・m)";
+                        this.myTable[1, 0] = "部材";
+                        this.myTable[2, 0] = "No";
+                        this.myTable[1, 1] = "節点";
+                        this.myTable[2, 1] = "No";
+                        this.myTable[1, 2] = "着目位置";
+                        this.myTable[2, 2] = "(m)";
+                        this.myTable[1, 3] = "軸方向力";
+                        this.myTable[2, 3] = "(kN)";
+                        this.myTable[1, 4] = "せん断力";
+                        this.myTable[2, 4] = "(kN)";
+                        this.myTable[1, 5] = "曲げﾓｰﾒﾝﾄ";
+                        this.myTable[2, 5] = "(kN・m)";
 
 
                         break;
@@ -288,7 +291,7 @@ namespace PDF_Manager.Printing
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
-            table.RowHeight[r] = printManager.LineSpacing2;
+            //table.RowHeight[r] = printManager.LineSpacing2;
 
             if (dimension == 3)　　//３次元
             {
@@ -325,6 +328,13 @@ namespace PDF_Manager.Printing
                     table.AlignX[r, j] = "R";
                     j++;
 
+                    var x = item.m;
+
+                    if (x != "") 
+                    {
+                        table.RowHeight[r] = printManager.LineSpacing2;
+                    }
+
                     r++;
                 }
             }
@@ -357,6 +367,13 @@ namespace PDF_Manager.Printing
                     table.AlignX[r, j] = "R";
                     j++;
 
+                    var x = item.m;
+
+                    if (x != "")
+                    {
+                        table.RowHeight[r] = printManager.LineSpacing2;
+                    }
+
                     r++;
 
                 }
@@ -383,47 +400,70 @@ namespace PDF_Manager.Printing
             var page = new List<Table>();
 
             // 1ページ目に入る行数
-            int rows = printRows[0];
+            int rows = printRows[0] - 14;
+
 
             // 集計開始
-            for (int j = 0; j < this.fsecs.Count; ++j)
-                {   // ケース番号のループ
-                    var key = this.fsecs.ElementAt(j).Key;  // ケース番号
-                    var tmp1 = new List<Fsec>((List<Fsec>)this.fsecs.ElementAt(j).Value);
+            for (int j = 0; j < this.fsecs.Count; ++j){   // ケース番号のループ
+                var key = this.fsecs.ElementAt(j).Key;  // ケース番号
+                var tmp1 = new List<Fsec>((List<Fsec>)this.fsecs.ElementAt(j).Value);
 
-                    var caseNo = this.fsecnames.ElementAt(j).Key;
-                    var caseName = this.fsecnames.ElementAt(j).Value;
+                var caseNo = this.fsecnames.ElementAt(j).Key;
+                var caseName = this.fsecnames.ElementAt(j).Value;
 
-                    while (true)
+                while (true)
+                {
+                    // 1ページに納まる分のデータをコピー
+                    var tmp2 = new List<Fsec>();
+
+                    for (int i = 0; i < rows; i++)
                     {
-                        // 1ページに納まる分のデータをコピー
-                        var tmp2 = new List<Fsec>();
-                        for (int i = 0; i < rows; i++)
-                        {
-                            if (tmp1.Count <= 0)
-                                break;
-                            tmp2.Add(tmp1.First());
-                            tmp1.Remove(tmp1.First());
-                        }
-
-                        if (tmp2.Count > 0)
-                        {
-                            var table = this.getPageContents(tmp2);
-                            table[0, 0] = caseNo + caseName;
-                            page.Add(table);
-                        }
-                        else if (tmp1.Count <= 0)
-                        {
+                        if (tmp1.Count <= 0)
                             break;
-                        }
-                        else
-                        { // 印刷するものもない
-                            mc.NewPage();
+
+                        // 1つの部材が1ページに収まらなければ 改ページする
+                        if (tmp1.First().m != "") // もし、部材の先頭行で...
+                        {   
+                            bool isNewPage = true; 
+                            int rr = 0;
+                            for (int k = i + 1; k < rows; k++) // 今コピーしようとしてる行+1 ～ そのページの最終行
+                            {   
+                                if (tmp1.Count < rr || tmp1[rr].m != "") 
+                                { // tmp1の最後か もしくは, 別の部材の先頭行があったら
+                                    isNewPage = false;  // 改ページしない
+                                    break;
+                                }
+
+                            }
+                            if (isNewPage == true)
+                            {   //改ページ
+                                break;
+                            }
                         }
 
-                        // 2ページ以降に入る行数
-                        rows = printRows[1];
+                        tmp2.Add(tmp1.First());
+                        tmp1.Remove(tmp1.First());
+                            
                     }
+
+                    if (tmp2.Count > 0)
+                    {
+                        var table = this.getPageContents(tmp2);
+                        table[0, 0] = caseNo + caseName;
+                        page.Add(table);
+                    }
+                    else if (tmp1.Count <= 0)
+                    {
+                        break;
+                    }
+                    else
+                    { // 印刷するものもない
+                        mc.NewPage();
+                    }
+
+                    // 2ページ以降に入る行数
+                    rows = printRows[1] - 14;
+                }
             }
             
 
