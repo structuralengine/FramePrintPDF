@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
+using PDF_Manager.Printing.Comon;
 using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
@@ -11,13 +12,6 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "diagramFsec";
 
-        // レイアウト
-        enum Layout
-        {
-            Default,
-            SpritVertical,
-            SpritHorizontal
-        }
         // 軸線スケール
         private double scaleX;
         private double scaleY;
@@ -29,10 +23,14 @@ namespace PDF_Manager.Printing
         // 文字サイズ
         private double fontSize;
 
+        // 描画情報
+        private Layout mode;
+
+
         // 軸線を作成するのに必要な情報
 
         // 節点情報
-        private InputNode Node = null;
+        private Dictionary<string, Vector3> Node = null;
         // 要素情報
         private InputMember Member = null;
         // 材料情報
@@ -58,10 +56,28 @@ namespace PDF_Manager.Printing
             // 文字サイズ
             this.fontSize = dataManager.parseDouble(target, "fontSize");
 
+            // 描画情報
+            string mode = target.ContainsKey("layout") ? target["layout"].ToString() : "Default";
+            switch (mode) {
+                case "SpritHorizontal":
+                    this.mode = Layout.SplitHorizontal;
+                    break;
+                case "SpritVertical":
+                    this.mode = Layout.SplitVertical;
+                    break;
+                default:
+                    this.mode = Layout.Default;
+                    break;
+            }
 
         }
 
-        
+
+        // 描画するために必要なパラメータ
+        private diagramManager canvas;   // 図を描くためのモジュール
+        private XPoint CenterPos;       // 骨組の中心座標
+
+
         /// <summary>
         /// 荷重図の作成
         /// </summary>
@@ -71,7 +87,7 @@ namespace PDF_Manager.Printing
         {
 
             // 部材長を取得できる状態にする
-            this.Node = (InputNode)data.printDatas[InputNode.KEY];
+            this.Node = ((InputNode)data.printDatas[InputNode.KEY]).Nodes;
 
             // 要素を取得できる状態にする
             this.Member = (InputMember)data.printDatas[InputMember.KEY];
@@ -79,24 +95,66 @@ namespace PDF_Manager.Printing
             // 材料名称を取得できる状態にする
             this.Element = (InputElement)data.printDatas[InputElement.KEY];
 
-            // 
-            var comon = new diagramManager(mc);
+            // 描画領域を
+            this.canvas = new diagramManager(mc, this.mode);
+
+            // 印刷の前処理
+            this.printInit();
 
             // 骨組みを印字する
-            this.printFrame(comon);
+            this.printFrame();
         }
 
 
-        private void printFrame(diagramManager comon)
+        /// <summary>
+        /// 印刷の前処理
+        /// </summary>
+        private void printInit()
         {
-            foreach(var n in this.Node.Nodes)
+            // 格点の中心座標を求める
+            var LeftTop = new XPoint(double.MaxValue, double.MaxValue);     // 節点の最も左上
+            var RightBottom = new XPoint(double.MinValue, double.MinValue); // 節点の最も右下
+            foreach (var n in this.Node.Values)
+            {
+                if (n.x < LeftTop.X)
+                    LeftTop.X = n.x;
+                if (n.x > RightBottom.X)
+                    RightBottom.X = n.x;
+                if (n.y < LeftTop.Y)
+                    LeftTop.Y = n.y;
+                if (n.y > RightBottom.Y)
+                    RightBottom.Y = n.y;
+            }
+            this.CenterPos = new XPoint((LeftTop.X + RightBottom.X) / 2, (LeftTop.Y + RightBottom.Y) / 2);
+
+            // スケールを決める
+            if(double.IsNaN(this.scaleX))
+            {
+                var frameWidth = Math.Abs(LeftTop.X - RightBottom.X);
+                var paperWidth = this.canvas.areaSize.Width;
+                this.scaleX = paperWidth / frameWidth;
+            }
+            if (double.IsNaN(this.scaleY))
+            {
+                var frameHeight = Math.Abs(LeftTop.Y - RightBottom.Y);
+                var paperHeight = this.canvas.areaSize.Height;
+                this.scaleY = paperHeight / frameHeight;
+            }
+
+
+        }
+
+        private void printFrame()
+        {
+            // 節点データ
+            foreach(var n in this.Node)
             {
                 var id = n.Key;
                 var p = n.Value;
-                var x = p.x * this.scaleX;
-                var y = -p.y * this.scaleY;
+                var x = (p.x - this.CenterPos.X) * this.scaleX;
+                var y = -(p.y - this.CenterPos.Y) * this.scaleY;
 
-                comon.printNode(x, y);
+                canvas.printNode(x, y);
             }
         }
 

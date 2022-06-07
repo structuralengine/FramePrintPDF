@@ -70,11 +70,6 @@ namespace PDF_Manager.Printing
             {
                 double height = this.currentPage.Height;
                 height -= this.Margine.Top;
-                // 高さはタイトルの分だけ小さくなる
-                height -= printManager.titlePos.Y;
-                height -= printManager.FontHeight;
-                height -= printManager.LineSpacing2;
-
                 height -= this.Margine.Bottom;
 
                 double width = this.currentPage.Width;
@@ -85,23 +80,6 @@ namespace PDF_Manager.Printing
             }
         }
 
-        /// <summary>
-        /// 現在の位置（マージンとタイトルの分を引いた Y位置）
-        /// </summary>
-        public double contentY
-        {
-            get
-            {
-                double height = this.currentPos.Y;
-                // 高さはマージンの分だけ小さくなる
-                height -= this.Margine.Top;
-                // 高さはタイトルの分だけ小さくなる
-                height -= printManager.titlePos.Y;
-                height -= printManager.FontHeight;
-                height -= printManager.LineSpacing2;
-                return height;
-            }
-        }
 
         /// <summary>
         /// 改行する
