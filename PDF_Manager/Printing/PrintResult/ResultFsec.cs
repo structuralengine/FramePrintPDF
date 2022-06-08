@@ -411,10 +411,14 @@ namespace PDF_Manager.Printing
                 var caseNo = this.fsecnames.ElementAt(j).Key;
                 var caseName = this.fsecnames.ElementAt(j).Value;
 
+                var tmp3 = new List<Fsec>();
+
                 while (true)
                 {
                     // 1ページに納まる分のデータをコピー
                     var tmp2 = new List<Fsec>();
+                    var lost = rows;
+
 
                     for (int i = 0; i < rows; i++)
                     {
@@ -422,27 +426,52 @@ namespace PDF_Manager.Printing
                             break;
 
                         // 1つの部材が1ページに収まらなければ 改ページする
-                        if (tmp1.First().m != "") // もし、部材の先頭行で...
-                        {   
-                            bool isNewPage = true; 
-                            int rr = 0;
-                            for (int k = i + 1; k < rows; k++) // 今コピーしようとしてる行+1 ～ そのページの最終行
-                            {   
-                                if (tmp1.Count < rr || tmp1[rr].m != "") 
-                                { // tmp1の最後か もしくは, 別の部材の先頭行があったら
-                                    isNewPage = false;  // 改ページしない
-                                    break;
-                                }
+                        //if (tmp1.First().m != "") // もし、部材の先頭行で...
+                        //{   
+                        //    bool isNewPage = true; 
+                        //    int rr = 0;
+                        //    for (int k = i + 1; k < rows; k++) // 今コピーしようとしてる行+1 ～ そのページの最終行
+                        //    {   
+                        //        if (tmp1.Count < rr || tmp1[rr].m != "") 
+                        //        { // tmp1の最後か もしくは, 別の部材の先頭行があったら
+                        //            isNewPage = false;  // 改ページしない
+                        //            break;
+                        //        }
 
+                        //    }
+                        //    if (isNewPage == true)
+                        //    {   //改ページ
+                        //        break;
+                        //    }
+                        //}
+
+                        if (tmp1.First().m != "")
+                        {
+                            for(int k = 0; k < rows; k++)
+                            {
+                                tmp3.Add(tmp1.First());
+                                tmp1.Remove(tmp1.First());
+
+                                if (tmp1.Count == 0)
+                                    break;
+
+                                if (tmp1.First().m != "")
+                                    break;
                             }
-                            if (isNewPage == true)
-                            {   //改ページ
-                                break;
-                            }
+
                         }
 
-                        tmp2.Add(tmp1.First());
-                        tmp1.Remove(tmp1.First());
+                        var add = tmp3.Count;
+                        lost = lost - add;
+
+                        if(tmp3.Count > lost)
+                        {
+                            
+                            break;
+                        }
+
+                        tmp2.AddRange(tmp3);
+                        tmp3.Clear();
                             
                     }
 
