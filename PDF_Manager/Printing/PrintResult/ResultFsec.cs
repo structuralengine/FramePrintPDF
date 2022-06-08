@@ -334,6 +334,11 @@ namespace PDF_Manager.Printing
                     {
                         table.RowHeight[r] = printManager.LineSpacing2;
                     }
+                    else if (i == 0)
+                    {
+                        table.RowHeight[r] = printManager.LineSpacing2;
+                    }
+
 
                     r++;
                 }
@@ -370,6 +375,10 @@ namespace PDF_Manager.Printing
                     var x = item.m;
 
                     if (x != "")
+                    {
+                        table.RowHeight[r] = printManager.LineSpacing2;
+                    }
+                    else if (i == 0)
                     {
                         table.RowHeight[r] = printManager.LineSpacing2;
                     }
@@ -425,29 +434,9 @@ namespace PDF_Manager.Printing
                         if (tmp1.Count <= 0)
                             break;
 
-                        // 1つの部材が1ページに収まらなければ 改ページする
-                        //if (tmp1.First().m != "") // もし、部材の先頭行で...
-                        //{   
-                        //    bool isNewPage = true; 
-                        //    int rr = 0;
-                        //    for (int k = i + 1; k < rows; k++) // 今コピーしようとしてる行+1 ～ そのページの最終行
-                        //    {   
-                        //        if (tmp1.Count < rr || tmp1[rr].m != "") 
-                        //        { // tmp1の最後か もしくは, 別の部材の先頭行があったら
-                        //            isNewPage = false;  // 改ページしない
-                        //            break;
-                        //        }
-
-                        //    }
-                        //    if (isNewPage == true)
-                        //    {   //改ページ
-                        //        break;
-                        //    }
-                        //}
-
                         if (tmp1.First().m != "")
                         {
-                            for(int k = 0; k < rows; k++)
+                            while(true)
                             {
                                 tmp3.Add(tmp1.First());
                                 tmp1.Remove(tmp1.First());
@@ -461,18 +450,31 @@ namespace PDF_Manager.Printing
 
                         }
 
-                        var add = tmp3.Count;
-                        lost = lost - add;
-
-                        if(tmp3.Count > lost)
+                        if (i == 0 && tmp3.Count > lost)
                         {
-                            
+                            for(int l = 0; l < rows; l++)
+                            {
+                                tmp2.Add(tmp3.First());
+                                tmp3.Remove(tmp3.First());
+                            }
                             break;
                         }
+                        else
+                        {
+                            var add = tmp3.Count;
+                            lost = lost - add;
 
-                        tmp2.AddRange(tmp3);
-                        tmp3.Clear();
-                            
+                            if (tmp3.Count > lost)
+                            {
+
+                                break;
+                            }
+
+                            tmp2.AddRange(tmp3);
+                            tmp3.Clear();
+
+                        }
+
                     }
 
                     if (tmp2.Count > 0)
