@@ -408,8 +408,11 @@ namespace PDF_Manager.Printing
             // 行コンテンツを生成
             var page = new List<Table>();
 
+            // 
+            int CONST = 14;
+
             // 1ページ目に入る行数
-            int rows = printRows[0] - 14;
+            int rows = printRows[0] - CONST;
 
 
             // 集計開始
@@ -436,7 +439,8 @@ namespace PDF_Manager.Printing
 
                         if (tmp1.First().m != "")
                         {
-                            while(true)
+
+                            while (true)
                             {
                                 tmp3.Add(tmp1.First());
                                 tmp1.Remove(tmp1.First());
@@ -449,15 +453,30 @@ namespace PDF_Manager.Printing
                             }
 
                         }
-
-                        if (i == 0 && tmp3.Count > lost)
+                        
+                        if (tmp3.Count > printRows[1] - CONST && tmp3.Count > lost)
                         {
-                            for(int l = 0; l < rows; l++)
+                            while(tmp3.Count != 0)
                             {
-                                tmp2.Add(tmp3.First());
-                                tmp3.Remove(tmp3.First());
+                                for (int l = 0; l < rows; l++)
+                                {
+                                    tmp2.Add(tmp3.First());
+                                    tmp3.Remove(tmp3.First());
+                                    if (tmp3.Count == 0)
+                                        break;
+                                }
+                                if (tmp3.Count == 0)
+                                    break;
+                                var table = this.getPageContents(tmp2);
+                                table[0, 0] = caseNo + caseName;
+                                page.Add(table);
+                                rows = printRows[1] - CONST;
+
+                                tmp2.Clear();
                             }
-                            break;
+                            var add = tmp2.Count;
+                            lost = lost - add;
+
                         }
                         else
                         {
@@ -466,7 +485,6 @@ namespace PDF_Manager.Printing
 
                             if (tmp3.Count > lost)
                             {
-
                                 break;
                             }
 
@@ -487,13 +505,13 @@ namespace PDF_Manager.Printing
                     {
                         break;
                     }
-                    else
-                    { // 印刷するものもない
-                        mc.NewPage();
-                    }
+                    //else
+                    //{ // 印刷するものもない
+                    //    mc.NewPage();
+                    //}
 
                     // 2ページ以降に入る行数
-                    rows = printRows[1] - 14;
+                    rows = printRows[1] - CONST;
                 }
             }
             
