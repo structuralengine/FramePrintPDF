@@ -1,4 +1,5 @@
 ﻿using PdfSharpCore.Drawing;
+using PdfSharpCore.Pdf;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -119,5 +120,12 @@ namespace PDF_Manager.Printing.Comon
             // 最後の改行
             mc.addCurrentY(printManager.LineSpacing1);
         }
+
+
+        // 図の描画設定
+        /// <summary>
+        /// 紙面の描画エリア(マージンを引いた範囲）に対する骨組を描画するパディング
+        /// </summary>
+        public static TrimMargins padding = new TrimMargins() { Bottom=10, Top=10, Left=10, Right=10 };
     }
 }

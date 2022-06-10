@@ -60,19 +60,19 @@ public class PrintInput
         var mc = new PdfDocument(data);
 
         // 荷重図
-        if (data.printDatas["diagramLoad"] != null)
+        if (data.printDatas.ContainsKey(InputDiagramLoad.KEY))
         {
             InputDiagramLoad diaLoad = (InputDiagramLoad)data.printDatas[InputDiagramLoad.KEY];
             diaLoad.printPDF(mc, data);                        // 格点
             return mc; // 荷重図の指定があったらその他の出力はしない
         }
-        // 断面力図
-        //if (data.printDatas["diagramFsec"] != null)
-        //{
-        //    InputDiagramLoad diaFsec = (InputdiagramFsec)data.printDatas[InputdiagramFsec.KEY];
-        //    diaFsec.printPDF(mc, data);                        // 格点
-        //    return mc; // 断面力図の指定があったらその他の出力はしない
-        //}
+        //断面力図
+        if (data.printDatas.ContainsKey(InputDiagramFsec.KEY))
+        {
+            InputDiagramFsec diaFsec = (InputDiagramFsec)data.printDatas[InputDiagramFsec.KEY];
+            diaFsec.printPDF(mc, data);                        // 格点
+            return mc; // 断面力図の指定があったらその他の出力はしない
+        }
 
        //入力データ
        //  格点

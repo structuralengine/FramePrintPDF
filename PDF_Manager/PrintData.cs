@@ -95,13 +95,14 @@ namespace PDF_Manager
             // 荷重図
             if (data.ContainsKey(InputDiagramLoad.KEY))
                 this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(data));
-            else
-                this.printDatas.Add(InputDiagramLoad.KEY, null);
+            // 断面力図
+            if (data.ContainsKey(InputDiagramFsec.KEY))
+                this.printDatas.Add(InputDiagramFsec.KEY, new InputDiagramFsec(data));
 
         }
 
         #region 他のモジュールのヘルパー関数
-        
+
 
         /// <summary>
         /// 2次元モードか3次元モードか？

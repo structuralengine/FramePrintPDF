@@ -244,16 +244,24 @@ namespace PDF_Manager.Printing
 
             // 2ページ目以降（ページ全体を使ってよい場合）の行数
             double Hx = mc.currentPageSize.Height;
+            // 高さはタイトルの分だけ小さくなる
+            Hx -= printManager.titlePos.Y;
+            Hx -= printManager.FontHeight;
+            Hx -= printManager.LineSpacing2;
             Hx -= printManager.H1;
-            //for (var i = 0; i < titles_count; ++i){
-            //    Hx -= printManager.FontHeight;
-            //    Hx -= printManager.LineSpacing2;
-            //}
             Hx -= H2;
+
             int rows2 = (int)(Hx / H3); // 切り捨て
 
             // 1ページ目（現在位置から）の行数
-            Hx -= mc.contentY;
+            Hx -= mc.currentPos.Y;
+            // 高さはマージンの分だけ小さくなる
+            Hx -= mc.Margine.Top;
+            // 高さはタイトルの分だけ小さくなる
+            Hx -= printManager.titlePos.Y;
+            Hx -= printManager.FontHeight;
+            Hx -= printManager.LineSpacing2;
+
             int rows1 = (int)(Hx / H3); // 切り捨て
 
             return new int[] { rows1, rows2 };
