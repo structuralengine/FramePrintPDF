@@ -242,6 +242,7 @@ namespace PDF_Manager.Printing
             // 1行当りの高さ + 改行高
             double H3 = this.LineSpacing3;
 
+
             // 2ページ目以降（ページ全体を使ってよい場合）の行数
             double Hx = mc.currentPageSize.Height;
             // 高さはタイトルの分だけ小さくなる
@@ -266,6 +267,7 @@ namespace PDF_Manager.Printing
 
             return new int[] { rows1, rows2 };
         }
+
 
         /// <summary>
         /// 印刷する
