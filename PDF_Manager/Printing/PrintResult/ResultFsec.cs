@@ -445,8 +445,6 @@ namespace PDF_Manager.Printing
 
                         if (tmp1.First().m != "")
                         {
-                            RowRevise++;
-
                             while (true)
                             {
                                 tmp3.Add(tmp1.First());
@@ -461,8 +459,9 @@ namespace PDF_Manager.Printing
 
                         }
                         
-                        if (tmp3.Count > printRows[1] - RowRevise * CONST && tmp3.Count > lost)
-                        {
+                        // その部材が次のページに入らなくて  かつ 現在のページにも入りきらない場合
+                        if (tmp3.Count > printRows[1] - CONST && tmp3.Count > lost)
+                        {   // 現在のページの続きから印刷していく
                             while(tmp3.Count != 0)
                             {
                                 for (int l = 0; l < rows; l++)
@@ -486,18 +485,58 @@ namespace PDF_Manager.Printing
 
                         }
                         else
-                        {
+                        { 
                             var add = tmp3.Count;
-                            lost = (int)(lost - add　- RowRevise * CONST);
+                            lost =lost - add;
+
+                            if (RowRevise % 2 == 1)
+                            {
+                                lost -= (int)CONST;
+                                RowRevise = 0;
+                            }
 
                             if (add > lost)
-                            {
-                                break;
-                            }
+                                break;  // その部材が現在のページにも入りきらない場合 
 
                             tmp2.AddRange(tmp3);
                             tmp3.Clear();
 
+                            RowRevise++;
+
+
+                            /*
+                            if (RowRevise % 2 == 1) // 
+                            {
+
+                                var add = tmp3.Count;
+                                lost = (int)(lost - add - CONST);
+
+                                if (add > lost)
+                                {
+                                    break;
+                                }
+
+                                tmp2.AddRange(tmp3);
+                                tmp3.Clear();
+                                RowRevise = 0;
+
+                            }
+                            else
+                            {
+                                RowRevise++;
+
+                                var add = tmp3.Count;
+                                lost = lost - add;
+
+                                if (add > lost)
+                                {
+                                    break;
+                                }
+
+                                tmp2.AddRange(tmp3);
+                                tmp3.Clear();
+                            }
+                            */
                         }
 
                     }
@@ -518,7 +557,7 @@ namespace PDF_Manager.Printing
                     //}
 
                     // 2ページ以降に入る行数
-                    rows = (int)(printRows[1] - RowRevise * CONST);
+                    rows = printRows[1];
 
                 }
             }
