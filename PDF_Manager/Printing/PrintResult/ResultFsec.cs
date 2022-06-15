@@ -503,40 +503,6 @@ namespace PDF_Manager.Printing
 
                             RowRevise++;
 
-
-                            /*
-                            if (RowRevise % 2 == 1) // 
-                            {
-
-                                var add = tmp3.Count;
-                                lost = (int)(lost - add - CONST);
-
-                                if (add > lost)
-                                {
-                                    break;
-                                }
-
-                                tmp2.AddRange(tmp3);
-                                tmp3.Clear();
-                                RowRevise = 0;
-
-                            }
-                            else
-                            {
-                                RowRevise++;
-
-                                var add = tmp3.Count;
-                                lost = lost - add;
-
-                                if (add > lost)
-                                {
-                                    break;
-                                }
-
-                                tmp2.AddRange(tmp3);
-                                tmp3.Clear();
-                            }
-                            */
                         }
 
                     }
