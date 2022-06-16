@@ -98,7 +98,7 @@ namespace PDF_Manager.Printing.Comon
             // 表の印刷
             for (var i = 0; i < page.Count; i++)
             {
-                //var table = page[i];
+                var table = page[i];
 
                 if (0 < i)
                     mc.NewPage(); // 2ページ目以降は改ページする
@@ -116,6 +116,47 @@ namespace PDF_Manager.Printing.Comon
                 // 表の印刷
                 page[i].PrintTable(mc);
             }
+
+
+            // 最後の改行
+            mc.addCurrentY(printManager.LineSpacing1);
+        }
+
+        public static void printTableContentsOnePage(PdfDocument mc, List<Table> page, string[] titles)
+        {
+            // 表の印刷
+            for (var i = 0; i < page.Count; i++)
+            {
+                var table = page[i];
+
+                //int DummyRows = page[i].getPrintRowCount();
+                //int PageRows = page.getPrintRowCount();
+
+                //var j = PageRows - DummyRows;
+
+                //if (j > 0)
+                //{
+                //    mc.NewPage();
+                //}
+
+
+                //if (0 < i)
+                //    mc.NewPage(); // 2ページ目以降は改ページする
+
+                // タイトルの印字
+                mc.setCurrentX(printManager.H1PosX);
+                foreach (var title in titles)
+                {
+                    Text.PrtText(mc, title);
+                    //mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
+                    mc.addCurrentY(printManager.LineSpacing2);
+
+                }
+
+                // 表の印刷
+                page[i].PrintTable(mc);
+            }
+
 
             // 最後の改行
             mc.addCurrentY(printManager.LineSpacing1);

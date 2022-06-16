@@ -376,6 +376,7 @@ namespace PDF_Manager.Printing
             // 行コンテンツを生成
             var page = new List<Table>();
 
+
             //行の高さの修正係数
             //double h1 = printManager.LineSpacing2 - printManager.FontHeight;
             //double h2 = printManager.FontHeight;
@@ -484,8 +485,24 @@ namespace PDF_Manager.Printing
 
             }
 
+            //for(var i = 0; i < page.Count; i++)
+            //{
+            //    page.Add(DummyPage.First());
+            //    DummyPage.Remove(DummyPage.First());
+
+            //    //int DummyRows = DummyPage[i].Count();
+            //    //int PageRows = page.Count();
+
+            //    //var j = PageRows - DummyRows;
+
+            //    //if ( j > 0)
+            //    //{
+            //    //    mc.NewPage();
+            //    //}
+            //}
+
             // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
         }
 
 
