@@ -376,13 +376,6 @@ namespace PDF_Manager.Printing
             // 行コンテンツを生成
             var page = new List<Table>();
 
-
-            //行の高さの修正係数
-            //double h1 = printManager.LineSpacing2 - printManager.FontHeight;
-            //double h2 = printManager.FontHeight;
-            //double CONST = h1 / h2;
-
-
             // 1ページ目に入る行数
             int rows = printRows[0];
 

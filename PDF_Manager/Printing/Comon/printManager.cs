@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using PDF_Manager.Printing.Comon;
 
 namespace PDF_Manager.Printing.Comon
 {
@@ -129,8 +130,10 @@ namespace PDF_Manager.Printing.Comon
             {
                 var table = page[i];
 
-                //int DummyRows = page[i].getPrintRowCount();
-                //int PageRows = page.getPrintRowCount();
+                Console.WriteLine(table.Rows.Count);
+
+                int Rows = table.Count();
+                int PageRows = page.Count();
 
                 //var j = PageRows - DummyRows;
 
