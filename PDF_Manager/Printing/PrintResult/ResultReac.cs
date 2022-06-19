@@ -478,22 +478,6 @@ namespace PDF_Manager.Printing
 
             }
 
-            //for(var i = 0; i < page.Count; i++)
-            //{
-            //    page.Add(DummyPage.First());
-            //    DummyPage.Remove(DummyPage.First());
-
-            //    //int DummyRows = DummyPage[i].Count();
-            //    //int PageRows = page.Count();
-
-            //    //var j = PageRows - DummyRows;
-
-            //    //if ( j > 0)
-            //    //{
-            //    //    mc.NewPage();
-            //    //}
-            //}
-
             // 表の印刷
             printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
         }
