@@ -1,4 +1,5 @@
-﻿using PdfSharpCore.Drawing;
+﻿using PDF_Manager.Printing.Comon;
+using PdfSharpCore.Drawing;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -15,7 +16,7 @@ namespace PDF_Manager.Printing
 
     internal class diagramManager
     {
-        private double nodeSize = 1;        // 節点の円の大きさ
+        private double nodeSize = 2;        // 節点の円の大きさ
         private double nodePenWidth = 0.2;  // 節点の線幅
 
         private PdfDocument mc;
@@ -49,27 +50,49 @@ namespace PDF_Manager.Printing
             // 図描画エリアの中心の位置を決定する.
             var paper = this.mc.currentPageSize;    // マージを引いたエリア
             this.AreaSize.Width = paper.Width;
+            this.AreaSize.Width -= printManager.padding.Left;
+            this.AreaSize.Width -= printManager.padding.Right;
             this.AreaSize.Height = paper.Height;
+            this.AreaSize.Height -= printManager.padding.Top;
+            this.AreaSize.Height -= printManager.padding.Bottom;
+            this.AreaSize.Height -= printManager.FontHeight;        // タイトル印字分高さを減らす
+            this.AreaSize.Height -= printManager.LineSpacing2;
 
-            Center[0].X = this.mc.Margine.Left + this.AreaSize.Width / 2;
-            Center[0].Y = this.mc.Margine.Top + this.AreaSize.Height / 2;
+            Center[0].X = this.AreaSize.Width / 2;
+            Center[0].X += printManager.padding.Left;
+            Center[0].Y = this.AreaSize.Height / 2;
+            Center[0].Y += printManager.padding.Top;
+            Center[0].Y += printManager.FontHeight;     // タイトル印字分高さを減らす
+            Center[0].Y += printManager.LineSpacing2;
 
             if (this.mode == Layout.SplitHorizontal)
             {   // ページを上下に分割する場合
                 Center[1].X = Center[0].X;
-                Center[0].Y = this.mc.Margine.Top + this.AreaSize.Height / 4;
-                Center[1].Y = this.mc.Margine.Top + this.AreaSize.Height * 3 / 4; ;
+
+                Center[0].Y = this.AreaSize.Height / 4;
+                Center[0].Y += this.mc.Margine.Top;
+                Center[0].Y += printManager.padding.Top;
+                Center[1].Y = this.AreaSize.Height * 3 / 4; ;
+                Center[1].Y += this.mc.Margine.Top;
+                Center[1].Y += printManager.padding.Top;
+
                 AreaSize.Height /= 2;
             }
             if (this.mode == Layout.SplitVertical)
             { // ページを左右に分割する場合
-                Center[0].X = this.mc.Margine.Left + this.AreaSize.Width / 4;
-                Center[1].X = this.mc.Margine.Left + this.AreaSize.Width * 3 / 4;
                 Center[1].Y = Center[0].Y;
+
+                Center[0].X = this.AreaSize.Width / 4;
+                Center[0].X += this.mc.Margine.Left;
+                Center[0].X += printManager.padding.Left;
+                Center[1].X = this.AreaSize.Width * 3 / 4;
+                Center[1].X += this.mc.Margine.Left;
+                Center[1].X += printManager.padding.Left;
+
                 AreaSize.Width /= 2;
             }
             // カレント
-            this.currentArea = 1;
+            this.currentArea = 0;
         }
 
         /// <summary>
@@ -104,8 +127,10 @@ namespace PDF_Manager.Printing
         /// </summary>
         public void printNode(double _x, double _y)
         {
-            var x = this.mc.Margine.Left + _x;
-            var y = this.mc.Margine.Top + _y;
+            var centerPos = this.Center[this.currentArea];
+
+            var x = centerPos.X + _x;
+            var y = centerPos.Y + _y;
 
             XPoint p = new XPoint(x, y);
             XSize z = new XSize(this.nodeSize, this.nodeSize);

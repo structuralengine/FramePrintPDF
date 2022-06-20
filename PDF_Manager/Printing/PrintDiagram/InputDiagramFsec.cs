@@ -85,7 +85,6 @@ namespace PDF_Manager.Printing
         /// <param name="class_set">入力データ</param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
-
             // 部材長を取得できる状態にする
             this.Node = ((InputNode)data.printDatas[InputNode.KEY]).Nodes;
 
@@ -112,18 +111,18 @@ namespace PDF_Manager.Printing
         private void printInit()
         {
             // 格点の中心座標を求める
-            var LeftTop = new XPoint(double.MaxValue, double.MaxValue);     // 節点の最も左上
-            var RightBottom = new XPoint(double.MinValue, double.MinValue); // 節点の最も右下
+            var LeftTop = new XPoint(double.MaxValue, double.MinValue);     // 節点の最も左上
+            var RightBottom = new XPoint(double.MinValue, double.MaxValue); // 節点の最も右下
             foreach (var n in this.Node.Values)
             {
                 if (n.x < LeftTop.X)
                     LeftTop.X = n.x;
                 if (n.x > RightBottom.X)
                     RightBottom.X = n.x;
-                if (n.y < LeftTop.Y)
-                    LeftTop.Y = n.y;
-                if (n.y > RightBottom.Y)
+                if (n.y < RightBottom.Y)
                     RightBottom.Y = n.y;
+                if (n.y > LeftTop.Y)
+                    LeftTop.Y = n.y;
             }
             this.CenterPos = new XPoint((LeftTop.X + RightBottom.X) / 2, (LeftTop.Y + RightBottom.Y) / 2);
 
@@ -138,11 +137,12 @@ namespace PDF_Manager.Printing
             {
                 var frameHeight = Math.Abs(LeftTop.Y - RightBottom.Y);
                 var paperHeight = this.canvas.areaSize.Height;
+                paperHeight -= printManager.FontHeight; // タイトル印字分高さを減らす
+                paperHeight -= printManager.LineSpacing2;
                 this.scaleY = paperHeight / frameHeight;
             }
-
-
         }
+
 
         private void printFrame()
         {
@@ -151,6 +151,7 @@ namespace PDF_Manager.Printing
             {
                 var id = n.Key;
                 var p = n.Value;
+
                 var x = (p.x - this.CenterPos.X) * this.scaleX;
                 var y = -(p.y - this.CenterPos.Y) * this.scaleY;
 
