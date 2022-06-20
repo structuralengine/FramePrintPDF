@@ -408,11 +408,15 @@ namespace PDF_Manager.Printing
             // 行コンテンツを生成
             var page = new List<Table>();
 
-            // 
-            int CONST = 14;
+            // 行の高さと隙間の比率（後の修正行数算定の係数）
+            double h1 = printManager.LineSpacing2 - printManager.FontHeight;
+            double h2 = printManager.FontHeight;
+            double CONST = h1 / h2;
+
+
 
             // 1ページ目に入る行数
-            int rows = printRows[0] - CONST;
+            int rows = printRows[0];
 
 
             // 集計開始
@@ -430,7 +434,9 @@ namespace PDF_Manager.Printing
                     // 1ページに納まる分のデータをコピー
                     var tmp2 = new List<Fsec>();
                     var lost = rows;
+                    var RowRevise = 0;
 
+                    // 行の高さと隙間の比率（後の修正行数算定の係数）
 
                     for (int i = 0; i < rows; i++)
                     {
@@ -439,7 +445,6 @@ namespace PDF_Manager.Printing
 
                         if (tmp1.First().m != "")
                         {
-
                             while (true)
                             {
                                 tmp3.Add(tmp1.First());
@@ -454,8 +459,9 @@ namespace PDF_Manager.Printing
 
                         }
                         
+                        // その部材が次のページに入らなくて  かつ 現在のページにも入りきらない場合
                         if (tmp3.Count > printRows[1] - CONST && tmp3.Count > lost)
-                        {
+                        {   // 現在のページの続きから印刷していく
                             while(tmp3.Count != 0)
                             {
                                 for (int l = 0; l < rows; l++)
@@ -470,7 +476,7 @@ namespace PDF_Manager.Printing
                                 var table = this.getPageContents(tmp2);
                                 table[0, 0] = caseNo + caseName;
                                 page.Add(table);
-                                rows = printRows[1] - CONST;
+                                rows = printRows[1];
 
                                 tmp2.Clear();
                             }
@@ -479,17 +485,23 @@ namespace PDF_Manager.Printing
 
                         }
                         else
-                        {
+                        { 
                             var add = tmp3.Count;
-                            lost = lost - add;
+                            lost =lost - add;
 
-                            if (tmp3.Count > lost)
+                            if (RowRevise % 2 == 1)
                             {
-                                break;
+                                lost -= (int)CONST;
+                                RowRevise = 0;
                             }
+
+                            if (add > lost)
+                                break;  // その部材が現在のページにも入りきらない場合 
 
                             tmp2.AddRange(tmp3);
                             tmp3.Clear();
+
+                            RowRevise++;
 
                         }
 
@@ -511,13 +523,14 @@ namespace PDF_Manager.Printing
                     //}
 
                     // 2ページ以降に入る行数
-                    rows = printRows[1] - CONST;
+                    rows = printRows[1];
+
                 }
             }
             
 
             // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
         }
 
 

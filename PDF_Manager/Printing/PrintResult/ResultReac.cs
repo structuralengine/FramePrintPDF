@@ -394,30 +394,36 @@ namespace PDF_Manager.Printing
                     {
                         // 1ページに納まる分のデータをコピー
                         var tmp2 = new List<Reac>();
+                        var lost = rows;
+
                         for (int i = 0; i < rows; i++)
                         {
-                            if (tmp1.Count <= 0)
+
+                            if (tmp1.Count == 0)
                                 break;
+
                             tmp2.Add(tmp1.First());
                             tmp1.Remove(tmp1.First());
+
+                            var add = tmp1.Count();
+                            lost -= add;
                         }
 
-                        if (tmp2.Count > 0)
+                        if(tmp2.Count > 0)
                         {
                             var table = this.getPageContents(tmp2);
                             table[0, 0] = caseNo + caseName;
                             page.Add(table);
+
                         }
-                        else if (tmp1.Count <= 0)
+                        else if(tmp1.Count <= 0)
                         {
                             break;
                         }
-                        else
-                        { // 印刷するものもない
-                            mc.NewPage();
-                        }
 
                         // 2ページ以降に入る行数
+                        if (lost > 0)
+                            break;
                         rows = printRows[1];
                     }
                 }
@@ -448,8 +454,8 @@ namespace PDF_Manager.Printing
 
                         if (tmp2.Count > 0)
                         {
-                            int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
-                            rows = Math.Min(rows, rs);
+                            //int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
+                            //rows = Math.Min(rows, rs);
 
                             var table = this.getPageContents(tmp2);
                             table[0, 0] = caseNo + caseName;
@@ -473,7 +479,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
         }
 
 

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using PDF_Manager.Printing.Comon;
 
 namespace PDF_Manager.Printing.Comon
 {
@@ -98,10 +99,13 @@ namespace PDF_Manager.Printing.Comon
             // 表の印刷
             for (var i = 0; i < page.Count; i++)
             {
-                //var table = page[i];
+                var table = page[i];
 
                 if (0 < i)
+                {
+                    // 残りの余白（＝CurrentY座標）＜ 次のページの表の高さ
                     mc.NewPage(); // 2ページ目以降は改ページする
+                }
 
                 // タイトルの印字
                 mc.setCurrentX(printManager.H1PosX);
@@ -110,12 +114,64 @@ namespace PDF_Manager.Printing.Comon
                     Text.PrtText(mc, title);
                     //mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
                     mc.addCurrentY(printManager.LineSpacing2);
-
                 }
 
                 // 表の印刷
                 page[i].PrintTable(mc);
             }
+
+
+            // 最後の改行
+            mc.addCurrentY(printManager.LineSpacing1);
+        }
+
+        public static void printTableContentsOnePage(PdfDocument mc, List<Table> page, string[] titles)
+        {
+            var CurrentHight = page[0].Rows * printManager.LineSpacing2;
+            CurrentHight = 0;
+
+            //現在の印刷できる高さの取得
+            var CurrentY = mc.currentPageSize.Height;
+
+            foreach (var title in titles)
+            {
+                Text.PrtText(mc, title);
+                mc.addCurrentY(printManager.LineSpacing2);
+            }
+
+            // 表の印刷
+            for (var i = 0; i < page.Count; i++)
+            {
+                var table = page[i];
+
+                if (i > 0)
+                {
+                    // 残りの余白（＝CurrentY座標）＜ 次のページの表の高さ
+                    //これから印刷する高さを取得
+                    CurrentHight += table.Rows * printManager.LineSpacing2;
+
+                    //印刷できるかできないかの判定（できなければ改ページ）
+                    if (CurrentY < CurrentHight)
+                    {
+                        mc.NewPage();
+                        CurrentHight = 0;
+
+                        // タイトルの印字
+
+                        foreach (var title in titles)
+                        {
+                            Text.PrtText(mc, title);
+                        }
+
+                    }
+                    mc.setCurrentX(printManager.H1PosX);
+                    mc.addCurrentY(printManager.LineSpacing2);
+                }
+
+                // 表の印刷
+                page[i].PrintTable(mc);
+            }
+
 
             // 最後の改行
             mc.addCurrentY(printManager.LineSpacing1);
