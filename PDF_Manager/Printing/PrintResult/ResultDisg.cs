@@ -466,7 +466,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
         }
 
     }

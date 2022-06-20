@@ -481,7 +481,7 @@ namespace PDF_Manager.Printing
                                 tmp2.Clear();
                             }
                             var add = tmp2.Count;
-                            lost = lost - add;
+                            lost -= add;
 
                         }
                         else
@@ -491,8 +491,14 @@ namespace PDF_Manager.Printing
 
                             if (RowRevise % 2 == 1)
                             {
-                                lost -= (int)CONST;
-                                RowRevise = 0;
+                                if (CONST >= 0.5)
+                                {
+                                    CONST = 1;
+                                    lost = lost - (int)CONST;
+                                    RowRevise = 0;
+                                }
+                                else
+                                    RowRevise = 0;
                             }
 
                             if (add > lost)

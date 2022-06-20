@@ -127,11 +127,10 @@ namespace PDF_Manager.Printing.Comon
 
         public static void printTableContentsOnePage(PdfDocument mc, List<Table> page, string[] titles)
         {
-            var CurrentHight = page[0].Rows * printManager.LineSpacing2;
-            CurrentHight = 0;
+            var CurrentHight = page[0].GetTableHeight();
 
             //現在の印刷できる高さの取得
-            var CurrentY = mc.currentPageSize.Height;
+            var PageHihgt = mc.currentPageSize.Height;
 
             foreach (var title in titles)
             {
@@ -146,23 +145,24 @@ namespace PDF_Manager.Printing.Comon
 
                 if (i > 0)
                 {
-                    // 残りの余白（＝CurrentY座標）＜ 次のページの表の高さ
+                    // 残りの余白（＝PageHihgt座標）＜ 次のページの表の高さ
                     //これから印刷する高さを取得
-                    CurrentHight += table.Rows * printManager.LineSpacing2;
-
+                    //CurrentHight += table.Rows * printManager.LineSpacing2;
+                    CurrentHight += table.GetTableHeight();
+                    CurrentHight += printManager.LineSpacing2;
+                    
                     //印刷できるかできないかの判定（できなければ改ページ）
-                    if (CurrentY < CurrentHight)
+                    if (PageHihgt < CurrentHight)
                     {
                         mc.NewPage();
-                        CurrentHight = 0;
+
+                        CurrentHight = table.GetTableHeight();
 
                         // タイトルの印字
-
                         foreach (var title in titles)
                         {
                             Text.PrtText(mc, title);
                         }
-
                     }
                     mc.setCurrentX(printManager.H1PosX);
                     mc.addCurrentY(printManager.LineSpacing2);
