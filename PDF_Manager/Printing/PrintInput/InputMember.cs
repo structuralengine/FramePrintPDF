@@ -22,7 +22,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "member";
 
-        private Dictionary<string, Member> members = new Dictionary<string, Member>();
+        public Dictionary<string, Member> members = new Dictionary<string, Member>();
 
         public InputMember(Dictionary<string, object> value)
         {

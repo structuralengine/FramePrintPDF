@@ -29,6 +29,7 @@ namespace PDF_Manager.Printing
         private PageOrientation pageOrientation;
 
         private string title;   // 全ページ共通 左上に印字するタイトル
+        private string casename;    //  左上に印字するケース名
 
         /// <summary>
         /// 現在の座標
@@ -164,7 +165,20 @@ namespace PDF_Manager.Printing
             }
             this.currentPos.Y += printManager.FontHeight;
             this.currentPos.Y += printManager.LineSpacing2;
-
+            //ケース名を適当に入力
+            if (this.title != null)
+            {
+                Text.PrtText(this, string.Format("CASE : {0}", this.title));
+            }
+            this.currentPos.Y += printManager.FontHeight;
+            this.currentPos.Y += printManager.LineSpacing2;
+            //ケース名を適当に入力2
+            if (this.title != null)
+            {
+                Text.PrtText(this, string.Format("{0}", this.title));
+            }
+            this.currentPos.Y += printManager.FontHeight;
+            this.currentPos.Y += printManager.LineSpacing2;
         }
 
         /// <summary>

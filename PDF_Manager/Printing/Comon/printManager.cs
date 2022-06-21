@@ -109,7 +109,7 @@ namespace PDF_Manager.Printing.Comon
 
                 // タイトルの印字
                 mc.setCurrentX(printManager.H1PosX);
-                foreach(var title in titles)
+                foreach (var title in titles)
                 {
                     Text.PrtText(mc, title);
                     //mc.addCurrentY(printManager.FontHeight + printManager.LineSpacing2);
@@ -182,6 +182,7 @@ namespace PDF_Manager.Printing.Comon
         /// <summary>
         /// 紙面の描画エリア(マージンを引いた範囲）に対する骨組を描画するパディング
         /// </summary>
-        public static TrimMargins padding = new TrimMargins() { Bottom=10, Top=10, Left=10, Right=10 };
-    }
+
+    public static TrimMargins padding = new TrimMargins() { Bottom=60, Top=150, Left=80, Right=80 };
+}
 }

@@ -15,6 +15,7 @@ namespace PDF_Manager.Printing
         // 軸線スケール
         private double scaleX;
         private double scaleY;
+        private double scale;
 
         // 位置補正
         private double posX;
@@ -30,7 +31,7 @@ namespace PDF_Manager.Printing
         // 軸線を作成するのに必要な情報
 
         // 節点情報
-        private Dictionary<string, Vector3> Node = null;
+        private InputNode Node = null;
         // 要素情報
         private InputMember Member = null;
         // 材料情報
@@ -85,8 +86,9 @@ namespace PDF_Manager.Printing
         /// <param name="class_set">入力データ</param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+         
             // 部材長を取得できる状態にする
-            this.Node = ((InputNode)data.printDatas[InputNode.KEY]).Nodes;
+            this.Node = (InputNode)data.printDatas[InputNode.KEY];
 
             // 要素を取得できる状態にする
             this.Member = (InputMember)data.printDatas[InputMember.KEY];
@@ -96,6 +98,8 @@ namespace PDF_Manager.Printing
 
             // 描画領域を
             this.canvas = new diagramManager(mc, this.mode);
+
+
 
             // 印刷の前処理
             this.printInit();
@@ -113,7 +117,7 @@ namespace PDF_Manager.Printing
             // 格点の中心座標を求める
             var LeftTop = new XPoint(double.MaxValue, double.MinValue);     // 節点の最も左上
             var RightBottom = new XPoint(double.MinValue, double.MaxValue); // 節点の最も右下
-            foreach (var n in this.Node.Values)
+            foreach (var n in this.Node.Nodes.Values)
             {
                 if (n.x < LeftTop.X)
                     LeftTop.X = n.x;
@@ -127,36 +131,81 @@ namespace PDF_Manager.Printing
             this.CenterPos = new XPoint((LeftTop.X + RightBottom.X) / 2, (LeftTop.Y + RightBottom.Y) / 2);
 
             // スケールを決める
-            if(double.IsNaN(this.scaleX))
+
+                    if (double.IsNaN(this.scaleX))
+                    {
+
+                        var frameWidth = Math.Abs(LeftTop.X - RightBottom.X);
+                        var paperWidth = this.canvas.areaSize.Width;
+                        this.scaleX = paperWidth / frameWidth;
+                    }
+                    if (double.IsNaN(this.scaleY))
+                    {
+                        var frameHeight = Math.Abs(LeftTop.Y - RightBottom.Y);
+                        var paperHeight = this.canvas.areaSize.Height;
+                        paperHeight -= printManager.FontHeight; // タイトル印字分高さを減らす
+                        paperHeight -= printManager.LineSpacing2;
+                        this.scaleY = paperHeight / frameHeight;
+                    }
+
+            if (scaleX >= scaleY)
             {
-                var frameWidth = Math.Abs(LeftTop.X - RightBottom.X);
-                var paperWidth = this.canvas.areaSize.Width;
-                this.scaleX = paperWidth / frameWidth;
+                this.scale = scaleY;
             }
-            if (double.IsNaN(this.scaleY))
+            else
             {
-                var frameHeight = Math.Abs(LeftTop.Y - RightBottom.Y);
-                var paperHeight = this.canvas.areaSize.Height;
-                paperHeight -= printManager.FontHeight; // タイトル印字分高さを減らす
-                paperHeight -= printManager.LineSpacing2;
-                this.scaleY = paperHeight / frameHeight;
+                this.scale = scaleX;
             }
         }
 
 
         private void printFrame()
         {
-            // 節点データ
-            foreach(var n in this.Node)
+            int j = 0;
+            switch (this.mode)
             {
-                var id = n.Key;
-                var p = n.Value;
-
-                var x = (p.x - this.CenterPos.X) * this.scaleX;
-                var y = -(p.y - this.CenterPos.Y) * this.scaleY;
-
-                canvas.printNode(x, y);
+                case Layout.SplitHorizontal:
+                case Layout.SplitVertical:
+                    j = 1;
+                    break;
             }
+
+            for (var i = 0; i <= j; ++i)
+            {
+                canvas.currentArea = i;
+
+
+                // 要素を取得できる状態にする
+                foreach (var m in this.Member.members)
+                {
+                    var mm = m.Value;
+                    var p1 = this.Node.GetNodePos(mm.ni);
+                    var p2 = this.Node.GetNodePos(mm.nj);
+
+                    //n スケール調整
+                    var x1 = (p1.x - this.CenterPos.X) * this.scale;
+                    var y1 = -(p1.y - this.CenterPos.Y) * this.scale;
+                    var x2 = (p2.x - this.CenterPos.X) * this.scale;
+                    var y2 = -(p2.y - this.CenterPos.Y) * this.scale;
+
+                    canvas.printLine(x1, y1, x2, y2);
+                }
+
+                // 節点データ
+                foreach (var n in this.Node.Nodes)
+                {
+                    var id = n.Key;
+                    var p = n.Value;
+
+                    var x = (p.x - this.CenterPos.X) * this.scale;
+                    var y = -(p.y - this.CenterPos.Y) * this.scale;
+
+                    canvas.printNode(x, y);
+                }
+            }
+
+
+
         }
 
     }

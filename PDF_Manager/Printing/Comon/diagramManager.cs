@@ -51,7 +51,7 @@ namespace PDF_Manager.Printing
             var paper = this.mc.currentPageSize;    // マージを引いたエリア
             this.AreaSize.Width = paper.Width;
             this.AreaSize.Width -= printManager.padding.Left;
-            this.AreaSize.Width -= printManager.padding.Right;
+            this.AreaSize.Width -= printManager.padding.Right;   //ここでareaseizewidthはパディングを引いたものになっている
             this.AreaSize.Height = paper.Height;
             this.AreaSize.Height -= printManager.padding.Top;
             this.AreaSize.Height -= printManager.padding.Bottom;
@@ -69,12 +69,16 @@ namespace PDF_Manager.Printing
             {   // ページを上下に分割する場合
                 Center[1].X = Center[0].X;
 
-                Center[0].Y = this.AreaSize.Height / 4;
+                Center[0].Y = this.AreaSize.Height;
+                Center[0].Y -= printManager.padding.Bottom;
+                Center[0].Y /= 4;
                 Center[0].Y += this.mc.Margine.Top;
                 Center[0].Y += printManager.padding.Top;
-                Center[1].Y = this.AreaSize.Height * 3 / 4; ;
-                Center[1].Y += this.mc.Margine.Top;
-                Center[1].Y += printManager.padding.Top;
+                Center[1].Y = this.AreaSize.Height / 2;
+                //Center[1].Y += this.mc.Margine.Top;
+                //Center[1].Y += printManager.padding.Top;
+                Center[1].Y += printManager.padding.Bottom / 2;
+                Center[1].Y += Center[0].Y;
 
                 AreaSize.Height /= 2;
             }
@@ -82,12 +86,13 @@ namespace PDF_Manager.Printing
             { // ページを左右に分割する場合
                 Center[1].Y = Center[0].Y;
 
-                Center[0].X = this.AreaSize.Width / 4;
-                Center[0].X += this.mc.Margine.Left;
+                Center[0].X = this.AreaSize.Width;
+                Center[0].X -= printManager.padding.Left;
+                Center[0].X /= 4;
                 Center[0].X += printManager.padding.Left;
-                Center[1].X = this.AreaSize.Width * 3 / 4;
-                Center[1].X += this.mc.Margine.Left;
-                Center[1].X += printManager.padding.Left;
+                Center[1].X = this.AreaSize.Width / 2;
+                Center[1].X += printManager.padding.Left / 2;
+                Center[1].X += Center[0].X;
 
                 AreaSize.Width /= 2;
             }
@@ -129,13 +134,34 @@ namespace PDF_Manager.Printing
         {
             var centerPos = this.Center[this.currentArea];
 
-            var x = centerPos.X + _x;
-            var y = centerPos.Y + _y;
+            var x = centerPos.X + _x - nodeSize / 2;
+            var y = centerPos.Y + _y - nodeSize / 2;
 
             XPoint p = new XPoint(x, y);
             XSize z = new XSize(this.nodeSize, this.nodeSize);
 
             Shape.Drawcircle(this.mc, p, z);
+        }
+
+        /// <summary>
+        /// 節点の印字
+        /// </summary>
+        public void printLine(double _x1, double _y1, double _x2, double _y2)
+        {
+            var centerPos = this.Center[this.currentArea];
+
+            var x1 = centerPos.X + _x1 ;
+            var y1 = centerPos.Y + _y1 ;
+            var x2 = centerPos.X + _x2 ;
+            var y2 = centerPos.Y + _y2 ;
+
+            //XPoint p = new XPoint(x, y);
+            //XSize z = new XSize(this.nodeSize, this.nodeSize);
+
+            XPoint p = new XPoint(x1, y1);
+            XPoint q = new XPoint(x2, y2);
+
+            Shape.DrawLine(this.mc, p, q, 1);
         }
     }
 }
