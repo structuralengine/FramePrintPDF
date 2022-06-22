@@ -153,9 +153,6 @@ namespace PDF_Manager.Printing.Comon
                     // 残りの余白（＝PageHihgt座標）＜ 次のページの表の高さ
                     //これから印刷する高さを取得
                     var CurrentHight = page[i].GetTableHeight();
-                    //CurrentHight += table.Rows * printManager.LineSpacing2;
-                    //CurrentHight += table.GetTableHeight();
-                    //CurrentHight += printManager.LineSpacing2;
 
                     //印刷できるかできないかの判定（できなければ改ページ）
                     if (PageHihgt < CurrentHight)
