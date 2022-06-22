@@ -132,8 +132,6 @@ namespace PDF_Manager.Printing.Comon
             mc.setCurrentX(printManager.H1PosX);
             mc.addCurrentY(printManager.LineSpacing2);
 
-            var CurrentHight = page[0].GetTableHeight();
-
             foreach (var title in titles)
             {
                 Text.PrtText(mc, title);
@@ -154,16 +152,17 @@ namespace PDF_Manager.Printing.Comon
 
                     // 残りの余白（＝PageHihgt座標）＜ 次のページの表の高さ
                     //これから印刷する高さを取得
+                    var CurrentHight = page[i].GetTableHeight();
                     //CurrentHight += table.Rows * printManager.LineSpacing2;
-                    CurrentHight += table.GetTableHeight();
-                    CurrentHight += printManager.LineSpacing2;
-                    
+                    //CurrentHight += table.GetTableHeight();
+                    //CurrentHight += printManager.LineSpacing2;
+
                     //印刷できるかできないかの判定（できなければ改ページ）
                     if (PageHihgt < CurrentHight)
                     {
                         mc.NewPage();
 
-                        CurrentHight = table.GetTableHeight();
+                        //CurrentHight = table.GetTableHeight();
 
                         // タイトルの印字
                         foreach (var title in titles)

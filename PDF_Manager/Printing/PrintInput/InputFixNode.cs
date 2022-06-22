@@ -356,6 +356,9 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+            if (this.fixnodes.Count == 0)
+                return;
+
             // タイトル などの初期化
             this.printInit(mc, data);
 
