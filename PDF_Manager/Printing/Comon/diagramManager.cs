@@ -55,14 +55,14 @@ namespace PDF_Manager.Printing
             this.AreaSize.Height = paper.Height;
             this.AreaSize.Height -= printManager.padding.Top;
             this.AreaSize.Height -= printManager.padding.Bottom;
-            this.AreaSize.Height -= printManager.FontHeight;        // タイトル印字分高さを減らす
+            this.AreaSize.Height -= printManager.FontHeight * 2;        // タイトル印字分高さを減らす
             this.AreaSize.Height -= printManager.LineSpacing2;
 
             Center[0].X = this.AreaSize.Width / 2;
             Center[0].X += printManager.padding.Left;
             Center[0].Y = this.AreaSize.Height / 2;
             Center[0].Y += printManager.padding.Top;
-            Center[0].Y += printManager.FontHeight;     // タイトル印字分高さを減らす
+            Center[0].Y += printManager.FontHeight * 2;     // タイトル印字分高さを減らす
             Center[0].Y += printManager.LineSpacing2;
 
             if (this.mode == Layout.SplitHorizontal)
@@ -70,15 +70,18 @@ namespace PDF_Manager.Printing
                 Center[1].X = Center[0].X;
 
                 Center[0].Y = this.AreaSize.Height;
-                Center[0].Y -= printManager.padding.Bottom;
+                Center[0].Y -= printManager.padding.Top;
                 Center[0].Y /= 4;
-                Center[0].Y += this.mc.Margine.Top;
-                Center[0].Y += printManager.padding.Top;
-                Center[1].Y = this.AreaSize.Height / 2;
-                //Center[1].Y += this.mc.Margine.Top;
-                //Center[1].Y += printManager.padding.Top;
-                Center[1].Y += printManager.padding.Bottom / 2;
-                Center[1].Y += Center[0].Y;
+                Center[0].Y += printManager.FontHeight * 2;
+                Center[0].Y += printManager.LineSpacing2;
+                Center[0].Y += printManager.padding.Top * 3 / 2;
+                Center[1].Y = this.AreaSize.Height;
+                Center[1].Y -= printManager.padding.Top;
+                Center[1].Y /= 4;
+                Center[1].Y *= 3;
+                Center[1].Y += printManager.padding.Top * 5 / 2;
+                Center[1].Y += printManager.FontHeight * 3;
+                Center[1].Y += printManager.LineSpacing2 * 2;
 
                 AreaSize.Height /= 2;
             }
@@ -89,9 +92,9 @@ namespace PDF_Manager.Printing
                 Center[0].X = this.AreaSize.Width;
                 Center[0].X -= printManager.padding.Left;
                 Center[0].X /= 4;
-                Center[0].X += printManager.padding.Left;
+                Center[0].X += printManager.padding.Left ;
                 Center[1].X = this.AreaSize.Width / 2;
-                Center[1].X += printManager.padding.Left / 2;
+                Center[1].X += printManager.padding.Left /2;
                 Center[1].X += Center[0].X;
 
                 AreaSize.Width /= 2;

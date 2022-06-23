@@ -35,7 +35,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "loadName";
 
-        private Dictionary<int, LoadName> loadnames = new Dictionary<int, LoadName>();
+        public Dictionary<int, LoadName> loadnames = new Dictionary<int, LoadName>();
 
         public InputLoadName(Dictionary<string, object> value)
         {

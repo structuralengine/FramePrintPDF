@@ -43,7 +43,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "fsec";
 
-        private Dictionary<string, object> fsecs = new Dictionary<string, object>();
+        public Dictionary<string, object> fsecs = new Dictionary<string, object>();
         private Dictionary<string, string> fsecnames = new Dictionary<string, string>();
 
 

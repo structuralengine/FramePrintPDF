@@ -36,7 +36,10 @@ namespace PDF_Manager.Printing
         private InputMember Member = null;
         // 材料情報
         private InputElement Element = null;
-        //
+        // 荷重情報
+        private InputLoadName LoadName = null;
+        // 断面力情報
+        private ResultFsec Fsec = null;
 
         public InputDiagramFsec(Dictionary<string, object> value) 
         {
@@ -95,17 +98,112 @@ namespace PDF_Manager.Printing
 
             // 材料名称を取得できる状態にする
             this.Element = (InputElement)data.printDatas[InputElement.KEY];
+            //
+            this.LoadName = (InputLoadName)data.printDatas[InputLoadName.KEY];
+
+            // 断面力を取得
+            this.Fsec = (ResultFsec)data.printDatas[ResultFsec.KEY];
 
             // 描画領域を
             this.canvas = new diagramManager(mc, this.mode);
 
 
-
             // 印刷の前処理
             this.printInit();
 
-            // 骨組みを印字する
-            this.printFrame();
+
+            //ケース名を適当に入力
+            string title = "adfadfasdfasdfasdf";
+
+            // 断面力図を描く
+            foreach (var fsec in this.Fsec.fsecs)
+            {
+                // LoadName から同じキーの情報を
+
+                int index =Convert.ToInt32(fsec.Key);
+                LoadName a;
+                if (!this.LoadName.loadnames.TryGetValue(index, out a))
+                    continue;
+
+
+                if (a != null)
+                {
+                    Text.PrtText(mc, string.Format("CASE : {0}  {1} :{2}", fsec.Key, a.name, a.symbol));
+                }
+                mc.currentPos.Y += printManager.FontHeight;
+                mc.currentPos.Y += printManager.LineSpacing2;
+
+                switch (this.mode)
+                {
+                    case Layout.Default:
+                    case Layout.SplitHorizontal:
+                        //タイトル曲げモーメントを入力
+                        if (a != null)
+                        {
+                            Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
+                        }
+                        mc.currentPos.Y = printManager.titlePos.Y;
+                        mc.currentPos.Y += mc.currentPage.Height;
+                        mc.currentPos.Y -= printManager.padding.Top;
+                        mc.currentPos.Y -= printManager.padding.Bottom;
+                        mc.currentPos.Y -= printManager.FontHeight * 2;
+                        mc.currentPos.Y -= printManager.LineSpacing2;
+                        mc.currentPos.Y /= 2;
+                        mc.currentPos.Y += printManager.padding.Top;
+                        mc.currentPos.Y += printManager.FontHeight * 3;
+                        mc.currentPos.Y += printManager.LineSpacing2 * 2;
+
+                        //タイトルせん断力図を入力
+                        if (a != null)
+                        {
+                            Text.PrtText(mc, string.Format("{0}", "せん断力図"));
+                        }
+                        //mc.currentPos.Y += printManager.FontHeight;
+                        //mc.currentPos.Y += printManager.LineSpacing2;
+
+                        break;
+                    case Layout.SplitVertical:
+                        //タイトル曲げモーメントを入力
+                        if (a != null)
+                        {
+                            Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
+                        }
+                        mc.currentPos.X = printManager.titlePos.X;
+                        mc.currentPos.X += mc.currentPage.Width / 2;
+                        //mc.currentPos.X += printManager.padding.Left / 2;
+
+
+                        //Center[0].X = this.AreaSize.Width;
+                        //Center[0].X -= printManager.padding.Left;
+                        //Center[0].X /= 4;
+                        //Center[0].X += printManager.padding.Left;
+                        //Center[1].X = this.AreaSize.Width / 2;
+                        //Center[1].X += printManager.padding.Left / 2;
+                        //Center[1].X += Center[0].X;
+
+                        //タイトルせん断力図を入力
+                        if (a != null)
+                        {
+                            Text.PrtText(mc, string.Format("{0}", "せん断力図"));
+                        }
+                        mc.currentPos.Y += printManager.FontHeight;
+                        mc.currentPos.Y += printManager.LineSpacing2;
+
+                        break;
+                }
+
+                
+
+                string caseNo = fsec.Key;
+                var fs = fsec.Value;
+
+                // 骨組みを印字する
+                this.printFrame();
+
+                // 改ページ
+                mc.NewPage();
+            }
+
         }
 
 
@@ -143,7 +241,7 @@ namespace PDF_Manager.Printing
                     {
                         var frameHeight = Math.Abs(LeftTop.Y - RightBottom.Y);
                         var paperHeight = this.canvas.areaSize.Height;
-                        paperHeight -= printManager.FontHeight; // タイトル印字分高さを減らす
+                        paperHeight -= printManager.FontHeight * 2; // タイトル印字分高さを減らす
                         paperHeight -= printManager.LineSpacing2;
                         this.scaleY = paperHeight / frameHeight;
                     }

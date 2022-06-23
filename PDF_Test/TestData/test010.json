@@ -1,8 +1,8 @@
 ﻿{
   "title": "ああああああああ",
-  "diagramFsec": {
-     "layout": "SpritHorizontal"
-  },
+    "diagramFsec": {
+        "layout": "SpritVertical"
+    },
   "node": {
     "1": {
       "x": -5,
