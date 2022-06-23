@@ -221,9 +221,11 @@ namespace PDF_Manager.Printing
                     {
                         table[r + i, 3 + c * j] = printManager.toString(item.z, 3);
                         table.AlignX[r + i, 3 + c * j] = "R";
+
                     }
                 }
             }
+
             return table;
         }
 
@@ -282,10 +284,10 @@ namespace PDF_Manager.Printing
 
                 // 2ページ以降に入る行数
                 rows = printRows[1];
-            }
+        }
 
-            // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+        // 表の印刷
+        printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
 
         }
 

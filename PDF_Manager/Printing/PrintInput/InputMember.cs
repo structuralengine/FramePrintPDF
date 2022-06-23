@@ -254,6 +254,9 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+            if (this.members.Count == 0)
+                return;
+
             // 部材長を取得できる状態にする
             this.Node = (InputNode)data.printDatas[InputNode.KEY];
 
@@ -306,7 +309,7 @@ namespace PDF_Manager.Printing
             }
 
             // 表の印刷
-            printManager.printTableContents(mc, page, new string[] { this.title });
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
 
         }
 

@@ -78,11 +78,11 @@ public class PrintInput
        //  格点
        ((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
        // 部材
-       //((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
+       ((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
        // 材料
-       //((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
+       ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
        // 支点
-       //((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
+       ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
 
         /*
         mc = InputJoint.printPDF(mc, data);           // 結合

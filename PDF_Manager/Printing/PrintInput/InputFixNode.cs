@@ -356,6 +356,9 @@ namespace PDF_Manager.Printing
         /// <param name="mc"></param>
         public void printPDF(PdfDocument mc, PrintData data)
         {
+            if (this.fixnodes.Count == 0)
+                return;
+
             // タイトル などの初期化
             this.printInit(mc, data);
 
@@ -417,7 +420,7 @@ namespace PDF_Manager.Printing
                     }
 
                     // 表の印刷
-                    printManager.printTableContents(mc, page, titles);
+                    printManager.printTableContentsOnePage(mc, page, titles);
 
                 }
             }
@@ -495,7 +498,7 @@ namespace PDF_Manager.Printing
                     }
 
                     // 表の印刷
-                    printManager.printTableContents(mc, page, titles);
+                    printManager.printTableContentsOnePage(mc, page, titles);
 
                 }
 
