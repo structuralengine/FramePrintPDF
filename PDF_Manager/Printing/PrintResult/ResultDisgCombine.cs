@@ -145,19 +145,21 @@ namespace PDF_Manager.Printing
             {///3次元
 
                 ///テーブルの作成
-                this.myTable = new Table(5, 8);
+                this.myTable = new Table(5, 9);
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 15.0;//節点No
-                this.myTable.ColWidth[1] = 80.0;//X方向の移動量
-                this.myTable.ColWidth[2] = 80.0;//Y方向の移動量
-                this.myTable.ColWidth[3] = 80.0;//Z方向の移動量
-                this.myTable.ColWidth[4] = 80.0;//X軸周りの回転量
-                this.myTable.ColWidth[5] = 80.0;//Y軸周りの回転量
-                this.myTable.ColWidth[6] = 80.0;//Z軸周りの回転量
-                this.myTable.ColWidth[7] = 80.0;//組合せ
+                this.myTable.ColWidth[1] = 60.0;//X方向の移動量
+                this.myTable.ColWidth[2] = 60.0;//Y方向の移動量
+                this.myTable.ColWidth[3] = 60.0;//Z方向の移動量
+                this.myTable.ColWidth[4] = 60.0;//X軸周りの回転量
+                this.myTable.ColWidth[5] = 60.0;//Y軸周りの回転量
+                this.myTable.ColWidth[6] = 60.0;//Z軸周りの回転量
+                this.myTable.ColWidth[7] = 10.0;//調整用
+                this.myTable.ColWidth[8] = 80.0;//組合せ
 
                 this.myTable.RowHeight[1] = printManager.LineSpacing2;
+                this.myTable.RowHeight[2] = printManager.LineSpacing2;
 
                 this.myTable.AlignX[0, 0] = "L";
                 this.myTable.AlignX[1, 0] = "L";
@@ -211,7 +213,7 @@ namespace PDF_Manager.Printing
                         this.myTable[2, 6] = "Z軸周りの";
                         this.myTable[3, 6] = "回転量";
                         this.myTable[4, 6] = "(mmrad)";
-                        this.myTable[2, 7] = "組合せ";
+                        this.myTable[2, 8] = "組合せ";
                         break;
                 }
 
@@ -342,6 +344,10 @@ namespace PDF_Manager.Printing
                     table[r, j] = printManager.toString(item.rz, 4);
                     table.AlignX[r, j] = "R";
                     j++;
+                    j++;
+                    table[r, j] = printManager.toString(item.caseStr, 4);
+                    table.AlignX[r, j] = "L";
+                    j++;
 
                     r++;
                 }
@@ -400,47 +406,60 @@ namespace PDF_Manager.Printing
             int rows = printRows[0];
 
             // 集計開始
-            if (dimension == 3)　　//３次元
+            if (dimension == 3)  //３次元
             {
                 for (int j = 0; j < this.disgs.Count; ++j)
                 {   // ケース番号のループ
                     var key = this.disgs.ElementAt(j).Key;  // ケース番号
-                    //var tmp1 = new List<Disg>((List<Disg>)this.disgs.ElementAt(j).Value);
+                    var value = this.disgs.ElementAt(j).Value;
 
-                    var caseNo = this.disgnames.ElementAt(j).Key;
-                    var caseName = this.disgnames.ElementAt(j).Value;
 
-                    while (true)
-                    {
-                        // 1ページに納まる分のデータをコピー
-                        var tmp2 = new List<Disg>();
-                        for (int i = 0; i < rows; i++)
+                    //for (int k = 0; k < value.dx_max.Count; ++k)
+                    //{
+                        var tmp1 = new List<Disg>((List<Disg>)value.dx_max);
+                        var caseNo = this.disgnames.ElementAt(j).Key;
+                        var caseName = this.disgnames.ElementAt(j).Value;
+                        var value_key = "X方向の移動量　最大";
+
+                        while (true)
                         {
-                            if (tmp1.Count <= 0)
+                            // 1ページに納まる分のデータをコピー
+                            var tmp2 = new List<Disg>();
+                            for (int i = 0; i < rows; i++)
+                            {
+                                if (tmp1.Count <= 0)
+                                    break;
+                                //tmp2.Add(tmp1.First());
+                                tmp2.Add(tmp1.First());
+                                tmp1.Remove(tmp1.First());
+                            }
+
+                            if (tmp2.Count > 0)
+                            {
+                                var table = this.getPageContents(tmp2);
+                                table[0, 0] = caseNo + caseName;
+                                table[1, 0] = value_key;
+                                page.Add(table);
+
+                            }
+                            else if (tmp1.Count <= 0)
+                            {
                                 break;
-                            tmp2.Add(tmp1.First());
-                            tmp1.Remove(tmp1.First());
+                            }
+                            else
+                            { // 印刷するものもない
+                                mc.NewPage();
+                            }
+
+                            // 2ページ以降に入る行数
+                            rows = printRows[1];
                         }
 
-                        if (tmp2.Count > 0)
-                        {
-                            var table = this.getPageContents(tmp2);
-                            table[0, 0] = caseNo + caseName;
-                            page.Add(table);
+                    //}
 
-                        }
-                        else if (tmp1.Count <= 0)
-                        {
-                            break;
-                        }
-                        else
-                        { // 印刷するものもない
-                            mc.NewPage();
-                        }
+                    //tmp1.AddRange(value);
 
-                        // 2ページ以降に入る行数
-                        rows = printRows[1];
-                    }
+
                 }
             }
             //else　　//２次元
