@@ -204,6 +204,21 @@ namespace PDF_Manager.Printing
         }
 
         /// <summary>
+        /// テーブルの幅
+        /// </summary>
+        /// <returns>pt</returns>
+        public double GetTableWidth()
+        {
+            double result = 0;
+            for (int i = 0; i < this.CellCols; ++i)
+                if (this.ColWidth[i] == double.NaN || this.ColWidth[i] <= 0)
+                    result += this.LineSpacing3;
+                else
+                    result += this.ColWidth[i];
+            return result;
+        }
+
+        /// <summary>
         /// 横罫線幅の設定
         /// </summary>
         /// <param name="row">行番号</param>

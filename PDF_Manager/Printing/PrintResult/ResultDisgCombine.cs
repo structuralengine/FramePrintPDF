@@ -30,7 +30,7 @@ namespace PDF_Manager.Printing
             // key と同じ名前の変数を取得する
             Type type = this.GetType();
             FieldInfo field = type.GetField(key);
-            if(field == null)
+            if (field == null)
             {
                 throw new Exception(String.Format("DisgCombineクラスの変数{0} に値{1}を登録しようとしてエラーが発生しました", key, value));
             }
@@ -42,6 +42,62 @@ namespace PDF_Manager.Printing
             // 変数を更新する
             field.SetValue(this, val);
         }
+
+        public List<Disg> getValue(int Index)
+        {
+            if (Index == 0)
+            {
+                return this.dx_max;
+            }
+            if (Index == 1)
+            {
+                return this.dx_min;
+            }
+            if (Index == 2)
+            {
+                return this.dy_max;
+            }
+            if (Index == 3)
+            {
+                return this.dy_min;
+            }
+            if (Index == 4)
+            {
+                return this.dz_max;
+            }
+            if (Index == 5)
+            {
+                return this.dz_min;
+            }
+            if (Index == 6)
+            {
+                return this.rx_max;
+            }
+            if (Index == 7)
+            {
+                return this.rx_min;
+            }
+            if (Index == 8)
+            {
+                return this.ry_max;
+            }
+            if (Index == 9)
+            {
+                return this.ry_min;
+            }
+            if (Index == 10)
+            {
+                return this.rz_max;
+            }
+            if (Index == 11)
+            {
+                return this.rz_min;
+            }
+
+            return null;
+
+        }
+
     }
 
     internal class ResultDisgCombine
@@ -50,6 +106,7 @@ namespace PDF_Manager.Printing
 
         private Dictionary<string, DisgCombine> disgs = new Dictionary<string, DisgCombine>();
         private Dictionary<string, string> disgnames = new Dictionary<string, string>();
+        private Dictionary<string, string> disgcasenames = new Dictionary<string, string>();
 
         public ResultDisgCombine(Dictionary<string, object> value, string key = ResultDisgCombine.KEY)
         {
@@ -89,7 +146,6 @@ namespace PDF_Manager.Printing
                 loadNew[1] = load[1].ToString();
 
                 disgnames.Add(loadNew[0], loadNew[1]);
-
             }
 
         }
@@ -308,13 +364,19 @@ namespace PDF_Manager.Printing
             int c = count / columns;
 
             int rows = target.Count;
-
+            var wide = 0;
+            var pagewidth = 0;
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
             table.RowHeight[r] = printManager.LineSpacing2;
+
+            for (int i = 0; i < count; i++)
+            {
+
+            }
 
             if (dimension == 3)　　//３次元
             {
@@ -349,6 +411,7 @@ namespace PDF_Manager.Printing
                     table.AlignX[r, j] = "L";
                     j++;
 
+                    
                     r++;
                 }
             }
@@ -413,13 +476,26 @@ namespace PDF_Manager.Printing
                     var key = this.disgs.ElementAt(j).Key;  // ケース番号
                     var value = this.disgs.ElementAt(j).Value;
 
+                    var caseNo = this.disgnames.ElementAt(j).Key;
+                    var caseName = this.disgnames.ElementAt(j).Value;
 
-                    //for (int k = 0; k < value.dx_max.Count; ++k)
-                    //{
-                        var tmp1 = new List<Disg>((List<Disg>)value.dx_max);
-                        var caseNo = this.disgnames.ElementAt(j).Key;
-                        var caseName = this.disgnames.ElementAt(j).Value;
-                        var value_key = "X方向の移動量　最大";
+                    var ValueKey = new List<string>();
+                    ValueKey.Add("X方向の移動量　最大");
+                    ValueKey.Add("X方向の移動量　最小");
+                    ValueKey.Add("Y方向の移動量　最大");
+                    ValueKey.Add("Y方向の移動量　最小");
+                    ValueKey.Add("Z方向の移動量　最大");
+                    ValueKey.Add("Z方向の移動量　最小");
+                    ValueKey.Add("X軸周りの回転量　最大");
+                    ValueKey.Add("X軸周りの回転量　最小");
+                    ValueKey.Add("Y軸周りの回転量　最大");
+                    ValueKey.Add("Y軸周りの回転量　最小");
+                    ValueKey.Add("Z軸周りの回転量　最大");
+                    ValueKey.Add("Z軸周りの回転量　最小");
+
+                    for (int k = 0; k < 12; ++k)
+                    {
+                        var tmp1 = value.getValue(k);
 
                         while (true)
                         {
@@ -438,7 +514,7 @@ namespace PDF_Manager.Printing
                             {
                                 var table = this.getPageContents(tmp2);
                                 table[0, 0] = caseNo + caseName;
-                                table[1, 0] = value_key;
+                                table[1, 0] = ValueKey[k];
                                 page.Add(table);
 
                             }
@@ -453,13 +529,10 @@ namespace PDF_Manager.Printing
 
                             // 2ページ以降に入る行数
                             rows = printRows[1];
+
                         }
 
-                    //}
-
-                    //tmp1.AddRange(value);
-
-
+                    }
                 }
             }
             //else　　//２次元
@@ -515,6 +588,7 @@ namespace PDF_Manager.Printing
             // 表の印刷
             printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
         }
+
 
 
     }
