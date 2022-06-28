@@ -198,7 +198,7 @@ namespace PDF_Manager.Printing
                 var fs = fsec.Value;
 
                 // 骨組みを印字する
-                this.printFrame();
+                this.printFrame((List<Fsec>)fsec.Value);
 
                 // 改ページ
                 mc.NewPage();
@@ -257,7 +257,7 @@ namespace PDF_Manager.Printing
         }
 
 
-        private void printFrame()
+        private void printFrame(List<Fsec> fsec)
         {
             int j = 0;
             switch (this.mode)
@@ -299,6 +299,109 @@ namespace PDF_Manager.Printing
                     var y = -(p.y - this.CenterPos.Y) * this.scale;
 
                     canvas.printNode(x, y);
+                }
+
+
+
+
+                // 断面力の描写
+                canvas.mc.xpen = new XPen(XBrushes.Blue, 0.1);
+
+                Member m1 = null;
+                Vector3 posi = null;
+                Vector3 posj = null;
+                double Tilt = 0.00;
+                double vertical = 0;
+
+                foreach (var f in fsec)
+                {
+                    if (f.m.Length > 0)
+                    {
+                        m1 = this.Member.GetMember(f.m);//任意の要素を取得
+                        if (m1 == null)
+                        {
+                            continue;
+                        }
+                        //要素の節点i,jの情報を取得
+                        posi = this.Node.GetNodePos(m1.ni);
+                        posj = this.Node.GetNodePos(m1.nj);
+
+                        //節点情報の座標を取得
+                        var nodeix = posi.x;
+                        var nodeiy = posi.y;
+                        var nodejx = posj.x;
+                        var nodejy = posj.y;
+
+                        //要素の傾きを計算する
+                        Tilt = (nodejy - nodeiy) / (nodejx - nodeix);
+
+                        //傾きに対して直角となるような傾き
+                        
+                        if (Tilt != 0)
+                        {
+                            vertical = -1 * (1 / Tilt);
+                        }
+                    }
+                    if (f.n.Length <= 0)
+                    {
+                        continue;
+                    }
+
+                
+                    //荷重の大きさ(線の長さ)の時の座標計算
+
+                    var fz = f.fz; //荷重の大きさを取得
+                    if(fz == 0)
+                    {
+                        continue;
+                    }
+
+                    var xx2 = (posi.x - this.CenterPos.X) * this.scale; //紙面に合う大きさ設定(仮)
+                    var yx2 = -(posi.y - this.CenterPos.Y) * this.scale;
+
+                    var yx1 = fz;
+                    var Fsecx = 0.00;
+                    var Fsecy = 0.00;
+
+                    if (Tilt != 0)
+                    {
+                        Fsecx = Math.Sqrt(yx1 * yx1 / (1 + (vertical * vertical))); //x座標の算出
+                        Fsecy = vertical * Fsecx; //y座標の算出
+
+                    } else
+                    {
+                        Fsecx = (posi.x - this.CenterPos.X) * this.scale; 
+                        Fsecy = (f.fz - this.CenterPos.Y) * this.scale; 
+                    }
+
+                    var xx11 = 0.00;
+                    var xy11 = 0.00;
+
+                    if (Tilt > 0)
+                    {
+                        xx11 = Fsecx * -1;
+                        xy11 = Fsecy * 1;
+                    }
+                    else if(Tilt < 0)
+                    {
+                        xx11 = Fsecx * 1;
+                        xy11 = Fsecy * -1;
+                    }
+                    else
+                    {
+                        xx11 = 0;
+                        xy11 = Fsecy * 1;
+                    }
+
+                    //2点を結ぶ直線を引く
+                    canvas.printLine(xx11 + xx2, xy11 + yx2, xx2, yx2);
+
+
+
+                    canvas.mc.currentPos.X = (posi.x - this.CenterPos.X) * this.scale;
+                    canvas.mc.currentPos.Y = -(posi.y - this.CenterPos.Y) * this.scale;
+
+                    Text.PrtText(canvas.mc, string.Format("{0}", fz));
                 }
             }
 

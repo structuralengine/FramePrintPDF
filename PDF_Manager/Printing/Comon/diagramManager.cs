@@ -19,7 +19,7 @@ namespace PDF_Manager.Printing
         private double nodeSize = 2;        // 節点の円の大きさ
         private double nodePenWidth = 0.2;  // 節点の線幅
 
-        private PdfDocument mc;
+        public PdfDocument mc;
 
         // 図のレイアウト
         private Layout mode;        // 図のレイアウト
