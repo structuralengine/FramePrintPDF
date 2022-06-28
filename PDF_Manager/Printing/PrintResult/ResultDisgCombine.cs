@@ -100,6 +100,36 @@ namespace PDF_Manager.Printing
 
     }
 
+
+    //文字数分割用メソッド
+    public static class StringExtensions
+    {
+        public static string[] SubstringAtCount(this string self, int count)
+        {
+            var result = new List<string>();
+            var length = (int)Math.Ceiling((double)self.Length / count);
+
+            for (int i = 0; i < length; i++)
+            {
+                int start = count * i;
+                if (self.Length <= start)
+                {
+                    break;
+                }
+                if (self.Length < start + count)
+                {
+                    result.Add(self.Substring(start));
+                }
+                else
+                {
+                    result.Add(self.Substring(start, count));
+                }
+            }
+
+            return result.ToArray();
+        }
+    }
+
     internal class ResultDisgCombine
     {
         public const string KEY = "disgCombine";
@@ -364,19 +394,12 @@ namespace PDF_Manager.Printing
             int c = count / columns;
 
             int rows = target.Count;
-            var wide = 0;
-            var pagewidth = 0;
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
-            table.ReDim(row: r + rows);
+            table.ReDim(row: r + rows*2);
 
             table.RowHeight[r] = printManager.LineSpacing2;
-
-            for (int i = 0; i < count; i++)
-            {
-
-            }
 
             if (dimension == 3)　　//３次元
             {
@@ -407,12 +430,27 @@ namespace PDF_Manager.Printing
                     table.AlignX[r, j] = "R";
                     j++;
                     j++;
-                    table[r, j] = printManager.toString(item.caseStr, 4);
-                    table.AlignX[r, j] = "L";
-                    j++;
+                    if(item.caseStr != null)
+                    {
+                        int len = item.caseStr.Length;
+                        var str = item.caseStr;
 
-                    
-                    r++;
+                        if(len > 24)
+                        {
+                            foreach (var n in str.SubstringAtCount(24))
+                            {
+                                table[r, j] = printManager.toString(n, 4);
+                                table.AlignX[r, j] = "L";
+                                r++;
+                            }
+                        }
+                        else
+                        {
+                            table[r, j] = printManager.toString(item.caseStr, 4);
+                            table.AlignX[r, j] = "L";
+                            r++;
+                        }
+                    }
                 }
             }
 
@@ -499,6 +537,7 @@ namespace PDF_Manager.Printing
 
                         while (true)
                         {
+
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Disg>();
                             for (int i = 0; i < rows; i++)
@@ -529,6 +568,19 @@ namespace PDF_Manager.Printing
 
                             // 2ページ以降に入る行数
                             rows = printRows[1];
+
+                            ////改行したため入りきらなかった場合
+                            //if (tmp2.Count > 0)
+                            //{
+                            //    printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
+                            //    page = new List<Table>();
+                            //    mc.NewPage();
+
+                            //    var table = this.getPageContents(tmp2);
+                            //    table[0, 0] = caseNo + caseName;
+                            //    table[1, 0] = ValueKey[k];
+                            //    page.Add(table);
+                            //}
 
                         }
 
@@ -587,6 +639,7 @@ namespace PDF_Manager.Printing
 
             // 表の印刷
             printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
+
         }
 
 
