@@ -537,6 +537,13 @@ namespace PDF_Manager.Printing
 
                         while (true)
                         {
+                            if (tmp1.Count <= 0)
+                                break;
+
+                            if(tmp1[0].caseStr.Length > 24)
+                            {
+                                rows = rows / 2;
+                            }
 
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Disg>();
