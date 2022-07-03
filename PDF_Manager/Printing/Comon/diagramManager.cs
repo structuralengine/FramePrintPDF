@@ -164,7 +164,7 @@ namespace PDF_Manager.Printing
             XPoint p = new XPoint(x1, y1);
             XPoint q = new XPoint(x2, y2);
 
-            Shape.DrawLine(this.mc, p, q, 1);
+            Shape.DrawLine(this.mc, p, q);
         }
     }
 }

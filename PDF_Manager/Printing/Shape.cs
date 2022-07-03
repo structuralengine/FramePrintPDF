@@ -18,9 +18,10 @@ namespace PDF_Manager.Printing
         /// <param name="_pt1"></param>
         /// <param name="_pt2"></param>
         /// <param name="_PenWidth"></param>
-        static public void DrawLine(PdfDocument mc, XPoint _pt1, XPoint _pt2, double _PenWidth)
+        static public void DrawLine(PdfDocument mc, XPoint _pt1, XPoint _pt2, double _PenWidth = double.NaN)
         {
-            mc.xpen.Width = _PenWidth;
+            if(!double.IsNaN(_PenWidth))
+                mc.xpen.Width = _PenWidth;
             mc.gfx.DrawLine(mc.xpen, _pt1, _pt2);
         }
 

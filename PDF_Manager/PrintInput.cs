@@ -107,6 +107,9 @@ public class PrintInput
         ((ResultReac)data.printDatas[ResultReac.KEY]).printPDF(mc, data);
         ((ResultFsec)data.printDatas[ResultFsec.KEY]).printPDF(mc, data);
         ((ResultDisgCombine)data.printDatas[ResultDisgCombine.KEY]).printPDF(mc, data);
+        ((ResultReacCombine)data.printDatas[ResultReacCombine.KEY]).printPDF(mc, data);
+        ((ResultFsecCombine)data.printDatas[ResultFsecCombine.KEY]).printPDF(mc, data);
+
 
         /*
         mc = ResultDisg.printPDF(mc, data);

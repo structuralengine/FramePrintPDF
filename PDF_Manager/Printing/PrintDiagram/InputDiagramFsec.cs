@@ -112,23 +112,19 @@ namespace PDF_Manager.Printing
             this.printInit();
 
 
-            //ケース名を適当に入力
-            string title = "adfadfasdfasdfasdf";
-
             // 断面力図を描く
             foreach (var fsec in this.Fsec.fsecs)
             {
                 // LoadName から同じキーの情報を
 
                 int index =Convert.ToInt32(fsec.Key);
-                LoadName a;
-                if (!this.LoadName.loadnames.TryGetValue(index, out a))
+                LoadName ln = null;
+                if (!this.LoadName.loadnames.TryGetValue(index, out ln))
                     continue;
 
-
-                if (a != null)
+                if (ln != null)
                 {
-                    Text.PrtText(mc, string.Format("CASE : {0}  {1} :{2}", fsec.Key, a.name, a.symbol));
+                    Text.PrtText(mc, string.Format("CASE : {0}  {1} :{2}", fsec.Key, ln.name, ln.symbol));
                 }
                 mc.currentPos.Y += printManager.FontHeight;
                 mc.currentPos.Y += printManager.LineSpacing2;
@@ -138,7 +134,7 @@ namespace PDF_Manager.Printing
                     case Layout.Default:
                     case Layout.SplitHorizontal:
                         //タイトル曲げモーメントを入力
-                        if (a != null)
+                        if (ln != null)
                         {
                             Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
                         }
@@ -154,35 +150,23 @@ namespace PDF_Manager.Printing
                         mc.currentPos.Y += printManager.LineSpacing2 * 2;
 
                         //タイトルせん断力図を入力
-                        if (a != null)
+                        if (ln != null)
                         {
                             Text.PrtText(mc, string.Format("{0}", "せん断力図"));
                         }
-                        //mc.currentPos.Y += printManager.FontHeight;
-                        //mc.currentPos.Y += printManager.LineSpacing2;
 
                         break;
                     case Layout.SplitVertical:
                         //タイトル曲げモーメントを入力
-                        if (a != null)
+                        if (ln != null)
                         {
                             Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
                         }
                         mc.currentPos.X = printManager.titlePos.X;
                         mc.currentPos.X += mc.currentPage.Width / 2;
-                        //mc.currentPos.X += printManager.padding.Left / 2;
-
-
-                        //Center[0].X = this.AreaSize.Width;
-                        //Center[0].X -= printManager.padding.Left;
-                        //Center[0].X /= 4;
-                        //Center[0].X += printManager.padding.Left;
-                        //Center[1].X = this.AreaSize.Width / 2;
-                        //Center[1].X += printManager.padding.Left / 2;
-                        //Center[1].X += Center[0].X;
 
                         //タイトルせん断力図を入力
-                        if (a != null)
+                        if (ln != null)
                         {
                             Text.PrtText(mc, string.Format("{0}", "せん断力図"));
                         }
@@ -191,8 +175,6 @@ namespace PDF_Manager.Printing
 
                         break;
                 }
-
-                
 
                 string caseNo = fsec.Key;
                 var fs = fsec.Value;
@@ -257,6 +239,10 @@ namespace PDF_Manager.Printing
         }
 
 
+        /// <summary>
+        /// 骨組みを印字する
+        /// </summary>
+        /// <param name="fsec"></param>
         private void printFrame(List<Fsec> fsec)
         {
             int j = 0;
@@ -272,6 +258,8 @@ namespace PDF_Manager.Printing
             {
                 canvas.currentArea = i;
 
+                // 骨組の描写
+                canvas.mc.xpen = new XPen(XBrushes.Black, 1);
 
                 // 要素を取得できる状態にする
                 foreach (var m in this.Member.members)
@@ -302,8 +290,6 @@ namespace PDF_Manager.Printing
                 }
 
 
-
-
                 // 断面力の描写
                 canvas.mc.xpen = new XPen(XBrushes.Blue, 0.1);
 
@@ -313,7 +299,7 @@ namespace PDF_Manager.Printing
                 double Tilt = 0.00;
                 double vertical = 0;
 
-                foreach (var f in fsec)
+                foreach (Fsec f in fsec)
                 {
                     if (f.m.Length > 0)
                     {
@@ -395,8 +381,6 @@ namespace PDF_Manager.Printing
 
                     //2点を結ぶ直線を引く
                     canvas.printLine(xx11 + xx2, xy11 + yx2, xx2, yx2);
-
-
 
                     canvas.mc.currentPos.X = (posi.x - this.CenterPos.X) * this.scale;
                     canvas.mc.currentPos.Y = -(posi.y - this.CenterPos.Y) * this.scale;
