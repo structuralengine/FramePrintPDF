@@ -569,7 +569,6 @@ namespace PDF_Manager.Printing
 
                     var caseNo = this.fsecnames.ElementAt(j).Key;
                     var caseName = this.fsecnames.ElementAt(j).Value;
-                    var tmp3 = new List<Fsec>();
 
                     var ValueKey = new List<string>();
                     ValueKey.Add("軸方向力　最大");
@@ -584,6 +583,8 @@ namespace PDF_Manager.Printing
                     ValueKey.Add("Y軸周りの曲げモーメント　最小");
                     ValueKey.Add("Z軸周りの曲げモーメント　最大");
                     ValueKey.Add("Z軸周りの曲げモーメント　最小");
+
+                    var tmp3 = new List<Fsec>();
 
                     for (int k = 0; k < 12; ++k)
                     {
@@ -601,6 +602,7 @@ namespace PDF_Manager.Printing
 
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Fsec>();
+
                             for (int i = 0; i < rows; i++)
                             {
                                 if (tmp1.Count <= 0)
@@ -608,16 +610,50 @@ namespace PDF_Manager.Printing
 
                                 while (true)
                                 {
-                                    tmp2.Add(tmp1.First());
+                                    tmp3.Add(tmp1.First());
                                     tmp1.Remove(tmp1.First());
+
                                     if (tmp1.Count <= 0)
                                         break;
+
                                     if (tmp1.First().m != "")
                                     {
                                         break;
                                     }
-                                    rows -= 1;
                                 }
+
+                                if (rows - tmp2.Count > tmp3.Count)
+                                {
+                                    tmp2.AddRange(tmp3);
+                                    tmp3.Clear();
+                                }
+                                else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > rows)
+                                {
+                                    while (tmp3.Count != 0)
+                                    {
+                                        for (int l = 0; l < rows; l++)
+                                        {
+                                            tmp2.Add(tmp3.First());
+                                            tmp3.Remove(tmp3.First());                                            
+                                            if (tmp3.Count == 0)
+                                                break;
+                                            if (rows - tmp2.Count <= 0)
+                                                break;
+                                        }
+                                        if (tmp3.Count == 0)
+                                            break;
+                                        var table = this.getPageContents(tmp2);
+                                        table[0, 0] = caseNo + caseName;
+                                        table[1, 0] = ValueKey[k];
+                                        page.Add(table);
+                                        tmp2.Clear();
+                                    }
+                                }
+                                else 
+                                {
+                                    break;
+                                }
+
                             }
 
                             if (tmp2.Count > 0)
