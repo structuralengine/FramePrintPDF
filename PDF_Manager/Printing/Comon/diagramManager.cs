@@ -42,7 +42,7 @@ namespace PDF_Manager.Printing
             this.mc = mc;
 
             // 線幅などの初期化
-            this.mc.xpen = new XPen(XBrushes.Black, nodePenWidth);
+            this.mc.xpen = new XPen(XColors.Black, nodePenWidth);
 
             // レイアウト
             this.mode = _mode;

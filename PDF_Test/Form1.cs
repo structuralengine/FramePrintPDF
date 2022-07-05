@@ -1,8 +1,10 @@
 ﻿using PDF_Manager;
+using PdfSharpCore.Pdf;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -34,13 +36,21 @@ namespace PDF_Test
 
                 p.createPDF();
 
-                MessageBox.Show("ｵﾜﾀ＼(^o^)／");
+                // PDF を表示する
+                var oProc = new Process();
+                oProc.StartInfo.FileName = Path.GetFullPath("../../../TestData/Test.pdf");
+                oProc.StartInfo.UseShellExecute = true;
+                oProc.Start();
+                oProc.WaitForExit();
+                
+                // MessageBox.Show("ｵﾜﾀ＼(^o^)／");
             }
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            button1_Click(sender, null);
         }
     }
 }

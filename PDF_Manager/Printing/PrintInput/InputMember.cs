@@ -15,6 +15,9 @@ namespace PDF_Manager.Printing
         public string e;  // 材料番号
         public double cg; // コードアングル
 
+        // 他のモジュールで使う変数
+        public double L = double.NaN;   // 要素の長さ
+        public double[, ] t = null;     // 座標変換マトリックス
     }
 
 

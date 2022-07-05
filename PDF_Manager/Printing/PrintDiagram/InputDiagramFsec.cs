@@ -245,7 +245,11 @@ namespace PDF_Manager.Printing
         /// <param name="fsec"></param>
         private void printFrame(List<Fsec> fsec)
         {
-            int j = 0;
+            // 描く順番
+            var targetIndexList = new int[] { 2, 1, 0 }; // 2: mz, 1: fy, 0:fx の順に描く
+
+            // レイアウトによって１ページに描画する数
+            int j = 0;  
             switch (this.mode)
             {
                 case Layout.SplitHorizontal:
@@ -254,17 +258,17 @@ namespace PDF_Manager.Printing
                     break;
             }
 
-            for (var i = 0; i <= j; ++i)
+            // 1ページ内に描く
+            for (var i = 0; i <= j; ++i) //<-
             {
                 canvas.currentArea = i;
 
                 // 骨組の描写
-                canvas.mc.xpen = new XPen(XBrushes.Black, 1);
+                canvas.mc.xpen = new XPen(XColors.Black, 1);
 
                 // 要素を取得できる状態にする
-                foreach (var m in this.Member.members)
+                foreach (var mm in this.Member.members.Values)
                 {
-                    var mm = m.Value;
                     var p1 = this.Node.GetNodePos(mm.ni);
                     var p2 = this.Node.GetNodePos(mm.nj);
 
@@ -278,114 +282,105 @@ namespace PDF_Manager.Printing
                 }
 
                 // 節点データ
-                foreach (var n in this.Node.Nodes)
+                foreach (var pp in this.Node.Nodes.Values)
                 {
-                    var id = n.Key;
-                    var p = n.Value;
-
-                    var x = (p.x - this.CenterPos.X) * this.scale;
-                    var y = -(p.y - this.CenterPos.Y) * this.scale;
+                    var x = (pp.x - this.CenterPos.X) * this.scale;
+                    var y = -(pp.y - this.CenterPos.Y) * this.scale;
 
                     canvas.printNode(x, y);
                 }
 
-
                 // 断面力の描写
-                canvas.mc.xpen = new XPen(XBrushes.Blue, 0.1);
+                canvas.mc.xpen = new XPen(XColors.Blue, 0.2);
+                int Index = targetIndexList[i];
 
-                Member m1 = null;
-                Vector3 posi = null;
-                Vector3 posj = null;
-                double Tilt = 0.00;
-                double vertical = 0;
+                // 断面力の縮尺を計算する
+                var max_value = 0.0;
+                foreach (Fsec f in fsec)
+                    max_value = Math.Max(Math.Abs(f.getValue2(Index)), max_value);
+
+                // 断面力の最大値を 50pt とする
+                var fsecScale = 50 / max_value;
+
+                // 描画中の要素情報
+                Member m = null;
+                Vector3 pi = new Vector3();  // 着目点位置
+                double xx = double.NaN;
+                double yy = double.NaN;
 
                 foreach (Fsec f in fsec)
                 {
+                    // 部材情報をセットする
                     if (f.m.Length > 0)
                     {
-                        m1 = this.Member.GetMember(f.m);//任意の要素を取得
+                        var m1 = this.Member.GetMember(f.m);//任意の要素を取得
                         if (m1 == null)
+                            continue;   // 有効な部材じゃない
+                        if (double.IsNaN(m1.L))
                         {
-                            continue;
+                            //要素の節点i,jの情報を取得
+                            pi = this.Node.GetNodePos(m1.ni);   // 描画中の要素のi端座標情報
+                            Vector3 pj = this.Node.GetNodePos(m1.nj);   // 描画中の要素のj端座標情報
+
+                            // 部材長さ
+                            m1.L = Math.Sqrt(Math.Pow(pj.x - pi.x, 2) + Math.Pow(pj.y - pi.y, 2));
+
+                            //節点情報の座標を取得
+                            var xL = (pj.x - pi.x) / m1.L;
+                            var yL = (pj.y - pi.y) / m1.L;
+
+                            // 座標変換マトリックス
+                            m1.t = new double[2, 2] { { xL, yL }, { -yL, xL } };
+
+                            // 断面力の線
+                            xx = double.NaN;
+                            yy = double.NaN;
                         }
-                        //要素の節点i,jの情報を取得
-                        posi = this.Node.GetNodePos(m1.ni);
-                        posj = this.Node.GetNodePos(m1.nj);
-
-                        //節点情報の座標を取得
-                        var nodeix = posi.x;
-                        var nodeiy = posi.y;
-                        var nodejx = posj.x;
-                        var nodejy = posj.y;
-
-                        //要素の傾きを計算する
-                        Tilt = (nodejy - nodeiy) / (nodejx - nodeix);
-
-                        //傾きに対して直角となるような傾き
-                        
-                        if (Tilt != 0)
-                        {
-                            vertical = -1 * (1 / Tilt);
-                        }
+                        m = m1;
                     }
+
+                    // 断面力の位置を決定する
+                    Vector3 pos = new Vector3(); 
                     if (f.n.Length <= 0)
-                    {
-                        continue;
-                    }
-
-                
-                    //荷重の大きさ(線の長さ)の時の座標計算
-
-                    var fz = f.fz; //荷重の大きさを取得
-                    if(fz == 0)
-                    {
-                        continue;
-                    }
-
-                    var xx2 = (posi.x - this.CenterPos.X) * this.scale; //紙面に合う大きさ設定(仮)
-                    var yx2 = -(posi.y - this.CenterPos.Y) * this.scale;
-
-                    var yx1 = fz;
-                    var Fsecx = 0.00;
-                    var Fsecy = 0.00;
-
-                    if (Tilt != 0)
-                    {
-                        Fsecx = Math.Sqrt(yx1 * yx1 / (1 + (vertical * vertical))); //x座標の算出
-                        Fsecy = vertical * Fsecx; //y座標の算出
-
-                    } else
-                    {
-                        Fsecx = (posi.x - this.CenterPos.X) * this.scale; 
-                        Fsecy = (f.fz - this.CenterPos.Y) * this.scale; 
-                    }
-
-                    var xx11 = 0.00;
-                    var xy11 = 0.00;
-
-                    if (Tilt > 0)
-                    {
-                        xx11 = Fsecx * -1;
-                        xy11 = Fsecy * 1;
-                    }
-                    else if(Tilt < 0)
-                    {
-                        xx11 = Fsecx * 1;
-                        xy11 = Fsecy * -1;
+                    {  // 部材途中の着目点位置
+                       pos.x = pi.x + f.l * m.t[0, 0];
+                       pos.y = pi.y + f.l * m.t[0, 1];
                     }
                     else
                     {
-                        xx11 = 0;
-                        xy11 = Fsecy * 1;
+                        pos = this.Node.GetNodePos(f.n);
                     }
 
-                    //2点を結ぶ直線を引く
-                    canvas.printLine(xx11 + xx2, xy11 + yx2, xx2, yx2);
+                    //荷重の大きさを取得
+                    var Value = f.getValue2(Index); 
 
-                    canvas.mc.currentPos.X = (posi.x - this.CenterPos.X) * this.scale;
-                    canvas.mc.currentPos.Y = -(posi.y - this.CenterPos.Y) * this.scale;
+                    //荷重の大きさ(線の長さ)の時の座標計算
+                    var fxg = m.t[1, 0] * Value;
+                    var fyg = m.t[1, 1] * Value;
 
-                    Text.PrtText(canvas.mc, string.Format("{0}", fz));
+                    //n スケール調整
+                    var x1 = (pos.x - this.CenterPos.X) * this.scale;
+                    var y1 = -(pos.y - this.CenterPos.Y) * this.scale;
+                    var x2 = x1 + fxg * fsecScale;
+                    var y2 = y1 + fyg * fsecScale;
+
+                    // 2点を結ぶ直線を引く
+                    if (!double.IsNaN(xx))
+                        canvas.printLine(xx, yy, x2, y2);
+
+                    // 部材から垂線を引く
+                    if (Value != 0)
+                    {
+                        canvas.printLine(x1, y1, x2, y2);
+                        
+                        //canvas.mc.currentPos.X = (pi.x - this.CenterPos.X) * this.scale;
+                        //canvas.mc.currentPos.Y = -(pi.y - this.CenterPos.Y) * this.scale;
+                        //Text.PrtText(canvas.mc, string.Format("{0}", fz));
+                    }
+
+                    xx = x2;
+                    yy = y2;
+
                 }
             }
 
