@@ -383,19 +383,16 @@ namespace PDF_Manager.Printing
         /// <returns>印刷する用の配列</returns>
         private Table getPageContents(List<Fsec> target)
         {
-            int r = this.myTable.Rows;
-
-            int columns = 2;
-            int count = this.myTable.Columns;
-            int c = count / columns;
+            int r = this.myTable.Rows; 
 
             int rows = target.Count;
+
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows * 2);
 
-            table.RowHeight[r] = printManager.LineSpacing2;
+            table.RowHeight[r -1] = printManager.LineSpacing2;
 
             if (dimension == 3)　　//３次元
             {
@@ -470,7 +467,6 @@ namespace PDF_Manager.Printing
 
             else　　//２次元
             {
-                int Rows = target.Count / columns;
 
                 for (var i = 0; i < rows; i++)
                 {
@@ -595,18 +591,31 @@ namespace PDF_Manager.Printing
                             if (tmp1.Count <= 0)
                                 break;
 
-                            if (tmp1[0].caseStr.Length > 24)
-                            {
-                                rows = rows / 2;
-                            }
-
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Fsec>();
-
+                            var pullrows = 0;
+                            
                             for (int i = 0; i < rows; i++)
                             {
                                 if (tmp1.Count <= 0)
                                     break;
+
+                                if (tmp1.Count < rows)
+                                    rows = tmp1.Count;
+
+                                int len = tmp1[i].caseStr.Length;
+                                var str = tmp1[i].caseStr;
+
+                                if (len > 24)
+                                {
+                                    foreach (var n in str.SubstringAtCount(24))
+                                    {
+                                        pullrows ++;
+                                    }
+                                }
+
+                                rows = rows - pullrows;
+
 
                                 while (true)
                                 {
@@ -708,10 +717,10 @@ namespace PDF_Manager.Printing
                             if (tmp1.Count <= 0)
                                 break;
 
-                            if (tmp1[0].caseStr.Length > 24)
-                            {
-                                rows = rows / 2;
-                            }
+                            //if (tmp1[0].caseStr.Length > 24)
+                            //{
+                            //    rows = rows / 2;
+                            //}
 
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Fsec>();
@@ -740,7 +749,6 @@ namespace PDF_Manager.Printing
                                 table[0, 0] = caseNo + caseName;
                                 table[1, 0] = ValueKey[k];
                                 page.Add(table);
-
                             }
                             else if (tmp1.Count <= 0)
                             {
