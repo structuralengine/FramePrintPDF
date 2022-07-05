@@ -314,14 +314,20 @@ namespace PDF_Manager.Printing
                     if (f.m.Length > 0)
                     {
                         var m1 = this.Member.GetMember(f.m);//任意の要素を取得
+
                         if (m1 == null)
                             continue;   // 有効な部材じゃない
+
+                        // 断面力の線を書かないフラグ
+                        xx = double.NaN;
+                        yy = double.NaN;
+
+                        //要素の節点i,jの情報を取得
+                        pi = this.Node.GetNodePos(m1.ni);   // 描画中の要素のi端座標情報
+                        Vector3 pj = this.Node.GetNodePos(m1.nj);   // 描画中の要素のj端座標情報
+
                         if (double.IsNaN(m1.L))
                         {
-                            //要素の節点i,jの情報を取得
-                            pi = this.Node.GetNodePos(m1.ni);   // 描画中の要素のi端座標情報
-                            Vector3 pj = this.Node.GetNodePos(m1.nj);   // 描画中の要素のj端座標情報
-
                             // 部材長さ
                             m1.L = Math.Sqrt(Math.Pow(pj.x - pi.x, 2) + Math.Pow(pj.y - pi.y, 2));
 
@@ -331,13 +337,10 @@ namespace PDF_Manager.Printing
 
                             // 座標変換マトリックス
                             m1.t = new double[2, 2] { { xL, yL }, { -yL, xL } };
-
-                            // 断面力の線
-                            xx = double.NaN;
-                            yy = double.NaN;
                         }
                         m = m1;
                     }
+
 
                     // 断面力の位置を決定する
                     Vector3 pos = new Vector3(); 
@@ -347,7 +350,7 @@ namespace PDF_Manager.Printing
                        pos.y = pi.y + f.l * m.t[0, 1];
                     }
                     else
-                    {
+                    {   // 部材端点位置
                         pos = this.Node.GetNodePos(f.n);
                     }
 

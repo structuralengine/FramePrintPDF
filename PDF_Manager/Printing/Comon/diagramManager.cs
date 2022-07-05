@@ -153,13 +153,10 @@ namespace PDF_Manager.Printing
         {
             var centerPos = this.Center[this.currentArea];
 
-            var x1 = centerPos.X + _x1 ;
-            var y1 = centerPos.Y + _y1 ;
-            var x2 = centerPos.X + _x2 ;
-            var y2 = centerPos.Y + _y2 ;
-
-            //XPoint p = new XPoint(x, y);
-            //XSize z = new XSize(this.nodeSize, this.nodeSize);
+            var x1 = centerPos.X + _x1;
+            var y1 = centerPos.Y + _y1;
+            var x2 = centerPos.X + _x2;
+            var y2 = centerPos.Y + _y2;
 
             XPoint p = new XPoint(x1, y1);
             XPoint q = new XPoint(x2, y2);
