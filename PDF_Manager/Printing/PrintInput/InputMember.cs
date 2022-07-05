@@ -16,8 +16,9 @@ namespace PDF_Manager.Printing
         public double cg; // コードアングル
 
         // 他のモジュールで使う変数
-        public double L = double.NaN;   // 要素の長さ
-        public double[, ] t = null;     // 座標変換マトリックス
+        public double L = double.NaN;       // 要素の長さ
+        public double[, ] t = null;         // 座標変換マトリックス
+        public double radian = double.NaN;   // 角度
     }
 
 

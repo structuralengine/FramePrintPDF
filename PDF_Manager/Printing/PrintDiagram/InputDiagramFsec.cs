@@ -337,10 +337,12 @@ namespace PDF_Manager.Printing
 
                             // 座標変換マトリックス
                             m1.t = new double[2, 2] { { xL, yL }, { -yL, xL } };
+
+                            // 角度
+                            m1.radian = Math.Atan2(yL, xL);
                         }
                         m = m1;
                     }
-
 
                     // 断面力の位置を決定する
                     Vector3 pos = new Vector3(); 
@@ -375,10 +377,13 @@ namespace PDF_Manager.Printing
                     if (Value != 0)
                     {
                         canvas.printLine(x1, y1, x2, y2);
-                        
-                        //canvas.mc.currentPos.X = (pi.x - this.CenterPos.X) * this.scale;
-                        //canvas.mc.currentPos.Y = -(pi.y - this.CenterPos.Y) * this.scale;
-                        //Text.PrtText(canvas.mc, string.Format("{0}", fz));
+                        // 文字
+                        // 文字の角度を決定する
+                        var radian = m.radian + Math.PI / 2;
+                        if (radian > 0)
+                            radian -= Math.PI;
+
+                        canvas.printText(x2, y2, string.Format("{0}", Value), radian);
                     }
 
                     xx = x2;

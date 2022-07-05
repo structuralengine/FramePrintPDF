@@ -163,5 +163,24 @@ namespace PDF_Manager.Printing
 
             Shape.DrawLine(this.mc, p, q);
         }
+
+        public void printText(double _x1, double _y1, string str, double radian = 0)
+        {
+            var centerPos = this.Center[this.currentArea];
+
+            var x1 = centerPos.X + _x1;
+            var y1 = centerPos.Y + _y1;
+
+
+            this.mc.currentPos.X = x1;
+            this.mc.currentPos.Y = y1;
+
+            var angle = radian * (180 / Math.PI);
+
+            this.mc.gfx.RotateAtTransform(angle, this.mc.currentPos);
+            Text.PrtText(this.mc, str);
+            this.mc.gfx.RotateAtTransform(-angle, this.mc.currentPos);
+
+        }
     }
 }
