@@ -29,7 +29,7 @@ namespace PDF_Manager.Printing
         private PageOrientation pageOrientation;
 
         private string title;   // 全ページ共通 左上に印字するタイトル
-        private string casename;    //  左上に印字するケース名
+        // private string casename;    //  左上に印字するケース名
 
         /// <summary>
         /// 現在の座標
@@ -53,7 +53,7 @@ namespace PDF_Manager.Printing
 
             // フォントの設定
             this.font_mic = new XFont("MS Mincho", printManager.FontSize, XFontStyle.Regular);
-            this.font_got = new XFont("MS Gothic", printManager.FontSize, XFontStyle.Regular);
+            this.font_got = new XFont("MS Gothic", diagramManager.FontSize, XFontStyle.Regular);
 
             this.title = pd.title;
 

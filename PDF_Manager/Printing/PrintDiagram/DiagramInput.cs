@@ -7,11 +7,11 @@ using System.Text;
 
 namespace PDF_Manager.Printing
 {
-    class InputDiagramLoad
+    class DiagramInput
     {
-        public const string KEY = "diagramLoad";
+        public const string KEY = "diagramInput";
 
-        public InputDiagramLoad(Dictionary<string, object> value) 
+        public DiagramInput(Dictionary<string, object> value) 
         {
             if (!value.ContainsKey(KEY))
                 return;

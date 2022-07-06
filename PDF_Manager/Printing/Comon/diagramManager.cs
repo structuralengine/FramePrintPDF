@@ -21,6 +21,12 @@ namespace PDF_Manager.Printing
 
         public PdfDocument mc;
 
+        /// <summary>
+        /// デフォルトのフォントサイズ 
+        /// pt ポイント　（1pt = 1/72 インチ)
+        /// </summary>
+        public static double FontSize = 8;
+
         // 図のレイアウト
         private Layout mode;        // 図のレイアウト
         private int Target;           // これから描く図が, 紙面のどの位置なのか
@@ -164,13 +170,12 @@ namespace PDF_Manager.Printing
             Shape.DrawLine(this.mc, p, q);
         }
 
-        public void printText(double _x1, double _y1, string str, double radian = 0)
+        public void printText(double _x1, double _y1, string str, double radian = 0, XFont font = null)
         {
             var centerPos = this.Center[this.currentArea];
 
             var x1 = centerPos.X + _x1;
             var y1 = centerPos.Y + _y1;
-
 
             this.mc.currentPos.X = x1;
             this.mc.currentPos.Y = y1;
@@ -178,7 +183,7 @@ namespace PDF_Manager.Printing
             var angle = radian * (180 / Math.PI);
 
             this.mc.gfx.RotateAtTransform(angle, this.mc.currentPos);
-            Text.PrtText(this.mc, str);
+            Text.PrtText(this.mc, str, font);
             this.mc.gfx.RotateAtTransform(-angle, this.mc.currentPos);
 
         }

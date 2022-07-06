@@ -38,7 +38,7 @@ namespace PDF_Manager.Printing
         public string comb = null;
 
         // インデックスから値を返す関数（3次元）
-        public double getValue3(int Index)
+        public double getValue3D(int Index)
         {
             if (Index == 0)
                 return this.fx;
@@ -56,7 +56,7 @@ namespace PDF_Manager.Printing
         }
 
         // インデックスから値を返す関数（2次元）
-        public double getValue2(int Index)
+        public double getValue2D(int Index)
         {
             if (Index == 0)
                 return this.fx;

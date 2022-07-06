@@ -93,11 +93,11 @@ namespace PDF_Manager
             this.printDatas.Add(ResultReacPickup.KEY, new ResultReacPickup(data));
 
             // 荷重図
-            if (data.ContainsKey(InputDiagramLoad.KEY))
-                this.printDatas.Add(InputDiagramLoad.KEY, new InputDiagramLoad(data));
+            if (data.ContainsKey(DiagramInput.KEY))
+                this.printDatas.Add(DiagramInput.KEY, new DiagramInput(data));
             // 断面力図
-            if (data.ContainsKey(InputDiagramFsec.KEY))
-                this.printDatas.Add(InputDiagramFsec.KEY, new InputDiagramFsec(data));
+            if (data.ContainsKey(DiagramResult.KEY))
+                this.printDatas.Add(DiagramResult.KEY, new DiagramResult(data));
 
         }
 
