@@ -390,9 +390,9 @@ namespace PDF_Manager.Printing
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
-            table.ReDim(row: r + rows * 2);
+            table.ReDim(row: r + rows * 3);
 
-            table.RowHeight[r -1] = printManager.LineSpacing2;
+            table.RowHeight[r] = printManager.LineSpacing2;
 
             if (dimension == 3)　　//３次元
             {
@@ -591,20 +591,28 @@ namespace PDF_Manager.Printing
                             if (tmp1.Count <= 0)
                                 break;
 
+
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Fsec>();
-                            var pullrows = 0;
-                            
+
+                            if (tmp3.Count != 0)
+                                rows = rows - tmp3.Count();
+                                tmp2.AddRange(tmp3);
+                                tmp3.Clear();
+
+
                             for (int i = 0; i < rows; i++)
                             {
                                 if (tmp1.Count <= 0)
                                     break;
 
-                                if (tmp1.Count < rows)
-                                    rows = tmp1.Count;
+                                //if (tmp1.Count < rows)
+                                //    rows = tmp1.Count;
 
-                                int len = tmp1[i].caseStr.Length;
-                                var str = tmp1[i].caseStr;
+                                int len = tmp1[0].caseStr.Length;
+                                var str = tmp1[0].caseStr;
+                                var pullrows = 0;
+
 
                                 if (len > 24)
                                 {
@@ -615,7 +623,8 @@ namespace PDF_Manager.Printing
                                 }
 
                                 rows = rows - pullrows;
-
+                                if (rows <= 0)
+                                    break;
 
                                 while (true)
                                 {
@@ -631,13 +640,16 @@ namespace PDF_Manager.Printing
                                     }
                                 }
 
+                                //残りの行にこれから入れるデータが入りきるとき
                                 if (rows - tmp2.Count > tmp3.Count)
                                 {
                                     tmp2.AddRange(tmp3);
                                     tmp3.Clear();
                                 }
-                                else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > rows)
+                                //残りの行にも、次のページにも入りきらないとき
+                                else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > printRows[1])
                                 {
+                                    //現在のページから連続して印刷
                                     while (tmp3.Count != 0)
                                     {
                                         for (int l = 0; l < rows; l++)
@@ -651,6 +663,8 @@ namespace PDF_Manager.Printing
                                         }
                                         if (tmp3.Count == 0)
                                             break;
+                                        if (rows == 0)
+                                            break;
                                         var table = this.getPageContents(tmp2);
                                         table[0, 0] = caseNo + caseName;
                                         table[1, 0] = ValueKey[k];
@@ -658,6 +672,7 @@ namespace PDF_Manager.Printing
                                         tmp2.Clear();
                                     }
                                 }
+                                //tmp3にためたまま改ページし次のページで印刷
                                 else 
                                 {
                                     break;
