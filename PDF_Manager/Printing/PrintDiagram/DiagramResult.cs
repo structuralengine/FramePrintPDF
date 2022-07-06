@@ -12,9 +12,6 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "diagramResult";
 
-        // 文字サイズ
-        private double fontSize;
-
         // 軸線を作成するのに必要な情報
         private DiagramFrame Frame = null;
 
@@ -33,14 +30,6 @@ namespace PDF_Manager.Printing
 
             // 骨組の描画クラスを生成する
             this.Frame = new DiagramFrame(target);
-
-            // 文字サイズ
-            this.fontSize = dataManager.parseDouble(target, "fontSize");
-            if(double.IsNaN(fontSize))
-            {
-                this.fontSize = 8;
-            }
-
 
         }
 
