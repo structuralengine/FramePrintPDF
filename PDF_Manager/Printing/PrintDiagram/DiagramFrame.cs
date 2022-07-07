@@ -14,12 +14,14 @@ namespace PDF_Manager.Printing
         // 軸線スケール
         private double _scaleX;
         public double scaleX { get { return this._scaleX; } }
+
         private double _scaleY;
         public double scaleY { get { return this._scaleY; } }
 
         // 位置補正
         private double _posX;
         public double posX { get { return this._posX; } }
+
         private double _posY;
         public double posY { get { return this._posY; } }
 
@@ -39,7 +41,6 @@ namespace PDF_Manager.Printing
         public InputMember Member;
         // 材料情報
         public InputElement Element;
-
 
         public DiagramFrame(Dictionary<string, object> target)
         {
