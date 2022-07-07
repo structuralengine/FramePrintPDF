@@ -50,68 +50,22 @@ namespace PDF_Manager.Printing
             this.Fsec = (ResultFsec)data.printDatas[ResultFsec.KEY];
 
             // 断面力図を描く
+
+
             foreach (var fsec in this.Fsec.fsecs)
             {
                 // LoadName から同じキーの情報を
                 int index = Convert.ToInt32(fsec.Key);
+
                 LoadName ln = null;
                 if (!this.LoadName.loadnames.TryGetValue(index, out ln))
                     continue;
 
                 if (ln != null)
-                {
                     Text.PrtText(mc, string.Format("CASE : {0}  {1} :{2}", fsec.Key, ln.name, ln.symbol));
-                }
-                mc.currentPos.Y += printManager.FontHeight;
-                mc.currentPos.Y += printManager.LineSpacing2;
 
-                switch (this.Frame.mode)
-                {
-                    case Layout.Default:
-                    case Layout.SplitHorizontal:
-                        //タイトル曲げモーメントを入力
-                        if (ln != null)
-                        {
-                            Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
-                        }
-                        mc.currentPos.Y = printManager.titlePos.Y;
-                        mc.currentPos.Y += mc.currentPage.Height;
-                        mc.currentPos.Y -= printManager.padding.Top;
-                        mc.currentPos.Y -= printManager.padding.Bottom;
-                        mc.currentPos.Y -= printManager.FontHeight * 2;
-                        mc.currentPos.Y -= printManager.LineSpacing2;
-                        mc.currentPos.Y /= 2;
-                        mc.currentPos.Y += printManager.padding.Top;
-                        mc.currentPos.Y += printManager.FontHeight * 3;
-                        mc.currentPos.Y += printManager.LineSpacing2 * 2;
-
-                        //タイトルせん断力図を入力
-                        if (ln != null)
-                        {
-                            Text.PrtText(mc, string.Format("{0}", "せん断力図"));
-                        }
-
-                        break;
-                    case Layout.SplitVertical:
-
-                        //タイトル曲げモーメントを入力
-                        if (ln != null)
-                        {
-                            Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
-                        }
-                        mc.currentPos.X = printManager.titlePos.X;
-                        mc.currentPos.X += mc.currentPage.Width / 2;
-
-                        //タイトルせん断力図を入力
-                        if (ln != null)
-                        {
-                            Text.PrtText(mc, string.Format("{0}", "せん断力図"));
-                        }
-                        mc.currentPos.Y += printManager.FontHeight;
-                        mc.currentPos.Y += printManager.LineSpacing2;
-
-                        break;
-                }
+                // 
+                this.printTitle(mc, 0);
 
                 string caseNo = fsec.Key;
                 var fs = fsec.Value;
@@ -235,5 +189,61 @@ namespace PDF_Manager.Printing
 
         }
 
+
+        /// <summary>
+        /// 曲げモーメント図、せん断力図などのタイトルを印刷する
+        /// </summary>
+        private void printTitle(PdfDocument mc, int index)
+        {
+            //
+            double gyap = 350;
+
+            // タイトルを印字する位置の設定
+            mc.currentPos.Y = this.Frame.canvas.Center(0).Y - gyap;
+            mc.currentPos.X = printManager.titlePos.X + 40;
+
+            switch (this.Frame.mode)
+            {
+                case Layout.Default:
+                    if (index == 0)
+                        Text.PrtText(mc, "曲げモーメント図");
+                    if (index == 1)
+                        Text.PrtText(mc, "せん断力図");
+                    if (index == 2)
+                        Text.PrtText(mc, "軸方向力図");
+                    break;
+
+                case Layout.SplitHorizontal:
+
+                    //タイトル曲げモーメントを入力
+                    if (index == 0)
+                    {
+                        Text.PrtText(mc, "曲げモーメント図");
+
+                        // タイトルを印字する位置の設定
+                        mc.currentPos.Y = this.Frame.canvas.Center(1).Y - gyap;
+
+                        //タイトルせん断力図を入力
+                        Text.PrtText(mc, "せん断力図");
+                    }
+                    break;
+
+                case Layout.SplitVertical:
+
+                    //タイトル曲げモーメントを入力
+                    Text.PrtText(mc, string.Format("{0}", "曲げモーメント図"));
+
+                    // タイトルを印字する位置の設定
+                    mc.currentPos.X = printManager.titlePos.X;
+                    mc.currentPos.X += mc.currentPage.Width / 2;
+
+                    //タイトルせん断力図を入力
+                    Text.PrtText(mc, string.Format("{0}", "せん断力図"));
+
+                    break;
+
+            }
+
+        }
     }
 }

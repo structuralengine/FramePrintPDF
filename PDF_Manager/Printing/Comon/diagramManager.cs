@@ -30,7 +30,11 @@ namespace PDF_Manager.Printing
         // 図のレイアウト
         private Layout mode;        // 図のレイアウト
         private int Target;           // これから描く図が, 紙面のどの位置なのか
-        private XPoint[] Center = new XPoint[2] { new XPoint(0, 0), new XPoint(0, 0) };  // 描く図の紙面における中心位置
+        private XPoint[] _Center = new XPoint[2] { new XPoint(0, 0), new XPoint(0, 0) };  // 描く図の紙面における中心位置
+        public XPoint Center(int area)
+        {
+            return _Center[area];
+        }
 
         // 図の描画面積
         private XSize AreaSize = new XSize(0, 0);    
@@ -64,44 +68,45 @@ namespace PDF_Manager.Printing
             this.AreaSize.Height -= printManager.FontHeight * 2;        // タイトル印字分高さを減らす
             this.AreaSize.Height -= printManager.LineSpacing2;
 
-            Center[0].X = this.AreaSize.Width / 2;
-            Center[0].X += printManager.padding.Left;
-            Center[0].Y = this.AreaSize.Height / 2;
-            Center[0].Y += printManager.padding.Top;
-            Center[0].Y += printManager.FontHeight * 2;     // タイトル印字分高さを減らす
-            Center[0].Y += printManager.LineSpacing2;
+            _Center[0].X = this.AreaSize.Width / 2;
+            _Center[0].X += printManager.padding.Left;
+            _Center[0].Y = this.AreaSize.Height / 2;
+            _Center[0].Y += printManager.padding.Top;
+            _Center[0].Y += printManager.FontHeight * 2;     // タイトル印字分高さを減らす
+            _Center[0].Y += printManager.LineSpacing2 * 3;
 
             if (this.mode == Layout.SplitHorizontal)
             {   // ページを上下に分割する場合
-                Center[1].X = Center[0].X;
+                _Center[1].X = _Center[0].X;
 
-                Center[0].Y = this.AreaSize.Height;
-                Center[0].Y -= printManager.padding.Top;
-                Center[0].Y /= 4;
-                Center[0].Y += printManager.FontHeight * 2;
-                Center[0].Y += printManager.LineSpacing2;
-                Center[0].Y += printManager.padding.Top * 3 / 2;
-                Center[1].Y = this.AreaSize.Height;
-                Center[1].Y -= printManager.padding.Top;
-                Center[1].Y /= 4;
-                Center[1].Y *= 3;
-                Center[1].Y += printManager.padding.Top * 5 / 2;
-                Center[1].Y += printManager.FontHeight * 3;
-                Center[1].Y += printManager.LineSpacing2 * 2;
+                _Center[0].Y = this.AreaSize.Height;
+                _Center[0].Y -= printManager.padding.Top;
+                _Center[0].Y /= 4;
+                _Center[0].Y += printManager.FontHeight * 3;
+                _Center[0].Y += printManager.LineSpacing2;
+                _Center[0].Y += printManager.padding.Top * 3 / 2;
+                _Center[1].Y = this.AreaSize.Height;
+                _Center[1].Y -= printManager.padding.Top;
+                _Center[1].Y /= 4;
+                _Center[1].Y *= 3;
+                _Center[1].Y += printManager.padding.Top * 5 / 2;
+                _Center[1].Y += printManager.FontHeight * 3;
+                _Center[1].Y += printManager.LineSpacing2 * 2;
 
                 AreaSize.Height /= 2;
             }
             if (this.mode == Layout.SplitVertical)
             { // ページを左右に分割する場合
-                Center[1].Y = Center[0].Y;
+                _Center[1].Y = _Center[0].Y;
 
-                Center[0].X = this.AreaSize.Width;
-                Center[0].X -= printManager.padding.Left;
-                Center[0].X /= 4;
-                Center[0].X += printManager.padding.Left ;
-                Center[1].X = this.AreaSize.Width / 2;
-                Center[1].X += printManager.padding.Left /2;
-                Center[1].X += Center[0].X;
+                _Center[0].X = this.AreaSize.Width;
+                _Center[0].X -= printManager.padding.Left;
+                _Center[0].X /= 4;
+                _Center[0].X += printManager.padding.Left;
+                _Center[1].X = this.AreaSize.Width / 2;
+                _Center[1].X += printManager.padding.Left / 2;
+                _Center[1].X += 40;
+                _Center[1].X += _Center[0].X;
 
                 AreaSize.Width /= 2;
             }
@@ -141,7 +146,7 @@ namespace PDF_Manager.Printing
         /// </summary>
         public void printNode(double _x, double _y)
         {
-            var centerPos = this.Center[this.currentArea];
+            var centerPos = this._Center[this.currentArea];
 
             var x = centerPos.X + _x - nodeSize / 2;
             var y = centerPos.Y + _y - nodeSize / 2;
@@ -157,7 +162,7 @@ namespace PDF_Manager.Printing
         /// </summary>
         public void printLine(double _x1, double _y1, double _x2, double _y2)
         {
-            var centerPos = this.Center[this.currentArea];
+            var centerPos = this._Center[this.currentArea];
 
             var x1 = centerPos.X + _x1;
             var y1 = centerPos.Y + _y1;
@@ -172,7 +177,7 @@ namespace PDF_Manager.Printing
 
         public void printText(double _x1, double _y1, string str, double radian = 0, XFont font = null)
         {
-            var centerPos = this.Center[this.currentArea];
+            var centerPos = this._Center[this.currentArea];
 
             var x1 = centerPos.X + _x1;
             var y1 = centerPos.Y + _y1;
