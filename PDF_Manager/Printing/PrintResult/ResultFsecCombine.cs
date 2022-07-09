@@ -322,7 +322,7 @@ namespace PDF_Manager.Printing
             {//2次元
 
                 ///テーブルの作成
-                this.myTable = new Table(4, 7);
+                this.myTable = new Table(4, 8);
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 15.0;//部材No
@@ -331,7 +331,8 @@ namespace PDF_Manager.Printing
                 this.myTable.ColWidth[3] = 60.0;//軸方向力
                 this.myTable.ColWidth[4] = 60.0;//せん断力
                 this.myTable.ColWidth[5] = 60.0;//曲げモーメント
-                this.myTable.ColWidth[6] = 80.0;//組合せ
+                this.myTable.ColWidth[6] = 10.0;//調整用
+                this.myTable.ColWidth[7] = 80.0;//組合せ
 
                 this.myTable.RowHeight[1] = printManager.LineSpacing2;
                 this.myTable.RowHeight[2] = printManager.LineSpacing2;
@@ -369,7 +370,7 @@ namespace PDF_Manager.Printing
                         this.myTable[3, 4] = "(kN)";
                         this.myTable[2, 5] = "曲げﾓｰﾒﾝﾄ";
                         this.myTable[3, 5] = "(kN・m)";
-                        this.myTable[2, 6] = "組合せ";
+                        this.myTable[2, 7] = "組合せ";
                         break;
                 }
             }
@@ -451,23 +452,11 @@ namespace PDF_Manager.Printing
                         }
                     }
 
-                    //var x = item.m;
-
-                    //if (x != "")
-                    //{
-                    //    table.RowHeight[r] = printManager.LineSpacing2;
-                    //}
-                    //else if (i == 0)
-                    //{
-                    //    table.RowHeight[r] = printManager.LineSpacing2;
-                    //}
-
                 }
             }
 
             else　　//２次元
             {
-
                 for (var i = 0; i < rows; i++)
                 {
                     var item = target[i];
@@ -491,6 +480,7 @@ namespace PDF_Manager.Printing
                     table[r, j] = printManager.toString(item.mz, 2);
                     table.AlignX[r, j] = "R";
                     j++;
+                    j++;
                     if (item.caseStr != null)
                     {
                         int len = item.caseStr.Length;
@@ -512,19 +502,6 @@ namespace PDF_Manager.Printing
                             r++;
                         }
                     }
-
-                    //var x = item.m;
-
-                    //if (x != "")
-                    //{
-                    //    table.RowHeight[r] = printManager.LineSpacing2;
-                    //}
-                    //else if (i == 0)
-                    //{
-                    //    table.RowHeight[r] = printManager.LineSpacing2;
-                    //}
-
-                    //r++;
 
                 }
 
@@ -606,13 +583,9 @@ namespace PDF_Manager.Printing
                                 if (tmp1.Count <= 0)
                                     break;
 
-                                //if (tmp1.Count < rows)
-                                //    rows = tmp1.Count;
-
                                 int len = tmp1[0].caseStr.Length;
                                 var str = tmp1[0].caseStr;
                                 var pullrows = 0;
-
 
                                 if (len > 24)
                                 {
@@ -723,6 +696,8 @@ namespace PDF_Manager.Printing
                     ValueKey.Add("Z軸周りの曲げモーメント　最大");
                     ValueKey.Add("Z軸周りの曲げモーメント　最小");
 
+                    var tmp3 = new List<Fsec>();
+
                     for (int k = 0; k < 6; ++k)
                     {
                         var tmp1 = value.getValue2(k);
@@ -732,30 +707,89 @@ namespace PDF_Manager.Printing
                             if (tmp1.Count <= 0)
                                 break;
 
-                            //if (tmp1[0].caseStr.Length > 24)
-                            //{
-                            //    rows = rows / 2;
-                            //}
 
                             // 1ページに納まる分のデータをコピー
                             var tmp2 = new List<Fsec>();
+
+                            if (tmp3.Count != 0)
+                                rows = rows - tmp3.Count();
+                            tmp2.AddRange(tmp3);
+                            tmp3.Clear();
+
+
                             for (int i = 0; i < rows; i++)
                             {
                                 if (tmp1.Count <= 0)
                                     break;
 
+                                int len = tmp1[0].caseStr.Length;
+                                var str = tmp1[0].caseStr;
+                                var pullrows = 0;
+
+                                if (len > 24)
+                                {
+                                    foreach (var n in str.SubstringAtCount(24))
+                                    {
+                                        pullrows++;
+                                    }
+                                }
+
+                                rows = rows - pullrows;
+                                if (rows <= 0)
+                                    break;
+
                                 while (true)
                                 {
-                                    tmp2.Add(tmp1.First());
+                                    tmp3.Add(tmp1.First());
                                     tmp1.Remove(tmp1.First());
+
                                     if (tmp1.Count <= 0)
                                         break;
+
                                     if (tmp1.First().m != "")
                                     {
                                         break;
                                     }
-                                    rows -= 1;
                                 }
+
+                                //残りの行にこれから入れるデータが入りきるとき
+                                if (rows - tmp2.Count > tmp3.Count)
+                                {
+                                    tmp2.AddRange(tmp3);
+                                    tmp3.Clear();
+                                }
+                                //残りの行にも、次のページにも入りきらないとき
+                                else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > printRows[1])
+                                {
+                                    //現在のページから連続して印刷
+                                    while (tmp3.Count != 0)
+                                    {
+                                        for (int l = 0; l < rows; l++)
+                                        {
+                                            tmp2.Add(tmp3.First());
+                                            tmp3.Remove(tmp3.First());
+                                            if (tmp3.Count == 0)
+                                                break;
+                                            if (rows - tmp2.Count <= 0)
+                                                break;
+                                        }
+                                        if (tmp3.Count == 0)
+                                            break;
+                                        if (rows == 0)
+                                            break;
+                                        var table = this.getPageContents(tmp2);
+                                        table[0, 0] = caseNo + caseName;
+                                        table[1, 0] = ValueKey[k];
+                                        page.Add(table);
+                                        tmp2.Clear();
+                                    }
+                                }
+                                //tmp3にためたまま改ページし次のページで印刷
+                                else
+                                {
+                                    break;
+                                }
+
                             }
 
                             if (tmp2.Count > 0)
@@ -764,6 +798,7 @@ namespace PDF_Manager.Printing
                                 table[0, 0] = caseNo + caseName;
                                 table[1, 0] = ValueKey[k];
                                 page.Add(table);
+
                             }
                             else if (tmp1.Count <= 0)
                             {

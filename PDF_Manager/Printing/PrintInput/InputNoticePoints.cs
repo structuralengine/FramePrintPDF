@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using PDF_Manager.Comon;
+using PDF_Manager.Printing;
+using PDF_Manager.Printing.Comon;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +19,7 @@ namespace PDF_Manager.Printing
         public const string KEY = "notice_points";
 
         private List<NoticePoint> noticepoints = new List<NoticePoint>();
+        private Dictionary<string, Member> members = new Dictionary<string, Member>();
 
         public InputNoticePoints(Dictionary<string, object> value)
         {
@@ -46,6 +49,275 @@ namespace PDF_Manager.Printing
                 this.noticepoints.Add(np);
             }
         }
+
+        #region 印刷処理
+        // タイトル
+        private string title;
+        // 2次元か3次元か
+        private int dimension;
+        // テーブル
+        private Table myTable;
+
+        /// <summary>
+        /// 印刷前の初期化処理
+        /// </summary>
+        private void printInit(PdfDocument mc, PrintData data)
+        {
+            this.dimension = data.dimension;
+
+            if (this.dimension == 3)
+            {   // 3次元
+
+                //テーブルの作成
+                this.myTable = new Table(2, 12);
+
+                // テーブルの幅
+                this.myTable.ColWidth[0] = 45.0; // 格点No
+                this.myTable.ColWidth[1] = 60.0;
+                this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[3] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[4] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[5] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[6] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[7] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[8] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[9] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[10] = this.myTable.ColWidth[1];
+                this.myTable.ColWidth[11] = this.myTable.ColWidth[1];
+
+
+                switch (data.language)
+                {
+                    //case "en":
+                    //    this.title = "Support DATA";
+                    //    this.myTable[0, 0] = "Node";
+                    //    this.myTable[1, 0] = "No";
+                    //    this.myTable[1, 1] = "TX";
+                    //    this.myTable[2, 1] = "(kN/m)";
+                    //    this.myTable[0, 2] = "Displacement Restraint";
+                    //    this.myTable[1, 2] = "TY";
+                    //    this.myTable[2, 2] = "(kN/m)";
+                    //    this.myTable[1, 3] = "TZ";
+                    //    this.myTable[2, 3] = "(kN/m)";
+
+                    //    this.myTable[1, 4] = "MX";
+                    //    this.myTable[2, 4] = "(kN・m/rad)";
+                    //    this.myTable[0, 5] = "Rotational Restraint";
+                    //    this.myTable[1, 5] = "MY";
+                    //    this.myTable[2, 5] = "(kN・m/rad)";
+                    //    this.myTable[1, 6] = "MZ";
+                    //    this.myTable[2, 6] = "(kN・m/rad)";
+
+                    //    break;
+
+                    //case "cn":
+                    //    this.title = "支点";
+                    //    this.myTable[0, 0] = "节点";
+                    //    this.myTable[1, 0] = "编码";
+                    //    this.myTable[1, 1] = "X方向";
+                    //    this.myTable[2, 1] = "(kN/m)";
+                    //    this.myTable[0, 2] = "位移约束";
+                    //    this.myTable[1, 2] = "Y方向";
+                    //    this.myTable[2, 2] = "(kN/m)";
+                    //    this.myTable[1, 3] = "Z方向";
+                    //    this.myTable[2, 3] = "(kN/m)";
+
+                    //    this.myTable[1, 4] = "围绕X轴";
+                    //    this.myTable[2, 4] = "(kN・m/rad)";
+                    //    this.myTable[0, 5] = "旋转约束";
+                    //    this.myTable[1, 5] = "围绕Y轴";
+                    //    this.myTable[2, 5] = "(kN・m/rad)";
+                    //    this.myTable[1, 6] = "围绕Z轴";
+                    //    this.myTable[2, 6] = "(kN・m/rad)";
+                    //    break;
+
+                    default:
+                        this.title = "着目点データ";
+                        this.myTable[0, 0] = "部材";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "部材長";
+                        this.myTable[1, 2] = "L1";
+                        this.myTable[1, 3] = "L2";
+                        this.myTable[1, 4] = "L3";
+                        this.myTable[1, 5] = "L4";
+                        this.myTable[1, 6] = "L5";
+                        this.myTable[1, 7] = "L6";
+                        this.myTable[1, 8] = "L7";
+                        this.myTable[1, 9] = "L8";
+                        this.myTable[1, 10] = "L9";
+                        this.myTable[1, 11] = "L10";
+
+                        break;
+                }
+
+            }
+        }
+
+
+        /// <summary>
+        /// 1ページに入れるコンテンツを集計する 3次元の場合
+        /// </summary>
+        /// <param name="target">印刷対象の配列</param>
+        /// <param name="rows">行数</param>
+        /// <returns>印刷する用の配列</returns>
+        private Table getPageContents3D(List<NoticePoint> target)
+        {
+            int r = this.myTable.Rows;
+            int rows = target.Count;
+
+            // 行コンテンツを生成
+            var table = this.myTable.Clone();
+            table.ReDim(row: r + rows);
+
+            for (var i = 0; i < rows; i++)
+            {
+                NoticePoint item = target[i];
+
+                for (var j = 0; j < 12; j++)
+                {
+                    table[r, 0] = printManager.toString(item.m);
+                    table.AlignX[r, j] = "R";
+                    r++;
+                    //table[r, j] = printManager.toString(this.GetMemberLength(No), 3);
+                    //table.AlignX[r, j] = "R";
+                    //j++;
+
+
+                }
+            }
+
+            table.RowHeight[3] = printManager.LineSpacing2; // 表題と body の間
+
+            return table;
+        }
+
+
+
+        /// <summary>
+        /// 印刷する
+        /// </summary>
+        /// <param name="mc"></param>
+        public void printPDF(PdfDocument mc, PrintData data)
+        {
+            if (this.noticepoints.Count == 0)
+                return;
+
+            // タイトル などの初期化
+            this.printInit(mc, data);
+
+            // 集計開始
+            if (this.dimension == 3)
+            {   // 3次元
+                //foreach (var tmp0 in this.noticepoints)
+                //{
+                //    var typeNo = string.Format("Type{0}", tmp0.Key); // タイプ番号
+                //    var titles = new string[] { this.title, typeNo };
+
+                //    var tmp1 = new List<NoticePoint>(tmp0.Value);
+
+                //    // 行コンテンツを生成
+                //    var page = new List<Table>();
+
+                //    // 印刷可能な行数
+                //    var printRows = this.myTable.getPrintRowCount(mc, 2);
+
+                //    // 1ページ目に入る行数
+                //    int rows = printRows[0];
+
+                //    if (printRows[0] < tmp1.Count / 2)
+                //    { // もし行の半分がページに入らなければ、改ページする
+                //        mc.NewPage();
+                //        printRows = this.myTable.getPrintRowCount(mc, 2);
+                //        rows = printRows[1];
+                //    }
+
+                //    while (true)
+                //    {
+                //        // 1ページに納まる分のデータをコピー
+                //        var tmp2 = new List<NoticePoint>();
+                //        for (int i = 0; i < rows; i++)
+                //        {
+                //            if (tmp1.Count <= 0)
+                //                break;
+                //            tmp2.Add(tmp1.First());
+                //            tmp1.Remove(tmp1.First());
+                //        }
+
+                //        if (tmp2.Count > 0)
+                //        {
+                //            var table = this.getPageContents3D(tmp2);
+
+                //            page.Add(table);
+                //        }
+                //        else if (tmp1.Count <= 0)
+                //        {
+                //            break;
+                //        }
+                //        else
+                //        { // 印刷するものもない
+                //            mc.NewPage();
+                //        }
+
+                //        // 2ページ以降に入る行数
+                //        rows = printRows[1];
+                //    }
+
+                //    // 表の印刷
+                //    printManager.printTableContentsOnePage(mc, page, titles);
+
+                //}
+
+            }
+        }
+        #endregion
+
+        //#region 他のモジュールのヘルパー関数
+
+        ///// <summary>
+        ///// 部材にの長さを取得する
+        ///// </summary>
+        ///// <param name="mc"></param>
+        ///// <param name="memberNo"></param>
+        ///// <param name="value"></param>
+        ///// <returns></returns>
+        //public double GetMemberLength(string memberNo)
+        //{
+        //    var memb = this.GetMember(memberNo);
+
+        //    if (memb == null)
+        //        return double.NaN;
+
+        //    if (memb.ni == null || memb.nj == null)
+        //    {
+        //        return double.NaN;
+        //    }
+
+        //    Vector3 iPos = this.Node.GetNodePos(memb.ni);
+        //    Vector3 jPos = this.Node.GetNodePos(memb.nj);
+        //    if (iPos == null || jPos == null)
+        //    {
+        //        return double.NaN;
+        //    }
+
+        //    double result = Math.Sqrt(Math.Pow(iPos.x - jPos.x, 2) + Math.Pow(iPos.y - jPos.y, 2) + Math.Pow(iPos.z - jPos.z, 2));
+
+        //    return result;
+        //}
+
+        ///// <summary>
+        ///// 部材情報を取得する
+        ///// </summary>
+        ///// <param name="No">部材番号</param>
+        ///// <returns></returns>
+        //public Member GetMember(string No)
+        //{
+        //    if (!this.members.ContainsKey(No))
+        //    {
+        //        return null;
+        //    }
+        //    return this.members[No];
+        //}
+
 
         /*
         // 集まったデータはここに格納する
@@ -161,5 +433,5 @@ namespace PDF_Manager.Printing
         }
         */
     }
-}
 
+}

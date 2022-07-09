@@ -84,10 +84,12 @@ public class PrintInput
        // 支点
        ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
 
+        
+        //mc = InputJoint.printPDF(mc, data);           // 結合
+        //mc = InputNoticePoints.printPDF(mc, data);    // 着目点
+        
+        //mc = InputFixMember.printPDF(mc,data);        // バネ
         /*
-        mc = InputJoint.printPDF(mc, data);           // 結合
-        mc = InputNoticePoints.printPDF(mc, data);    // 着目点
-        mc = InputFixMember.printPDF(mc,data);        // バネ
         mc = InputShell.printPDF(mc, data);           // シェル
         */
         //荷重名称
