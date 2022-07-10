@@ -83,11 +83,12 @@ public class PrintInput
        ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
        // 支点
        ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
+       // 着目点
+       ((InputNoticePoints)data.printDatas[InputNoticePoints.KEY]).printPDF(mc, data);
 
-        
         //mc = InputJoint.printPDF(mc, data);           // 結合
         //mc = InputNoticePoints.printPDF(mc, data);    // 着目点
-        
+
         //mc = InputFixMember.printPDF(mc,data);        // バネ
         /*
         mc = InputShell.printPDF(mc, data);           // シェル
