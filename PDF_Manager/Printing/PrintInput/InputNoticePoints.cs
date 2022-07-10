@@ -19,7 +19,9 @@ namespace PDF_Manager.Printing
         public const string KEY = "notice_points";
 
         private List<NoticePoint> noticepoints = new List<NoticePoint>();
-        private Dictionary<string, Member> members = new Dictionary<string, Member>();
+
+        // 要素情報
+        private InputMember Member = null;
 
         public InputNoticePoints(Dictionary<string, object> value)
         {
@@ -57,6 +59,10 @@ namespace PDF_Manager.Printing
         private int dimension;
         // テーブル
         private Table myTable;
+        #region 印刷処理
+        // 節点情報
+        private InputNode Node = null;
+
 
         /// <summary>
         /// 印刷前の初期化処理
@@ -72,8 +78,8 @@ namespace PDF_Manager.Printing
                 this.myTable = new Table(2, 12);
 
                 // テーブルの幅
-                this.myTable.ColWidth[0] = 45.0; // 格点No
-                this.myTable.ColWidth[1] = 60.0;
+                this.myTable.ColWidth[0] = 25.0; // 格点No
+                this.myTable.ColWidth[1] = 40.0;
                 this.myTable.ColWidth[2] = this.myTable.ColWidth[1];
                 this.myTable.ColWidth[3] = this.myTable.ColWidth[1];
                 this.myTable.ColWidth[4] = this.myTable.ColWidth[1];
@@ -149,7 +155,8 @@ namespace PDF_Manager.Printing
 
                         break;
                 }
-
+                this.myTable.AlignX[0, 0] = "R";    // 右寄せ
+                this.myTable.AlignX[0, 1] = "R";    // 右寄せ
             }
         }
 
@@ -171,22 +178,31 @@ namespace PDF_Manager.Printing
 
             for (var i = 0; i < rows; i++)
             {
+
                 NoticePoint item = target[i];
 
-                for (var j = 0; j < 12; j++)
+                var count = 2 + item.Points.Count();
+
+                for (var j = 0; j < count; j++)
                 {
                     table[r, 0] = printManager.toString(item.m);
                     table.AlignX[r, j] = "R";
-                    r++;
-                    //table[r, j] = printManager.toString(this.GetMemberLength(No), 3);
-                    //table.AlignX[r, j] = "R";
-                    //j++;
-
-
+                    j++;
+                    table[r, j] = printManager.toString(this.Member.GetMemberLength(item.m), 3);
+                    table.AlignX[r, j] = "R";
+                    j++;
+                    for (var k= 0; k < item.Points.Count(); k++)
+                    {
+                        table[r, j] = printManager.toString(item.Points[k],3);
+                        table.AlignX[r, j] = "R";
+                        j++;
+                    }
                 }
+                r++;
+
             }
 
-            table.RowHeight[3] = printManager.LineSpacing2; // 表題と body の間
+            table.RowHeight[2] = printManager.LineSpacing2; // 表題と body の間
 
             return table;
         }
@@ -202,122 +218,107 @@ namespace PDF_Manager.Printing
             if (this.noticepoints.Count == 0)
                 return;
 
+            // 要素を取得できる状態にする
+            this.Member = (InputMember)data.printDatas[InputMember.KEY];
+
             // タイトル などの初期化
             this.printInit(mc, data);
 
+            // 印刷可能な行数
+            var printRows = myTable.getPrintRowCount(mc);
+
+            // 行コンテンツを生成
+            var page = new List<Table>();
+
+            // 1ページ目に入る行数
+            int rows = printRows[0];
+
             // 集計開始
-            if (this.dimension == 3)
-            {   // 3次元
-                //foreach (var tmp0 in this.noticepoints)
-                //{
-                //    var typeNo = string.Format("Type{0}", tmp0.Key); // タイプ番号
-                //    var titles = new string[] { this.title, typeNo };
+            var tmp1 = new List<NoticePoint>(this.noticepoints); // clone
+            while (true)
+            {
+                // 1ページに納まる分のデータをコピー
+                var tmp2 = new List<NoticePoint>();
+                for (int i = 0; i < rows; i++)
+                {
+                    if (tmp1.Count <= 0)
+                        break;
+                    tmp2.Add(tmp1.First());
+                    tmp1.Remove(tmp1.First());
+                }
 
-                //    var tmp1 = new List<NoticePoint>(tmp0.Value);
+                if (tmp2.Count > 0)
+                {
+                    var table = this.getPageContents3D(tmp2);
+                    page.Add(table);
+                }
+                else if (tmp1.Count <= 0)
+                {
+                    break;
+                }
+                else
+                { // 印刷するものもない
+                    mc.NewPage();
+                }
 
-                //    // 行コンテンツを生成
-                //    var page = new List<Table>();
-
-                //    // 印刷可能な行数
-                //    var printRows = this.myTable.getPrintRowCount(mc, 2);
-
-                //    // 1ページ目に入る行数
-                //    int rows = printRows[0];
-
-                //    if (printRows[0] < tmp1.Count / 2)
-                //    { // もし行の半分がページに入らなければ、改ページする
-                //        mc.NewPage();
-                //        printRows = this.myTable.getPrintRowCount(mc, 2);
-                //        rows = printRows[1];
-                //    }
-
-                //    while (true)
-                //    {
-                //        // 1ページに納まる分のデータをコピー
-                //        var tmp2 = new List<NoticePoint>();
-                //        for (int i = 0; i < rows; i++)
-                //        {
-                //            if (tmp1.Count <= 0)
-                //                break;
-                //            tmp2.Add(tmp1.First());
-                //            tmp1.Remove(tmp1.First());
-                //        }
-
-                //        if (tmp2.Count > 0)
-                //        {
-                //            var table = this.getPageContents3D(tmp2);
-
-                //            page.Add(table);
-                //        }
-                //        else if (tmp1.Count <= 0)
-                //        {
-                //            break;
-                //        }
-                //        else
-                //        { // 印刷するものもない
-                //            mc.NewPage();
-                //        }
-
-                //        // 2ページ以降に入る行数
-                //        rows = printRows[1];
-                //    }
-
-                //    // 表の印刷
-                //    printManager.printTableContentsOnePage(mc, page, titles);
-
-                //}
-
+                // 2ページ以降に入る行数
+                rows = printRows[1];
             }
+
+            // 表の印刷
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
+
+            #endregion
         }
+
+        #region 他のモジュールのヘルパー関数
+        /*
+        /// <summary>
+        /// 部材にの長さを取得する
+        /// </summary>
+        /// <param name="mc"></param>
+        /// <param name="memberNo"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        public double GetMemberLength(string memberNo)
+        {
+            var memb = this.GetMember(memberNo);
+
+            if (memb == null)
+                return double.NaN;
+
+            if (memb.ni == null || memb.nj == null)
+            {
+                return double.NaN;
+            }
+
+            Vector3 iPos = this.Node.GetNodePos(memb.ni);
+            Vector3 jPos = this.Node.GetNodePos(memb.nj);
+            if (iPos == null || jPos == null)
+            {
+                return double.NaN;
+            }
+
+            double result = Math.Sqrt(Math.Pow(iPos.x - jPos.x, 2) + Math.Pow(iPos.y - jPos.y, 2) + Math.Pow(iPos.z - jPos.z, 2));
+
+            return result;
+        }
+
+        /// <summary>
+        /// 部材情報を取得する
+        /// </summary>
+        /// <param name="No">部材番号</param>
+        /// <returns></returns>
+        public Member GetMember(string No)
+        {
+            if (!this.members.ContainsKey(No))
+            {
+                return null;
+            }
+            return this.members[No];
+        }
+        */
         #endregion
-
-        //#region 他のモジュールのヘルパー関数
-
-        ///// <summary>
-        ///// 部材にの長さを取得する
-        ///// </summary>
-        ///// <param name="mc"></param>
-        ///// <param name="memberNo"></param>
-        ///// <param name="value"></param>
-        ///// <returns></returns>
-        //public double GetMemberLength(string memberNo)
-        //{
-        //    var memb = this.GetMember(memberNo);
-
-        //    if (memb == null)
-        //        return double.NaN;
-
-        //    if (memb.ni == null || memb.nj == null)
-        //    {
-        //        return double.NaN;
-        //    }
-
-        //    Vector3 iPos = this.Node.GetNodePos(memb.ni);
-        //    Vector3 jPos = this.Node.GetNodePos(memb.nj);
-        //    if (iPos == null || jPos == null)
-        //    {
-        //        return double.NaN;
-        //    }
-
-        //    double result = Math.Sqrt(Math.Pow(iPos.x - jPos.x, 2) + Math.Pow(iPos.y - jPos.y, 2) + Math.Pow(iPos.z - jPos.z, 2));
-
-        //    return result;
-        //}
-
-        ///// <summary>
-        ///// 部材情報を取得する
-        ///// </summary>
-        ///// <param name="No">部材番号</param>
-        ///// <returns></returns>
-        //public Member GetMember(string No)
-        //{
-        //    if (!this.members.ContainsKey(No))
-        //    {
-        //        return null;
-        //    }
-        //    return this.members[No];
-        //}
-
 
         /*
         // 集まったデータはここに格納する
@@ -434,4 +435,6 @@ namespace PDF_Manager.Printing
         */
     }
 
+
 }
+#endregion
