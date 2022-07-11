@@ -41,11 +41,13 @@ namespace PDF_Manager.Printing
 
                 var itemPoints = item["Points"];
                 var _points = new List<double>();
+
                 for (int j = 0; j < itemPoints.Count(); j++)
                 {
                     var d = dataManager.parseDouble(itemPoints[j]);
                     _points.Add(d);
                 }
+
                 np.Points = _points.ToArray();
 
                 this.noticepoints.Add(np);
@@ -176,14 +178,14 @@ namespace PDF_Manager.Printing
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
+            var addrows = 0;
+
             for (var i = 0; i < rows; i++)
             {
 
                 NoticePoint item = target[i];
 
-                var count = 2 + item.Points.Count();
-
-                for (var j = 0; j < count; j++)
+                for (var j = 0; j < 3; j++)
                 {
                     table[r, 0] = printManager.toString(item.m);
                     table.AlignX[r, j] = "R";
@@ -191,17 +193,32 @@ namespace PDF_Manager.Printing
                     table[r, j] = printManager.toString(this.Member.GetMemberLength(item.m), 3);
                     table.AlignX[r, j] = "R";
                     j++;
-                    for (var k= 0; k < item.Points.Count(); k++)
+
+                    var count = item.Points.Count();
+                    var m = 0;
+
+
+                    for (var k = 0; k < item.Points.Count(); k++)
                     {
-                        table[r, j] = printManager.toString(item.Points[k],3);
+                        if(item.Points.Count() > 10 && k != 0)
+                        {
+                            if(k % 10 == 0)
+                            {
+                                r++;
+                                j = 2;
+                                addrows++;
+                                table.ReDim(row: r + rows + addrows);
+                            }
+                        }
+                        table[r, j] = printManager.toString(item.Points[k], 3);
                         table.AlignX[r, j] = "R";
                         j++;
                     }
+
                 }
                 r++;
 
             }
-
             table.RowHeight[2] = printManager.LineSpacing2; // 表題と body の間
 
             return table;
