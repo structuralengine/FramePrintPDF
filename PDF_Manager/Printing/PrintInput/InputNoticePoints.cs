@@ -298,11 +298,20 @@ namespace PDF_Manager.Printing
                     if (rows <= 0)
                         break;
 
+                    //if (tmp1[0].Points.Count() % 10 + 1 > rows)
+                    //{
+                    //    var tmp3_ = new List<NoticePoint>();
+                    //    for(var m = 0; m < rows;m++)
+                    //    {
+                    //        tmp3_ = tmp1.Points[m];
+                    //    }
+                    //}
+
                     while (true)
                     {
                         tmp3.Add(tmp1.First());
                         tmp1.Remove(tmp1.First());
-
+                        
                         if (tmp1.Count <= 0)
                             break;
 
