@@ -178,8 +178,6 @@ namespace PDF_Manager.Printing
             var table = this.myTable.Clone();
             table.ReDim(row: r + rows);
 
-            var addrows = 0;
-
             for (var i = 0; i < rows; i++)
             {
 
@@ -196,7 +194,7 @@ namespace PDF_Manager.Printing
 
                     var count = item.Points.Count();
                     var m = 0;
-
+                    var addrows = 0;
 
                     for (var k = 0; k < item.Points.Count(); k++)
                     {
@@ -207,8 +205,8 @@ namespace PDF_Manager.Printing
                                 r++;
                                 j = 2;
                                 addrows++;
-                                table.ReDim(row: r + rows + addrows);
                             }
+                            table.ReDim(row: r + rows + addrows);
                         }
                         table[r, j] = printManager.toString(item.Points[k], 3);
                         table.AlignX[r, j] = "R";
@@ -250,19 +248,108 @@ namespace PDF_Manager.Printing
             // 1ページ目に入る行数
             int rows = printRows[0];
 
+            var tmp3 = new List<NoticePoint>();
+
             // 集計開始
             var tmp1 = new List<NoticePoint>(this.noticepoints); // clone
             while (true)
             {
+                //// 1ページに納まる分のデータをコピー
+                //var tmp2 = new List<NoticePoint>();
+                //for (int i = 0; i < rows; i++)
+                //{
+                //    if (tmp1.Count <= 0)
+                //        break;
+                //    tmp2.Add(tmp1.First());
+                //    tmp1.Remove(tmp1.First());
+                //}
+                if (tmp1.Count <= 0)
+                    break;
+
+
                 // 1ページに納まる分のデータをコピー
                 var tmp2 = new List<NoticePoint>();
+
+                if (tmp3.Count != 0)
+                    rows = rows - tmp3.Count();
+                    tmp2.AddRange(tmp3);
+                    tmp3.Clear();
+
+
                 for (int i = 0; i < rows; i++)
                 {
                     if (tmp1.Count <= 0)
                         break;
-                    tmp2.Add(tmp1.First());
-                    tmp1.Remove(tmp1.First());
+
+                    int Points = tmp1[0].Points.Count();
+                    var pullrows = 0;
+
+                    for(var n=0; n<Points; n++)
+                    {
+                        if (n % 10 == 0)
+                        {
+                            pullrows++;
+                        }
+
+                    }
+                    rows = rows - pullrows;
+
+
+                    if (rows <= 0)
+                        break;
+
+                    while (true)
+                    {
+                        tmp3.Add(tmp1.First());
+                        tmp1.Remove(tmp1.First());
+
+                        if (tmp1.Count <= 0)
+                            break;
+
+                        if (tmp1.First().m != "")
+                        {
+                            break;
+                        }
+                    }
+
+                    //残りの行にこれから入れるデータが入りきるとき
+                    if (rows - tmp2.Count > tmp3.Count)
+                    {
+                        tmp2.AddRange(tmp3);
+                        tmp3.Clear();
+                    }
+                    //残りの行にも、次のページにも入りきらないとき
+                    else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > printRows[1])
+                    {
+                        //現在のページから連続して印刷
+                        while (tmp3.Count != 0)
+                        {
+                            for (int l = 0; l < rows; l++)
+                            {
+                                tmp2.Add(tmp3.First());
+                                tmp3.Remove(tmp3.First());
+                                if (tmp3.Count == 0)
+                                    break;
+                                if (rows - tmp2.Count <= 0)
+                                    break;
+                            }
+                            if (tmp3.Count == 0)
+                                break;
+                            if (rows == 0)
+                                break;
+                            var table = this.getPageContents3D(tmp2);
+                            page.Add(table);
+                            tmp2.Clear();
+                        }
+                    }
+                    //tmp3にためたまま改ページし次のページで印刷
+                    else
+                    {
+                        break;
+                    }
+
                 }
+
 
                 if (tmp2.Count > 0)
                 {
