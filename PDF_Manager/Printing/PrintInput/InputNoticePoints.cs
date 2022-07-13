@@ -222,6 +222,11 @@ namespace PDF_Manager.Printing
             return table;
         }
 
+        private void AdjustTableRows(int l, int m)
+        {
+
+        }
+
 
 
         /// <summary>
@@ -254,15 +259,116 @@ namespace PDF_Manager.Printing
             var tmp1 = new List<NoticePoint>(this.noticepoints); // clone
             while (true)
             {
+                ////// 1ページに納まる分のデータをコピー
+                ////var tmp2 = new List<NoticePoint>();
+                ////for (int i = 0; i < rows; i++)
+                ////{
+                ////    if (tmp1.Count <= 0)
+                ////        break;
+                ////    tmp2.Add(tmp1.First());
+                ////    tmp1.Remove(tmp1.First());
+                ////}
+                //if (tmp1.Count <= 0)
+                //    break;
+
+
                 //// 1ページに納まる分のデータをコピー
                 //var tmp2 = new List<NoticePoint>();
+
+                //if (tmp3.Count != 0)
+                //    rows = rows - tmp3.Count();
+                //    tmp2.AddRange(tmp3);
+                //    tmp3.Clear();
+
+
                 //for (int i = 0; i < rows; i++)
                 //{
                 //    if (tmp1.Count <= 0)
                 //        break;
-                //    tmp2.Add(tmp1.First());
-                //    tmp1.Remove(tmp1.First());
+
+                //    int Points = tmp1[0].Points.Count();
+                //    var pullrows = 0;
+
+                //    for(var n=0; n<Points; n++)
+                //    {
+                //        if (n % 10 == 0)
+                //        {
+                //            pullrows++;
+                //        }
+
+                //    }
+
+                //    for (var n=0; n<pullrows; n++)
+                //    {
+                //        tmp1.Add(tmp1[n]);
+                //    }
+                //    //rows = rows - pullrows;
+
+
+                //    if (rows <= 0)
+                //        break;
+
+                //    //if (tmp1[0].Points.Count() % 10 + 1 > rows)
+                //    //{
+                //    //    var tmp3_ = new List<NoticePoint>();
+                //    //    for(var m = 0; m < rows;m++)
+                //    //    {
+                //    //        tmp3_ = tmp1.Points[m];
+                //    //    }
+                //    //}
+
+                //    for (var n = 0; n < rows; n++)
+                //    {
+                //        tmp3.Add(tmp1.First());
+                //        tmp1.Remove(tmp1.First());
+
+                //        if (tmp1.Count <= 0)
+                //            break;
+
+                //        if (tmp1.First().m != "")
+                //        {
+                //            break;
+                //        }
+                //    }
+
+                //    //残りの行にこれから入れるデータが入りきるとき
+                //    if (rows - tmp2.Count > tmp3.Count)
+                //    {
+                //        tmp2.AddRange(tmp3);
+                //        tmp3.Clear();
+                //    }
+                //    //残りの行にも、次のページにも入りきらないとき
+                //    else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > printRows[1])
+                //    {
+                //        //現在のページから連続して印刷
+                //        while (tmp3.Count != 0)
+                //        {
+                //            for (int l = 0; l < rows; l++)
+                //            {
+                //                tmp2.Add(tmp3.First());
+                //                tmp3.Remove(tmp3.First());
+                //                if (tmp3.Count == 0)
+                //                    break;
+                //                if (rows - tmp2.Count <= 0)
+                //                    break;
+                //            }
+                //            if (tmp3.Count == 0)
+                //                break;
+                //            if (rows == 0)
+                //                break;
+                //            var table = this.getPageContents3D(tmp2);
+                //            page.Add(table);
+                //            tmp2.Clear();
+                //        }
+                //    }
+                //    //tmp3にためたまま改ページし次のページで印刷
+                //    else
+                //    {
+                //        break;
+                //    }
+
                 //}
+
                 if (tmp1.Count <= 0)
                     break;
 
@@ -272,46 +378,61 @@ namespace PDF_Manager.Printing
 
                 if (tmp3.Count != 0)
                     rows = rows - tmp3.Count();
-                    tmp2.AddRange(tmp3);
-                    tmp3.Clear();
+                tmp2.AddRange(tmp3);
+                tmp3.Clear();
 
 
-                for (int i = 0; i < rows; i++)
+                while (true)
                 {
                     if (tmp1.Count <= 0)
                         break;
 
-                    int Points = tmp1[0].Points.Count();
-                    var pullrows = 0;
-
-                    for(var n=0; n<Points; n++)
+                    if(tmp1.First().Points.Count() > 10)
                     {
-                        if (n % 10 == 0)
+                        var PointRows = tmp1.First().Points.Count() / 10 ;
+
+                        for (int n = 0; n < PointRows; n++)
                         {
-                            pullrows++;
+                            ////// 対象のコレクション
+                            //var list = tmp1.First().Points;
+
+                            //// N 個ずつの N
+                            //var chunkSize = 10;
+
+                            //var chunks = list.Select((v, i) => new { v, i })
+                            //    .GroupBy(x => x.i / chunkSize)
+                            //    .Select(g => g.Select(x => x.v));
+
+                            // 動作確認
+                            var tmp = new NoticePoint();
+
+                            var a = tmp1.First();
+                            tmp.Points = new double[a.Points.Length];
+                            for (var i=0; i< a.Points.Length; i++)
+                            {
+                                tmp.Points[i] =a.Points[i];
+                            }
+                            tmp3.Add(tmp1.First());
+                            //tmp3[n].Points = chunks[n];
+
                         }
-
+                        tmp1.Remove(tmp1.First());
                     }
-                    rows = rows - pullrows;
-
+                    else
+                    {
+                        tmp3.Add(tmp1.First());
+                        tmp1.Remove(tmp1.First());
+                    }
 
                     if (rows <= 0)
                         break;
 
-                    //if (tmp1[0].Points.Count() % 10 + 1 > rows)
-                    //{
-                    //    var tmp3_ = new List<NoticePoint>();
-                    //    for(var m = 0; m < rows;m++)
-                    //    {
-                    //        tmp3_ = tmp1.Points[m];
-                    //    }
-                    //}
 
-                    while (true)
+                    for (var n = 0; n < rows; n++)
                     {
-                        tmp3.Add(tmp1.First());
-                        tmp1.Remove(tmp1.First());
-                        
+                        tmp2.Add(tmp3.First());
+                        tmp3.Remove(tmp3.First());
+
                         if (tmp1.Count <= 0)
                             break;
 
@@ -321,43 +442,44 @@ namespace PDF_Manager.Printing
                         }
                     }
 
-                    //残りの行にこれから入れるデータが入りきるとき
-                    if (rows - tmp2.Count > tmp3.Count)
-                    {
-                        tmp2.AddRange(tmp3);
-                        tmp3.Clear();
-                    }
-                    //残りの行にも、次のページにも入りきらないとき
-                    else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > printRows[1])
-                    {
-                        //現在のページから連続して印刷
-                        while (tmp3.Count != 0)
-                        {
-                            for (int l = 0; l < rows; l++)
-                            {
-                                tmp2.Add(tmp3.First());
-                                tmp3.Remove(tmp3.First());
-                                if (tmp3.Count == 0)
-                                    break;
-                                if (rows - tmp2.Count <= 0)
-                                    break;
-                            }
-                            if (tmp3.Count == 0)
-                                break;
-                            if (rows == 0)
-                                break;
-                            var table = this.getPageContents3D(tmp2);
-                            page.Add(table);
-                            tmp2.Clear();
-                        }
-                    }
+                    ////残りの行にこれから入れるデータが入りきるとき
+                    //if (rows - tmp2.Count > tmp3.Count)
+                    //{
+                    //    tmp2.AddRange(tmp3);
+                    //    tmp3.Clear();
+                    //}
+                    ////残りの行にも、次のページにも入りきらないとき
+                    //else if (rows - tmp2.Count < tmp3.Count && tmp3.Count > printRows[1])
+                    //{
+                    //    //現在のページから連続して印刷
+                    //    while (tmp3.Count != 0)
+                    //    {
+                    //        for (int l = 0; l < rows; l++)
+                    //        {
+                    //            tmp2.Add(tmp3.First());
+                    //            tmp3.Remove(tmp3.First());
+                    //            if (tmp3.Count == 0)
+                    //                break;
+                    //            if (rows - tmp2.Count <= 0)
+                    //                break;
+                    //        }
+                    //        if (tmp3.Count == 0)
+                    //            break;
+                    //        if (rows == 0)
+                    //            break;
+                    //        var table = this.getPageContents3D(tmp2);
+                    //        page.Add(table);
+                    //        tmp2.Clear();
+                    //    }
+                    //}
                     //tmp3にためたまま改ページし次のページで印刷
-                    else
-                    {
-                        break;
-                    }
+                    //else
+                    //{
+                    //    break;
+                    //}
 
                 }
+
 
 
                 if (tmp2.Count > 0)
