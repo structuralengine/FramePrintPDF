@@ -185,7 +185,14 @@ namespace PDF_Manager.Printing.Comon
         /// <summary>
         /// 紙面の描画エリア(マージンを引いた範囲）に対する骨組を描画するパディング
         /// </summary>
+        public static double padding_Top = 60;
 
-    public static TrimMargins padding = new TrimMargins() { Bottom=80, Top=60, Left=80, Right=80 };
-}
+        public static TrimMargins padding = new TrimMargins() { 
+            Bottom = 60, 
+            Top = printManager.titlePos.Y + printManager.FontHeight +  printManager.LineSpacing2 + padding_Top,             // タイトル範囲を小さくする
+            Left = 40, 
+            Right = 40
+        };
+
+    }
 }

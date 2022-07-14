@@ -67,6 +67,17 @@ namespace PDF_Manager.Printing
 
             return double.NaN;
         }
+        public double getValue2D(string key)
+        {
+            if (key == "fx")
+                return this.fx;
+            if (key == "fy")
+                return this.fy;
+            if (key == "mz")
+                return this.mz;
+
+            return double.NaN;
+        }
     }
 
 

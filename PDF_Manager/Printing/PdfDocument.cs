@@ -165,39 +165,7 @@ namespace PDF_Manager.Printing
             }
             this.currentPos.Y += printManager.FontHeight;
             this.currentPos.Y += printManager.LineSpacing2;
-            ////ケース名を適当に入力
-            //if (this.title != null)
-            //{
-            //    Text.PrtText(this, string.Format("CASE : {0}", this.title));
-            //}
-            //this.currentPos.Y += printManager.FontHeight;
-            //this.currentPos.Y += printManager.LineSpacing2;
             
-            
-            ////ケース名を適当に入力2
-            //if (this.title != null)
-            //{
-            //    Text.PrtText(this, string.Format("{0}", this.title));
-            //}
-            //this.currentPos.Y = printManager.titlePos.Y;
-            //this.currentPos.Y += this.currentPage.Height;
-            //this.currentPos.Y -= printManager.padding.Top;
-            //this.currentPos.Y -= printManager.padding.Bottom;
-            //this.currentPos.Y -= printManager.FontHeight * 2;
-            //this.currentPos.Y -= printManager.LineSpacing2;
-            //this.currentPos.Y /= 2;
-            //this.currentPos.Y += printManager.padding.Top;
-            //this.currentPos.Y += printManager.FontHeight * 3;     
-            //this.currentPos.Y += printManager.LineSpacing2 * 2;
-
-
-            ////ケース名を適当に入力3
-            //if (this.title != null)
-            //{
-            //    Text.PrtText(this, string.Format("{0}", this.title));
-            //}
-            //this.currentPos.Y += printManager.FontHeight;
-            //this.currentPos.Y += printManager.LineSpacing2;
         }
 
         /// <summary>

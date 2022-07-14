@@ -65,51 +65,55 @@ namespace PDF_Manager.Printing
             this.AreaSize.Height = paper.Height;
             this.AreaSize.Height -= printManager.padding.Top;
             this.AreaSize.Height -= printManager.padding.Bottom;
-            this.AreaSize.Height -= printManager.FontHeight * 2;        // タイトル印字分高さを減らす
-            this.AreaSize.Height -= printManager.LineSpacing2;
 
             _Center[0].X = this.AreaSize.Width / 2;
+            _Center[0].X += this.mc.Margine.Left;
             _Center[0].X += printManager.padding.Left;
             _Center[0].Y = this.AreaSize.Height / 2;
+            _Center[0].Y += this.mc.Margine.Top;
             _Center[0].Y += printManager.padding.Top;
-            _Center[0].Y += printManager.FontHeight * 2;     // タイトル印字分高さを減らす
-            _Center[0].Y += printManager.LineSpacing2 * 3;
 
-            if (this.mode == Layout.SplitHorizontal)
-            {   // ページを上下に分割する場合
-                _Center[1].X = _Center[0].X;
-
-                _Center[0].Y = this.AreaSize.Height;
-                _Center[0].Y -= printManager.padding.Top;
-                _Center[0].Y /= 4;
-                _Center[0].Y += printManager.FontHeight * 3;
-                _Center[0].Y += printManager.LineSpacing2;
-                _Center[0].Y += printManager.padding.Top * 3 / 2;
-                _Center[1].Y = this.AreaSize.Height;
-                _Center[1].Y -= printManager.padding.Top;
-                _Center[1].Y /= 4;
-                _Center[1].Y *= 3;
-                _Center[1].Y += printManager.padding.Top * 5 / 2;
-                _Center[1].Y += printManager.FontHeight * 3;
-                _Center[1].Y += printManager.LineSpacing2 * 2;
-
-                AreaSize.Height /= 2;
-            }
             if (this.mode == Layout.SplitVertical)
             { // ページを左右に分割する場合
                 _Center[1].Y = _Center[0].Y;
 
-                _Center[0].X = this.AreaSize.Width;
-                _Center[0].X -= printManager.padding.Left;
-                _Center[0].X /= 4;
+                // 左と右の間にマージンを設定する
+                this.AreaSize.Width -= printManager.padding.Right;
+                this.AreaSize.Width -= printManager.padding.Left;
+
+                _Center[0].X = this.AreaSize.Width / 4;
+                _Center[0].X += this.mc.Margine.Left;
                 _Center[0].X += printManager.padding.Left;
-                _Center[1].X = this.AreaSize.Width / 2;
-                _Center[1].X += printManager.padding.Left / 2;
-                _Center[1].X += 40;
-                _Center[1].X += _Center[0].X;
+
+                _Center[1].X = this.AreaSize.Width * 3 / 4;
+                _Center[1].X += this.mc.Margine.Left;
+                _Center[1].X += printManager.padding.Left;   // ページの左のマージン
+                _Center[1].X += printManager.padding.Right;  // 左と右の間のマージン
+                _Center[1].X += printManager.padding.Left;
 
                 AreaSize.Width /= 2;
             }
+            else if (this.mode == Layout.SplitHorizontal)
+            {   // ページを上下に分割する場合
+                _Center[1].X = _Center[0].X;
+
+                // 1段目と2段目の間にマージンを設定する
+                this.AreaSize.Height -= printManager.padding.Bottom;
+                this.AreaSize.Height -= printManager.padding_Top;
+
+                _Center[0].Y = this.AreaSize.Height / 4;
+                _Center[0].Y += this.mc.Margine.Top;
+                _Center[0].Y += printManager.padding.Top;
+
+                _Center[1].Y = this.AreaSize.Height * 3 / 4;
+                _Center[1].Y += this.mc.Margine.Top;
+                _Center[1].Y += printManager.padding.Top;   // ページの上のマージン
+                _Center[1].Y += printManager.padding.Bottom;// 1段目と2段目の間のマージン
+                _Center[1].Y += printManager.padding_Top;
+
+                AreaSize.Height /= 2;
+            } 
+
             // カレント
             this.currentArea = 0;
         }
@@ -136,8 +140,6 @@ namespace PDF_Manager.Printing
             set
             {
                 this.Target = value;
-
-
             }
         }
 

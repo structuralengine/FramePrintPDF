@@ -58,12 +58,12 @@ namespace PDF_Manager.Printing
 
             // 描画情報
             string mode = target.ContainsKey("layout") ? target["layout"].ToString() : "Default";
-            switch (mode)
+            switch (mode.ToLower())
             {
-                case "SpritHorizontal":
+                case "splithorizontal":
                     this._mode = Layout.SplitHorizontal;
                     break;
-                case "SpritVertical":
+                case "splitvertical":
                     this._mode = Layout.SplitVertical;
                     break;
                 default:
@@ -123,14 +123,11 @@ namespace PDF_Manager.Printing
             {
                 this.setScaleX(LeftTop, RightBottom);
                 this.setScaleY(LeftTop, RightBottom);
-                if (this.scaleX >= this.scaleY)
-                {
+                // 小さい方に合わせる
+                if (this.scaleY < this.scaleX)
                     this._scaleX = this.scaleY;
-                }
                 else
-                {
                     this._scaleY = this.scaleX;
-                }
             }
             else if (double.IsNaN(this.scaleX))
             {
@@ -141,7 +138,7 @@ namespace PDF_Manager.Printing
                 this.setScaleY(LeftTop, RightBottom);
             }
 
-            // 要素を取得できる状態にする
+            // 要素の入力情報から２次情報をあらかじめ計算しておく
             foreach (var m1 in this.Member.members.Values)
             {
                 //要素の節点i,jの情報を取得
@@ -185,8 +182,6 @@ namespace PDF_Manager.Printing
         {
             var frameHeight = Math.Abs(LeftTop.Y - RightBottom.Y);
             var paperHeight = this.canvas.areaSize.Height;
-            paperHeight -= printManager.FontHeight * 2; // タイトル印字分高さを減らす
-            paperHeight -= printManager.LineSpacing2;
             this._scaleY = paperHeight / frameHeight;
         }
 

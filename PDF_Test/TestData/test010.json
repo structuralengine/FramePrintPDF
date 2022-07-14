@@ -1,8 +1,14 @@
 ﻿{
     "title": "ああああああああ",
-    "diagramResult": {
-        "layout": "SpritHorizontal"
-    },
+  "diagramResult": {
+    "layout": "SplitVertical",
+    "output": [
+      "mz",
+      "fy",
+      "fx",
+      "disg"
+    ]
+  },
     "node": {
         "1": {
             "x": -4.85,
