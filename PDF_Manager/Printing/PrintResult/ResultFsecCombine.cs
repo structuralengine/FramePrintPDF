@@ -134,7 +134,7 @@ namespace PDF_Manager.Printing
     {
         public const string KEY = "fsecCombine";
 
-        private Dictionary<string, FsecCombine> Fsecs = new Dictionary<string, FsecCombine>();
+        public Dictionary<string, FsecCombine> Fsecs = new Dictionary<string, FsecCombine>();
         private Dictionary<string, string> fsecnames = new Dictionary<string, string>();
 
 

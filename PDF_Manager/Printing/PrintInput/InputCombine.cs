@@ -27,7 +27,7 @@ namespace PDF_Manager.Printing
     internal class InputCombine
     {
         public const string KEY = "combine";
-        private Dictionary<int, Combine> combines = new Dictionary<int, Combine>();
+        public Dictionary<int, Combine> combines = new Dictionary<int, Combine>();
 
         public InputCombine(Dictionary<string, object> value)
         {

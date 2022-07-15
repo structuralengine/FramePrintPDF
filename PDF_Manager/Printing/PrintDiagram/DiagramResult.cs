@@ -17,9 +17,14 @@ namespace PDF_Manager.Printing
         private DiagramFrame Frame = null;
 
         // 荷重情報
-        private InputLoadName LoadName = null;
-        // 断面力情報
-        private ResultFsec Fsec = null;
+        //private InputLoadName LoadName = null;
+        //// 断面力情報
+        //private ResultFsec Fsec = null;
+        //// 組合せ断面力情報
+        //private ResultFsecCombine combFsec = null;
+        //// ピックアップ断面力情報
+        //private ResultFsecPickup pickFsec = null;
+
         // 出力情報
         private List<string> output = new List<string>() { "mz", "fy", "fx", "disg" };
 
@@ -65,29 +70,46 @@ namespace PDF_Manager.Printing
         {
             this.Frame.printInit(mc, data);
 
-            // 荷重名称を取得
-            this.LoadName = (InputLoadName)data.printDatas[InputLoadName.KEY];
-
-            // 断面力を取得
-            this.Fsec = (ResultFsec)data.printDatas[ResultFsec.KEY];
-
             // 断面力図を描く
-            foreach (var fsec in this.Fsec.fsecs)
+            var Fsec = (ResultFsec)data.printDatas[ResultFsec.KEY];             // 断面力を取得
+            var LoadName = (InputLoadName)data.printDatas[InputLoadName.KEY];   // 荷重名称を取得
+            this.printFsec(mc, Fsec, LoadName);
+
+            // 組合せ断面力図を描く
+            var combFsec = (ResultFsecCombine)data.printDatas[ResultFsecCombine.KEY];   // 組合せ断面力を取得
+            var combName = (InputCombine)data.printDatas[InputCombine.KEY];             // 組合せ名称を取得
+            this.printCombFsec(mc, combFsec, combName);
+
+            // ピックアップ断面力図を描く
+            var pickFsec = (ResultFsecPickup)data.printDatas[ResultFsecPickup.KEY];     // ピックアップ断面力を取得
+            var pickbName = (InputPickup)data.printDatas[InputPickup.KEY];              // ピックアップ名称を取得
+            // this.printPicFsec(mc, pickFsec, pickbName);
+        }
+
+        /// <summary>
+        /// 組合せ断面力図を描く
+        /// </summary>
+        /// <param name="mc">キャンパス</param>
+        /// <param name="Fsec">断面力クラス</param>
+        private void printCombFsec(PdfDocument mc, ResultFsecCombine combFsec, InputCombine combName)
+        {
+            // 断面力図を描く
+            foreach (var fsec in combFsec.Fsecs)
             {
                 // LoadName から同じキーの情報を
-                string caseNo = fsec.Key;
-                var fs = (List<Fsec>)fsec.Value;
-                int index = Convert.ToInt32(caseNo);
+                string combNo = fsec.Key;
+                var fs = (FsecCombine)fsec.Value;
+                int index = Convert.ToInt32(combNo);
 
                 // ケース番号を印刷
-                LoadName ln = null;
-                if (!this.LoadName.loadnames.TryGetValue(index, out ln))
-                    continue;
+                if (combName.combines.ContainsKey(index))
+                {
+                    var ln = combName.combines[index];
+                    if (ln.name != null)
+                        Text.PrtText(mc, string.Format("CASE : {0}  {1}", combNo, ln.name));
+                }
 
-                if (ln != null)
-                    Text.PrtText(mc, string.Format("CASE : {0}  {1} :{2}", caseNo, ln.name, ln.symbol));
-
-                // 
+                // 何の図を出すのか決めている
                 int k = 1;
                 switch (this.Frame.mode)
                 {
@@ -96,37 +118,86 @@ namespace PDF_Manager.Printing
                         k = 2;
                         break;
                 }
-
-                for (int i=0; i < this.output.Count; i+=k)
+                for (int i = 0; i < this.output.Count; i += k)
                 {
-                    for(int j=0; j<k; ++j)
+                    for (int j = 0; j < k; ++j)
                     {
                         if (this.output.Count <= i + j)
                             continue;
                         var key = this.output[i + j];
                         // タイトルを印刷
                         this.printTitle(mc, key, j);
+                        // 骨組の描写
+                        this.Frame.printFrame(j, true);
                         // 骨組みを印字する
-                        this.printFrame(fs, key, j);
+                        //this.printFrame(fs, key);
                     }
                     // 改ページ
                     mc.NewPage();
                 }
 
             }
+        }
 
+
+
+        /// <summary>
+        /// 基本ケース断面力図を描く
+        /// </summary>
+        /// <param name="mc">キャンパス</param>
+        /// <param name="Fsec">断面力クラス</param>
+        private void printFsec(PdfDocument mc, ResultFsec Fsec, InputLoadName LoadName)
+        {
+            // 断面力図を描く
+            foreach (var fsec in Fsec.fsecs)
+            {
+                // LoadName から同じキーの情報を
+                string caseNo = fsec.Key;
+                var fs = (List<Fsec>)fsec.Value;
+                int index = Convert.ToInt32(caseNo);
+
+                // ケース番号を印刷
+                LoadName ln = null;
+                if (LoadName.loadnames.TryGetValue(index, out ln))
+                    if (ln != null)
+                        Text.PrtText(mc, string.Format("CASE : {0}  {1} :{2}", caseNo, ln.name, ln.symbol));
+
+                // 何の図を出すのか決めている
+                int k = 1;
+                switch (this.Frame.mode)
+                {
+                    case Layout.SplitHorizontal:
+                    case Layout.SplitVertical:
+                        k = 2;
+                        break;
+                }
+                for (int i = 0; i < this.output.Count; i += k)
+                {
+                    for (int j = 0; j < k; ++j)
+                    {
+                        if (this.output.Count <= i + j)
+                            continue;
+                        var key = this.output[i + j];
+                        // タイトルを印刷
+                        this.printTitle(mc, key, j);
+                        // 骨組の描写
+                        this.Frame.printFrame(j, true);
+                        // 骨組みを印字する
+                        this.printFrame(fs, key);
+                    }
+                    // 改ページ
+                    mc.NewPage();
+                }
+
+            }
         }
 
         /// <summary>
         /// 骨組みを印字する
         /// </summary>
         /// <param name="fsec"></param>
-        private void printFrame(List<Fsec> fsec, string key, int currentArea)
+        private void printFrame(List<Fsec> fsec, string key)
         {
-
-            // 骨組の描写
-            this.Frame.printFrame(currentArea, true);
-
             // 断面力の描写用のペン設定
             this.Frame.canvas.mc.xpen = new XPen(XColors.Blue, 0.2);
 
@@ -136,7 +207,11 @@ namespace PDF_Manager.Printing
                 max_value = Math.Max(Math.Abs(f.getValue2D(key)), max_value);
 
             // 断面力の最大値を 50pt とする
-            var fsecScale = 50 / max_value;
+            var margin = Math.Min(printManager.padding.Left, Math.Min(
+                                  printManager.padding.Right, Math.Min(
+                                  printManager.padding.Bottom, 
+                                  printManager.padding_Top)));
+            var fsecScale = margin / max_value;
 
             // 描画中の要素情報
             Member m = null;
