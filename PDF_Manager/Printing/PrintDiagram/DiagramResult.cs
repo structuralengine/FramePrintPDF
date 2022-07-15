@@ -216,21 +216,16 @@ namespace PDF_Manager.Printing
         private void printTitle(PdfDocument mc, string key, int index)
         {
             // タイトルを印字する位置の設定
-            mc.currentPos.Y = this.Frame.canvas.Center(index).Y - 350;
-            mc.currentPos.X = printManager.titlePos.X + 40;
-            switch (this.Frame.mode)
-            {
-                case Layout.SplitHorizontal:
-                    mc.currentPos.Y = this.Frame.canvas.Center(index).Y - 170;
-                    break;
+            var center = this.Frame.canvas.Center(index);
+            var Area = this.Frame.canvas.areaSize;
 
-                case Layout.SplitVertical:
-                    mc.currentPos.Y = this.Frame.canvas.Center(index).X - 170;
-                    break;
-            }
+            mc.currentPos.Y = center.Y - Area.Height / 2;
+            mc.currentPos.Y -= printManager.padding_Top;
+            mc.currentPos.Y += printManager.FontHeight + printManager.LineSpacing2;
+            mc.currentPos.X = center.X - Area.Width / 2;
 
             // タイトルを印字する
-            if (key == "mx")
+            if (key == "mz")
                 Text.PrtText(mc, "曲げモーメント図");
             if (key == "fy")
                 Text.PrtText(mc, "せん断力図");
