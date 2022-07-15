@@ -98,7 +98,7 @@ namespace PDF_Manager.Printing
             {
                 // LoadName から同じキーの情報を
                 string combNo = fsec.Key;
-                var fs = (FsecCombine)fsec.Value;
+                var cfs = (FsecCombine)fsec.Value;
                 int index = Convert.ToInt32(combNo);
 
                 // ケース番号を印刷
@@ -129,8 +129,29 @@ namespace PDF_Manager.Printing
                         this.printTitle(mc, key, j);
                         // 骨組の描写
                         this.Frame.printFrame(j, true);
+
+                        List<Fsec> fs;
+                        if (key == "mz")
+                        {
+                            fs = cfs.mz_min;
+                            fs.AddRange(cfs.mz_max);
+                        }
+                        else if (key == "fy")
+                        {
+                            fs = cfs.fy_min;
+                            fs.AddRange(cfs.fy_max);
+                        }
+                        else if (key == "fx")
+                        {
+                            fs = cfs.fx_min;
+                            fs.AddRange(cfs.fx_max);
+                        }
+                        else
+                        {
+                            continue;
+                        }
                         // 骨組みを印字する
-                        //this.printFrame(fs, key);
+                        this.printFrame(fs, key);
                     }
                     // 改ページ
                     mc.NewPage();
@@ -248,6 +269,9 @@ namespace PDF_Manager.Printing
                 {   // 部材端点位置
                     pos = this.Frame.Node.GetNodePos(f.n);
                 }
+                if (pos == null)
+                    continue;   
+
 
                 //荷重の大きさを取得
                 var Value = f.getValue2D(key); 
@@ -274,7 +298,7 @@ namespace PDF_Manager.Printing
                     // 文字の角度を決定する
                     var radian = (-1  *m.radian) - Math.PI / 2;
 
-                    this.Frame.canvas.printText(x2, y2, string.Format("{0}", Value), radian, this.Frame.canvas.mc.font_got);
+                    this.Frame.canvas.printText(x2, y2, string.Format("{0:0.00}", Value), radian, this.Frame.canvas.mc.font_got);
                 }
 
                 xx = x2;
