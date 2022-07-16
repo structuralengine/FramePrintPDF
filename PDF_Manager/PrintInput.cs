@@ -74,57 +74,57 @@ public class PrintInput
             return mc; // 断面力図の指定があったらその他の出力はしない
         }
 
-       //入力データ
-       //  格点
-       ((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
-       // 部材
-       ((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
-       // 材料
-       ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
-       // 支点
-       ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
-       // 着目点
-       ((InputNoticePoints)data.printDatas[InputNoticePoints.KEY]).printPDF(mc, data);
-
-        //mc = InputJoint.printPDF(mc, data);           // 結合
-        //mc = InputNoticePoints.printPDF(mc, data);    // 着目点
-
-        //mc = InputFixMember.printPDF(mc,data);        // バネ
-        /*
-        mc = InputShell.printPDF(mc, data);           // シェル
-        */
-        //荷重名称
-        //((InputLoadName)data.printDatas[InputLoadName.KEY]).printPDF(mc, data);
-        /*
-        mc = InputLoad.printPDF(mc, data);            // 荷重強度 
-        mc = InputDefine.printPDF(mc, data);          // 組み合わせDefine
-        mc = InputCombine.printPDF(mc, data);         // 組み合わせCombine
-        mc = InputPickup.printPDF(mc, data);          // 組み合わせピックアップ
-
-        */
+        //入力データ
+        //  格点
+        ((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
+        // 部材
+        ((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
+        // 材料
+        ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
+        // 支点
+        ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
+        // 結合
+//        ((InputJoint)data.printDatas[InputJoint.KEY]).printPDF(mc, data);
+        // 着目点
+        ((InputNoticePoints)data.printDatas[InputNoticePoints.KEY]).printPDF(mc, data);
+        // バネ
+//        ((InputFixMember)data.printDatas[InputFixMember.KEY]).printPDF(mc, data);
+        // シェル
+//        ((InputShell)data.printDatas[InputShell.KEY]).printPDF(mc, data);
+        // 荷重名称
+        ((InputLoadName)data.printDatas[InputLoadName.KEY]).printPDF(mc, data);
+        // 荷重強度 
+//        ((InputLoad)data.printDatas[InputLoad.KEY]).printPDF(mc, data);
+        // 組み合わせDefine
+//        ((InputDefine)data.printDatas[InputDefine.KEY]).printPDF(mc, data);
+        // 組み合わせCombine
+//        ((InputCombine)data.printDatas[InputCombine.KEY]).printPDF(mc, data);
+        // 組み合わせピックアップ
+//        ((InputPickup)data.printDatas[InputPickup.KEY]).printPDF(mc, data);
 
 
         // 計算結果データ
         // 変位量
         ((ResultDisg)data.printDatas[ResultDisg.KEY]).printPDF(mc, data);
+        // 反力
         ((ResultReac)data.printDatas[ResultReac.KEY]).printPDF(mc, data);
+        // 断面力
         ((ResultFsec)data.printDatas[ResultFsec.KEY]).printPDF(mc, data);
+
+        // 組み合わせ変位量
         ((ResultDisgCombine)data.printDatas[ResultDisgCombine.KEY]).printPDF(mc, data);
+        // 組み合わせ反力
         ((ResultReacCombine)data.printDatas[ResultReacCombine.KEY]).printPDF(mc, data);
+        // 組み合わせ断面力
         ((ResultFsecCombine)data.printDatas[ResultFsecCombine.KEY]).printPDF(mc, data);
 
+        // ピックアップ変位量
+        ((ResultDisgPickup)data.printDatas[ResultDisgPickup.KEY]).printPDF(mc, data);
+        // ピックアップ反力
+        ((ResultReacPickup)data.printDatas[ResultReacPickup.KEY]).printPDF(mc, data);
+        // ピックアップ断面力
+        ((ResultFsecPickup)data.printDatas[ResultFsecPickup.KEY]).printPDF(mc, data);
 
-        /*
-        mc = ResultDisg.printPDF(mc, data);
-        mc = ResultDisgCombine.printPDF(mc, data);
-        mc = ResultDisgPickup.printPDF(mc, data);
-        mc = ResultFsec.printPDF(mc, data);
-        mc = ResultFsecCombine.printPDF(mc, data);
-        mc = ResultFsecPickup.printPDF(mc, data);
-        mc = ResultReac.ReacPDF(mc, data);
-        mc = ResultReacCombine.ReacAnnexingPDF(mc, data);
-        mc = ResultReacPickup.ReacAnnexingPDF(mc, data);
-        */
         return mc;
     }
 
