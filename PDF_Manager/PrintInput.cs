@@ -86,11 +86,11 @@ public class PrintInput
         // 結合
 //        ((InputJoint)data.printDatas[InputJoint.KEY]).printPDF(mc, data);
         // 着目点
-        ((InputNoticePoints)data.printDatas[InputNoticePoints.KEY]).printPDF(mc, data);
+        //((InputNoticePoints)data.printDatas[InputNoticePoints.KEY]).printPDF(mc, data);
         // バネ
-//        ((InputFixMember)data.printDatas[InputFixMember.KEY]).printPDF(mc, data);
+        ((InputFixMember)data.printDatas[InputFixMember.KEY]).printPDF(mc, data);
         // シェル
-//        ((InputShell)data.printDatas[InputShell.KEY]).printPDF(mc, data);
+        //        ((InputShell)data.printDatas[InputShell.KEY]).printPDF(mc, data);
         // 荷重名称
         ((InputLoadName)data.printDatas[InputLoadName.KEY]).printPDF(mc, data);
         // 荷重強度 
@@ -116,7 +116,7 @@ public class PrintInput
         // 組み合わせ反力
         ((ResultReacCombine)data.printDatas[ResultReacCombine.KEY]).printPDF(mc, data);
         // 組み合わせ断面力
-        ((ResultFsecCombine)data.printDatas[ResultFsecCombine.KEY]).printPDF(mc, data);
+        //((ResultFsecCombine)data.printDatas[ResultFsecCombine.KEY]).printPDF(mc, data);
 
         // ピックアップ変位量
         ((ResultDisgPickup)data.printDatas[ResultDisgPickup.KEY]).printPDF(mc, data);

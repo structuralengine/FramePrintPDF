@@ -15,6 +15,8 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using PDF_Manager.Comon;
+using PDF_Manager.Printing.Comon;
+
 
 namespace PDF_Manager.Printing
 {
@@ -66,7 +68,203 @@ namespace PDF_Manager.Printing
                 }
                 this.fixmembers.Add(key, _fixnode);
             }
+
         }
+        ///印刷処理
+
+        ///タイトル
+        private string title;
+        ///２次元か３次元か
+        private int dimension;
+        ///テーブル
+        private Table myTable;
+
+
+        ///印刷前の初期化処理
+        ///
+        private void printInit(PdfDocument mc, PrintData data)
+        {
+            this.dimension = data.dimension;
+
+
+            ///テーブルの作成
+            this.myTable = new Table(4, 6);
+
+            ///テーブルの幅
+            this.myTable.ColWidth[0] = 20.0;//節点No
+            this.myTable.ColWidth[1] = 100.0;//部材軸方向
+            this.myTable.ColWidth[2] = 100.0;//部材Y軸
+            this.myTable.ColWidth[3] = 40.0;
+            this.myTable.ColWidth[4] = this.myTable.ColWidth[1];
+            this.myTable.ColWidth[5] = this.myTable.ColWidth[2];
+
+            this.myTable.RowHeight[1] = printManager.LineSpacing2;
+
+            this.myTable.AlignX[0, 0] = "L";
+            this.myTable.AlignX[1, 0] = "R";
+            this.myTable.AlignX[1, 1] = "R";
+            this.myTable.AlignX[1, 2] = "L";
+            this.myTable.AlignX[1, 3] = "R";
+            this.myTable.AlignX[1, 4] = "R";
+            this.myTable.AlignX[1, 5] = "L";
+            this.myTable.AlignX[2, 0] = "R";
+            this.myTable.AlignX[2, 1] = "R";
+            this.myTable.AlignX[2, 2] = "R";
+            this.myTable.AlignX[2, 3] = "R";
+            this.myTable.AlignX[2, 4] = "R";
+            this.myTable.AlignX[2, 5] = "R";
+            this.myTable.AlignX[3, 1] = "R";
+            this.myTable.AlignX[3, 2] = "R";
+            this.myTable.AlignX[3, 3] = "R";
+            this.myTable.AlignX[3, 4] = "R";
+            this.myTable.AlignX[3, 5] = "R";
+
+            switch (data.language)
+            {
+                default:
+                    this.title = "バネデータ";
+                    this.myTable[1, 0] = "部材";
+                    this.myTable[2, 0] = "No";
+                    this.myTable[1, 2] = "変位拘束";
+                    this.myTable[2, 1] = "部材軸方向";
+                    this.myTable[3, 1] = "(kN/m/m)";
+                    this.myTable[2, 2] = "部材Y軸";
+                    this.myTable[3, 2] = "(kN/m/m)";
+                    this.myTable[1, 3] = "部材";
+                    this.myTable[2, 3] = "No";
+                    this.myTable[1, 5] = "変位拘束";
+                    this.myTable[2, 4] = "部材軸方向";
+                    this.myTable[3, 4] = "(kN/m/m)";
+                    this.myTable[2, 5] = "部材Y軸";
+                    this.myTable[3, 5] = "(kN/m/m)";
+
+
+                    break;
+            }
+
+        }
+
+        /// <summary>
+        /// 1ページに入れるコンテンツを集計する
+        /// </summary>
+        /// <param name="target">印刷対象の配列</param>
+        /// <param name="rows">行数</param>
+        /// <returns>印刷する用の配列</returns>
+        private Table getPageContents(List<FixMember> target)
+        {
+            int r = this.myTable.Rows;
+
+            int columns = 2;
+            int count = this.myTable.Columns;
+            int c = count / columns;
+
+            int rows = target.Count;
+
+
+            // 行コンテンツを生成
+            var table = this.myTable.Clone();
+            table.ReDim(row: r + rows);
+
+            table.RowHeight[r] = printManager.LineSpacing2;
+
+
+            int Rows = target.Count / columns;
+
+            for (var i = 0; i < Rows; i++)
+            {
+                for (var j = 0; j < columns; j++)
+                {
+                    var index = i + Rows * j; //左側：j=0 ∴index = i, 右側：j=1, ∴index = i+Rows
+                    if (target.Count <= index)
+                        continue;
+
+                    var item = target[index];
+
+                    table[r + i, 0 + c * j] = printManager.toString(item.m);
+                    table.AlignX[r + i, 0 + c * j] = "R";
+                    table[r + i, 1 + c * j] = printManager.toString(item.tx, 4);
+                    table.AlignX[r + i, 1 + c * j] = "R";
+                    table[r + i, 2 + c * j] = printManager.toString(item.ty, 4);
+                    table.AlignX[r + i, 2 + c * j] = "R";
+                }
+            }
+
+            return table;
+        }
+
+        /// <summary>
+        /// 印刷する
+        /// </summary>
+        /// <param name="mc"></param>
+        public void printPDF(PdfDocument mc, PrintData data)
+        {
+
+            if (this.fixmembers.Count == 0)
+                return;
+
+            // タイトル などの初期化
+            this.printInit(mc, data);
+
+            // 印刷可能な行数
+            var printRows = myTable.getPrintRowCount(mc);
+
+            // 行コンテンツを生成
+            var page = new List<Table>();
+
+            // 1ページ目に入る行数
+            int rows = printRows[0];
+
+            // 集計開始
+            for (int j = 0; j < this.fixmembers.Count; ++j)
+            {   // ケース番号のループ
+                var key = this.fixmembers.ElementAt(j).Key;  // ケース番号
+                var tmp1 = new List<FixMember>((List<FixMember>)this.fixmembers.ElementAt(j).Value);
+
+                var caseNo = this.fixmembers.ElementAt(j).Key;
+
+                while (true)
+                {
+                    // 1ページに納まる分のデータをコピー
+                    var tmp2 = new List<FixMember>();
+                    int columns = 2;
+
+                    for (int i = 0; i < columns * rows; i++)
+                    {
+                        if (tmp1.Count <= 0)
+                            break;
+                        tmp2.Add(tmp1.First());
+                        tmp1.Remove(tmp1.First());
+                    }
+
+                    if (tmp2.Count > 0)
+                    {
+                        int rs = Convert.ToInt32(Math.Ceiling(Convert.ToDouble(tmp2.Count) / columns));
+                        rows = Math.Min(rows, rs);
+
+                        var table = this.getPageContents(tmp2);
+                        table[0, 0] = caseNo.ToString();
+                        page.Add(table);
+
+                    }
+                    else if (tmp1.Count <= 0)
+                    {
+                        break;
+                    }
+                    else
+                    { // 印刷するものもない
+                        mc.NewPage();
+                    }
+
+                    // 2ページ以降に入る行数
+                    rows = printRows[1];
+                }
+            }
+
+
+            // 表の印刷
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
+        }
+
         /*
             private Dictionary<string, object> value = new Dictionary<string, object>();
             List<string> title = new List<string>();
