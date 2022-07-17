@@ -163,10 +163,17 @@ namespace PDF_Manager.Printing
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
+            if(columns >= 1)
+            {
+                rows = rows / columns;
+                if(rows % 2 != 0)
+                {
+                    rows++;
+                }
+            }
             table.ReDim(row: r + rows);
 
             table.RowHeight[r] = printManager.LineSpacing2;
-
 
             int Rows = target.Count / columns;
 
@@ -174,7 +181,7 @@ namespace PDF_Manager.Printing
             {
                 for (var j = 0; j < columns; j++)
                 {
-                    var index = i + Rows * j; //左側：j=0 ∴index = i, 右側：j=1, ∴index = i+Rows
+                    var index = i + Rows * j; //左側：j=0 ∴index = i, 右側：j=1, ∴index = i+rows
                     if (target.Count <= index)
                         continue;
 
@@ -182,9 +189,9 @@ namespace PDF_Manager.Printing
 
                     table[r + i, 0 + c * j] = printManager.toString(item.m);
                     table.AlignX[r + i, 0 + c * j] = "R";
-                    table[r + i, 1 + c * j] = printManager.toString(item.tx, 4);
+                    table[r + i, 1 + c * j] = printManager.toString(item.tx, 3);
                     table.AlignX[r + i, 1 + c * j] = "R";
-                    table[r + i, 2 + c * j] = printManager.toString(item.ty, 4);
+                    table[r + i, 2 + c * j] = printManager.toString(item.ty, 2, "E");
                     table.AlignX[r + i, 2 + c * j] = "R";
                 }
             }
