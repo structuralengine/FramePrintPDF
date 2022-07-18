@@ -94,13 +94,13 @@ public class PrintInput
         // 荷重名称
         ((InputLoadName)data.printDatas[InputLoadName.KEY]).printPDF(mc, data);
         // 荷重強度 
-//        ((InputLoad)data.printDatas[InputLoad.KEY]).printPDF(mc, data);
+        ((InputLoad)data.printDatas[InputLoad.KEY]).printPDF(mc, data);
         // 組み合わせDefine
-//        ((InputDefine)data.printDatas[InputDefine.KEY]).printPDF(mc, data);
+        //        ((InputDefine)data.printDatas[InputDefine.KEY]).printPDF(mc, data);
         // 組み合わせCombine
-//        ((InputCombine)data.printDatas[InputCombine.KEY]).printPDF(mc, data);
+        //        ((InputCombine)data.printDatas[InputCombine.KEY]).printPDF(mc, data);
         // 組み合わせピックアップ
-//        ((InputPickup)data.printDatas[InputPickup.KEY]).printPDF(mc, data);
+        //        ((InputPickup)data.printDatas[InputPickup.KEY]).printPDF(mc, data);
 
 
         // 計算結果データ

@@ -15,6 +15,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using PDF_Manager.Comon;
+using PDF_Manager.Printing.Comon;
 
 namespace PDF_Manager.Printing
 {
@@ -74,7 +75,7 @@ namespace PDF_Manager.Printing
                 var item = JObject.FromObject(target.ElementAt(i).Value);
                 
                 if (item.ContainsKey("load_member") )
-                {   // 要素荷重
+                {   // 部材荷重
                     var LoadM = new List<LoadMember>();
                     foreach(JToken member in item["load_member"])
                     {
@@ -118,104 +119,305 @@ namespace PDF_Manager.Printing
             }
         }
 
-    /*
-        private Dictionary<string, object> value = new Dictionary<string, object>();
-        List<string> title = new List<string>();
-        List<List<List<string[]>>> data = new List<List<List<string[]>>>();
+        ///印刷処理
 
-        public void init(PdfDoc mc, Dictionary<string, object> value_)
+        ///タイトル
+        private string title;
+        ///２次元か３次元か
+        private int dimension;
+        ///テーブル
+        private Table myTable;
+        ///節点情報
+        private InputNode Node = null;
+        ///材料情報
+        private InputElement Element = null;
+
+
+        ///印刷前の初期化処理
+        ///
+        private void printInit(PdfDocument mc, PrintData data)
         {
-            value = value_;
-            var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
-            // 集まったデータはここに格納する
-            title = new List<string>();
-            data = new List<List<List<string[]>>>();
+            this.dimension = data.dimension;
 
-            for (int i = 0; i < target.Count; i++)
+            if (this.dimension == 3)
+            {///3次元
+
+                ///テーブルの作成
+                this.myTable = new Table(2, 9);
+
+                ///テーブルの幅
+                this.myTable.ColWidth[0] = 45.0;//スタート
+                this.myTable.ColWidth[1] = 60.00;//エンド
+                this.myTable.ColWidth[2] = 30.0;//方向
+                this.myTable.ColWidth[3] = 240.0;//マーク
+                this.myTable.ColWidth[4] = 25.0;//L1
+                this.myTable.ColWidth[5] = 25.0;//L2
+                this.myTable.ColWidth[6] = 25.0;//P1
+                this.myTable.ColWidth[7] = 25.0;//P2
+
+                switch (data.language)
+                {
+                    default:
+                        this.title = "実荷重データ";
+                        this.myTable[0, 0] = "Case";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "スタート";
+                        this.myTable[1, 2] = "エンド";
+                        this.myTable[1, 3] = "方向";
+                        this.myTable[0, 4] = "マーク";
+                        this.myTable[1, 4] = "L1";
+                        this.myTable[1, 5] = "L2";
+                        this.myTable[1, 6] = "P1";
+                        this.myTable[1, 7] = "P2";
+                        break;
+                }
+
+                //表題の文字位置
+                this.myTable.AlignX[0, 5] = "L";    // 左寄せ
+            }
+            else
+            {//2次元
+
+                ///テーブルの作成
+                this.myTable = new Table(2, 11);
+
+                ///テーブルの幅
+                this.myTable.ColWidth[0] = 45.0;//Case
+                this.myTable.ColWidth[1] = 60.00;//割増係数
+                this.myTable.ColWidth[2] = 30.0;//記号
+                this.myTable.ColWidth[3] = 240.0;//荷重名称
+                this.myTable.ColWidth[4] = 25.0;//支点
+                this.myTable.ColWidth[5] = 25.0;//断面
+                this.myTable.ColWidth[6] = 25.0;//部材
+                this.myTable.ColWidth[7] = 25.0;//地盤
+
+                switch (data.language)
+                {
+                    default:
+                        this.title = "基本荷重DATA";
+                        this.myTable[0, 0] = "Case";
+                        this.myTable[1, 0] = "No";
+                        this.myTable[1, 1] = "割増係数";
+                        this.myTable[1, 2] = "記号";
+                        this.myTable[1, 3] = "荷重名称";
+                        this.myTable[0, 5] = "構造系条件";
+                        this.myTable[1, 4] = "支点";
+                        this.myTable[1, 5] = "断面";
+                        this.myTable[1, 6] = "バネ";
+                        this.myTable[1, 7] = "結合";
+                        break;
+                }
+
+                //表題の文字位置
+                this.myTable.AlignX[1, 2] = "L";    // 左寄せ
+                this.myTable.AlignX[0, 5] = "L";    // 左寄せ
+            }
+        }
+
+        /// <summary>
+        /// 1ページに入れるコンテンツを集計する
+        /// </summary>
+        /// <param name="target">印刷対象の配列</param>
+        /// <param name="rows">行数</param>
+        /// <returns>印刷する用の配列</returns>
+        private Table getPageContents(Dictionary<int, Load> target)
+        {
+            int r = this.myTable.Rows;
+            int rows = target.Count;
+
+            // 行コンテンツを生成
+            var table = this.myTable.Clone();
+            table.ReDim(row: r + rows);
+
+            table.RowHeight[r] = printManager.LineSpacing2;
+
+            for (var i = 0; i < rows; i++)
             {
-                var item = JObject.FromObject(target.ElementAt(i).Value);
-                var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+                int No = target.ElementAt(i).Key;
+                Load item = target.ElementAt(i).Value;
 
-                // タイトルの表示
-                if (item.ContainsKey("load_member") || item.ContainsKey("load_node"))
-                {
-                    title.Add("Case" + target.ElementAt(i).Key + ":" + item["name"]);
-                }
+                int j = 0;
+                table[r, j] = No.ToString();
+                table.AlignX[r, j] = "R";
+                j++;
+                //table[r, j] = printManager.toString(item.);
+                //j++;
+                //table[r, j] = printManager.toString(item.symbol);
+                //table.AlignX[r, j] = "L";
+                //j++;
+                //table[r, j] = printManager.toString(item.name);
+                //table.AlignX[r, j] = "L";
+                //j++;
+                //table[r, j] = printManager.toString(item.fix_node);
+                //j++;
+                //table[r, j] = printManager.toString(item.element);
+                //j++;
+                //table[r, j] = printManager.toString(item.fix_member);
+                //j++;
+                //table[r, j] = printManager.toString(item.joint);
+                j++;
 
-                List<List<string[]>> compile = new List<List<string[]>>();
-
-                List<string[]> table1 = new List<string[]>();
-                if (item.ContainsKey("load_member"))
-                {
-                    for (int j = 0; j < item["load_member"].Count(); j++)
-                    {
-                        JToken member = item["load_member"][j];
-                        if (member.SelectToken("m1") != null)
-                        {
-                            string[] line = new string[8];
-                            line[0] = dataManager.TypeChange(member["m1"]);
-                            line[1] = dataManager.TypeChange(member["m2"]);
-                            line[2] = dataManager.TypeChange(member["direction"]);
-                            line[3] = dataManager.TypeChange(member["mark"]);
-
-                            // line[4] = member["L1"].ToString().StartsWith("-0") ? "-0.000" : dataManager.TypeChange(double.Parse(member["L1"].ToString()), 3);
-                            var a4 = member["L1"].ToString();
-                            if(a4.Trim().Length == 0)
-                            {
-                                line[4] = "";
-                            } else {
-                                var b4 = double.Parse(a4);
-                                if (b4 == 0 && a4.StartsWith("-"))
-                                {
-                                    line[4] = "-0.000"; // ゼロにマイナスがついている場合
-                                }
-                                else
-                                {
-                                    line[4] = dataManager.TypeChange(b4, 3);
-                                }
-                            }
-
-                            line[5] = dataManager.TypeChange(member["L2"], 3);
-                            line[6] = dataManager.TypeChange(member["P1"], 2);
-                            line[7] = dataManager.TypeChange(member["P2"], 2);
-                            table1.Add(line);
-                        }
-                    }
-                    compile.Add(table1);
-                }
-                else
-                {
-                    compile.Add(null);
-                }
-
-                List<string[]> table2 = new List<string[]>();
-                if (item.ContainsKey("load_node"))
-                {
-                    for (int j = 0; j < item["load_node"].Count(); j++)
-                    {
-                        string[] line = new string[8];
-                        JToken node = item["load_node"][j];
-                        line[0] = "";
-                        line[1] = dataManager.TypeChange(node["n"]);
-                        line[2] = dataManager.TypeChange(node["tx"], 2);
-                        line[3] = dataManager.TypeChange(node["ty"], 2);
-                        line[4] = mc.Dimension(dataManager.TypeChange(node["tz"], 2));
-                        line[5] = mc.Dimension(dataManager.TypeChange(node["rx"], 2));
-                        line[6] = mc.Dimension(dataManager.TypeChange(node["ry"], 2));
-                        line[7] = dataManager.TypeChange(node["rz"], 2);
-                        table2.Add(line);
-                    }
-                    compile.Add(table2);
-                }
-                else
-                {
-                    compile.Add(null);
-                }
-
-                data.Add(compile);
+                r++;
             }
 
-        */
+            return table;
+        }
+
+        /// <summary>
+        /// 印刷する
+        /// </summary>
+        /// <param name="mc"></param>
+        public void printPDF(PdfDocument mc, PrintData data)
+        {
+
+            // タイトル などの初期化
+            this.printInit(mc, data);
+
+            // 印刷可能な行数
+            var printRows = myTable.getPrintRowCount(mc);
+
+            // 行コンテンツを生成
+            var page = new List<Table>();
+
+            // 1ページ目に入る行数
+            int rows = printRows[0];
+
+            // 集計開始
+            var tmp1 = new Dictionary<int, Load>(); // clone
+            while (true)
+            {
+                // 1ページに納まる分のデータをコピー
+                var tmp2 = new Dictionary<int, Load>();
+                for (int i = 0; i < rows; i++)
+                {
+                    if (tmp1.Count <= 0)
+                        break;
+                    tmp2.Add(tmp1.First().Key, tmp1.First().Value);
+                    tmp1.Remove(tmp1.First().Key);
+                }
+
+                if (tmp2.Count > 0)
+                {
+                    var table = this.getPageContents(tmp2);
+                    page.Add(table);
+                }
+                else if (tmp1.Count <= 0)
+                {
+                    break;
+                }
+                else
+                { // 印刷するものもない
+                    mc.NewPage();
+                }
+
+                // 2ページ以降に入る行数
+                rows = printRows[1];
+            }
+
+
+
+            // 表の印刷
+            printManager.printTableContentsOnePage(mc, page, new string[] { this.title });
+        }
+
+        /*
+            private Dictionary<string, object> value = new Dictionary<string, object>();
+            List<string> title = new List<string>();
+            List<List<List<string[]>>> data = new List<List<List<string[]>>>();
+
+            public void init(PdfDoc mc, Dictionary<string, object> value_)
+            {
+                value = value_;
+                var target = JObject.FromObject(value["load"]).ToObject<Dictionary<string, object>>();
+                // 集まったデータはここに格納する
+                title = new List<string>();
+                data = new List<List<List<string[]>>>();
+
+                for (int i = 0; i < target.Count; i++)
+                {
+                    var item = JObject.FromObject(target.ElementAt(i).Value);
+                    var Elem = JObject.FromObject(target.ElementAt(i).Value).ToObject<Dictionary<string, object>>();
+
+                    // タイトルの表示
+                    if (item.ContainsKey("load_member") || item.ContainsKey("load_node"))
+                    {
+                        title.Add("Case" + target.ElementAt(i).Key + ":" + item["name"]);
+                    }
+
+                    List<List<string[]>> compile = new List<List<string[]>>();
+
+                    List<string[]> table1 = new List<string[]>();
+                    if (item.ContainsKey("load_member"))
+                    {
+                        for (int j = 0; j < item["load_member"].Count(); j++)
+                        {
+                            JToken member = item["load_member"][j];
+                            if (member.SelectToken("m1") != null)
+                            {
+                                string[] line = new string[8];
+                                line[0] = dataManager.TypeChange(member["m1"]);
+                                line[1] = dataManager.TypeChange(member["m2"]);
+                                line[2] = dataManager.TypeChange(member["direction"]);
+                                line[3] = dataManager.TypeChange(member["mark"]);
+
+                                // line[4] = member["L1"].ToString().StartsWith("-0") ? "-0.000" : dataManager.TypeChange(double.Parse(member["L1"].ToString()), 3);
+                                var a4 = member["L1"].ToString();
+                                if(a4.Trim().Length == 0)
+                                {
+                                    line[4] = "";
+                                } else {
+                                    var b4 = double.Parse(a4);
+                                    if (b4 == 0 && a4.StartsWith("-"))
+                                    {
+                                        line[4] = "-0.000"; // ゼロにマイナスがついている場合
+                                    }
+                                    else
+                                    {
+                                        line[4] = dataManager.TypeChange(b4, 3);
+                                    }
+                                }
+
+                                line[5] = dataManager.TypeChange(member["L2"], 3);
+                                line[6] = dataManager.TypeChange(member["P1"], 2);
+                                line[7] = dataManager.TypeChange(member["P2"], 2);
+                                table1.Add(line);
+                            }
+                        }
+                        compile.Add(table1);
+                    }
+                    else
+                    {
+                        compile.Add(null);
+                    }
+
+                    List<string[]> table2 = new List<string[]>();
+                    if (item.ContainsKey("load_node"))
+                    {
+                        for (int j = 0; j < item["load_node"].Count(); j++)
+                        {
+                            string[] line = new string[8];
+                            JToken node = item["load_node"][j];
+                            line[0] = "";
+                            line[1] = dataManager.TypeChange(node["n"]);
+                            line[2] = dataManager.TypeChange(node["tx"], 2);
+                            line[3] = dataManager.TypeChange(node["ty"], 2);
+                            line[4] = mc.Dimension(dataManager.TypeChange(node["tz"], 2));
+                            line[5] = mc.Dimension(dataManager.TypeChange(node["rx"], 2));
+                            line[6] = mc.Dimension(dataManager.TypeChange(node["ry"], 2));
+                            line[7] = dataManager.TypeChange(node["rz"], 2);
+                            table2.Add(line);
+                        }
+                        compile.Add(table2);
+                    }
+                    else
+                    {
+                        compile.Add(null);
+                    }
+
+                    data.Add(compile);
+                }
+
+            */
 
         /*
         public void LoadPDF(PdfDoc mc)
@@ -383,7 +585,7 @@ namespace PDF_Manager.Printing
 
             }
         }
-      */      
+      */
     }
 
 }
