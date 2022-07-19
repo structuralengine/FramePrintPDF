@@ -94,7 +94,7 @@ namespace PDF_Manager.Printing
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 45.0;//Case
-                this.myTable.ColWidth[1] = 60.00;//割増係数
+                this.myTable.ColWidth[1] = 60.0;//割増係数
                 this.myTable.ColWidth[2] = 30.0;//記号
                 this.myTable.ColWidth[3] = 240.0;//荷重名称
                 this.myTable.ColWidth[4] = 25.0;//支点
@@ -130,7 +130,7 @@ namespace PDF_Manager.Printing
 
                 ///テーブルの幅
                 this.myTable.ColWidth[0] = 45.0;//Case
-                this.myTable.ColWidth[1] = 60.00;//割増係数
+                this.myTable.ColWidth[1] = 60.0;//割増係数
                 this.myTable.ColWidth[2] = 30.0;//記号
                 this.myTable.ColWidth[3] = 240.0;//荷重名称
                 this.myTable.ColWidth[4] = 25.0;//支点

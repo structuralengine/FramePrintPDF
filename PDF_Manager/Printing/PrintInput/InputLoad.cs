@@ -45,6 +45,7 @@ namespace PDF_Manager.Printing
 
     public class Load
     {
+        // public List<LoadMember> load_member;
         public LoadMember[] load_member;
         public LoadNode[] load_node;
     }
@@ -146,34 +147,40 @@ namespace PDF_Manager.Printing
                 this.myTable = new Table(2, 9);
 
                 ///テーブルの幅
-                this.myTable.ColWidth[0] = 45.0;//スタート
-                this.myTable.ColWidth[1] = 60.00;//エンド
-                this.myTable.ColWidth[2] = 30.0;//方向
-                this.myTable.ColWidth[3] = 240.0;//マーク
-                this.myTable.ColWidth[4] = 25.0;//L1
-                this.myTable.ColWidth[5] = 25.0;//L2
-                this.myTable.ColWidth[6] = 25.0;//P1
-                this.myTable.ColWidth[7] = 25.0;//P2
+                this.myTable.ColWidth[0] = 40.0;//スタート
+                this.myTable.ColWidth[1] = 50.0;//エンド
+                this.myTable.ColWidth[2] = 60.0;//方向
+                this.myTable.ColWidth[3] = 50.0;//マーク
+                this.myTable.ColWidth[4] = 60.0;//L1
+                this.myTable.ColWidth[5] = 75.0;//L2
+                this.myTable.ColWidth[6] = 75.0;//P1
+                this.myTable.ColWidth[7] = 75.0;//P2
 
                 switch (data.language)
                 {
                     default:
                         this.title = "実荷重データ";
-                        this.myTable[0, 0] = "Case";
-                        this.myTable[1, 0] = "No";
-                        this.myTable[1, 1] = "スタート";
-                        this.myTable[1, 2] = "エンド";
-                        this.myTable[1, 3] = "方向";
-                        this.myTable[0, 4] = "マーク";
-                        this.myTable[1, 4] = "L1";
-                        this.myTable[1, 5] = "L2";
-                        this.myTable[1, 6] = "P1";
-                        this.myTable[1, 7] = "P2";
+                        this.myTable[0, 0] = "部材荷重";
+                        this.myTable[1, 0] = "スタート";
+                        this.myTable[1, 1] = "エンド";
+                        this.myTable[1, 2] = "方向";
+                        this.myTable[1, 3] = "マーク";
+                        this.myTable[1, 4] = "L1　";
+                        this.myTable[1, 5] = "L2　";
+                        this.myTable[1, 6] = "P1　";
+                        this.myTable[1, 7] = "P2　";
                         break;
                 }
 
                 //表題の文字位置
-                this.myTable.AlignX[0, 5] = "L";    // 左寄せ
+                this.myTable.AlignX[0, 0] = "L";    // 左寄せ
+                this.myTable.AlignX[1, 0] = "L";    // 左寄せ
+                this.myTable.AlignX[1, 1] = "R";
+                this.myTable.AlignX[1, 4] = "R";
+                this.myTable.AlignX[1, 5] = "R";
+                this.myTable.AlignX[1, 6] = "R";
+                this.myTable.AlignX[1, 7] = "R";
+
             }
             else
             {//2次元
@@ -227,39 +234,84 @@ namespace PDF_Manager.Printing
 
             // 行コンテンツを生成
             var table = this.myTable.Clone();
-            table.ReDim(row: r + rows);
+            table.ReDim(row: r + rows*10);
 
             table.RowHeight[r] = printManager.LineSpacing2;
+
 
             for (var i = 0; i < rows; i++)
             {
                 int No = target.ElementAt(i).Key;
                 Load item = target.ElementAt(i).Value;
 
-                int j = 0;
-                table[r, j] = No.ToString();
-                table.AlignX[r, j] = "R";
-                j++;
-                //table[r, j] = printManager.toString(item.);
-                //j++;
-                //table[r, j] = printManager.toString(item.symbol);
-                //table.AlignX[r, j] = "L";
-                //j++;
-                //table[r, j] = printManager.toString(item.name);
-                //table.AlignX[r, j] = "L";
-                //j++;
-                //table[r, j] = printManager.toString(item.fix_node);
-                //j++;
-                //table[r, j] = printManager.toString(item.element);
-                //j++;
-                //table[r, j] = printManager.toString(item.fix_member);
-                //j++;
-                //table[r, j] = printManager.toString(item.joint);
-                j++;
+                if (item.load_member != null)
+                {
+                    for (int ii = 0; ii < item.load_member.Length; ii++)
+                    {
+                        LoadMember lm = item.load_member[ii];
 
-                r++;
+                        int j = 0;
+                        table[r, j] = printManager.toString(lm.m1);
+                        table.AlignX[r, j] = "R";
+                        j++;
+                        table[r, j] = printManager.toString(lm.m2);
+                        table.AlignX[r, j] = "R";
+                        j++;
+                        table[r, j] = printManager.toString(lm.direction);
+                        j++;
+                        table[r, j] = printManager.toString(lm.mark);
+                        j++;
+                        table[r, j] = printManager.toString(lm.L1, 3);
+                        table.AlignX[r, j] = "R";
+                        j++;
+                        table[r, j] = printManager.toString(lm.L2, 3);
+                        table.AlignX[r, j] = "R";
+                        j++;
+                        table[r, j] = printManager.toString(lm.P1, 2);
+                        table.AlignX[r, j] = "R";
+                        j++;
+                        table[r, j] = printManager.toString(lm.P2, 2);
+                        table.AlignX[r, j] = "R";
+                        j++;
+
+                        r++;
+
+                    }
+                }
+
+                if (item.load_node != null)
+                {
+                    for (int ii = 0; ii < item.load_node.Length; ii++)
+                    {
+
+                        LoadNode lln = item.load_node[ii];
+
+                        int j = 0;
+                        table[r, j] = printManager.toString(lln.n);
+                        j++;
+                        table[r, j] = printManager.toString(lln.tx);
+                        table.AlignX[r, j] = "L";
+                        j++;
+                        table[r, j] = printManager.toString(lln.ty);
+                        table.AlignX[r, j] = "L";
+                        j++;
+                        table[r, j] = printManager.toString(lln.tz);
+                        j++;
+                        table[r, j] = printManager.toString(lln.rx);
+                        j++;
+                        table[r, j] = printManager.toString(lln.ry);
+                        j++;
+                        table[r, j] = printManager.toString(lln.rz);
+                        j++;
+
+                            r++;
+
+
+                    }
+
+                }
+
             }
-
             return table;
         }
 
@@ -283,7 +335,7 @@ namespace PDF_Manager.Printing
             int rows = printRows[0];
 
             // 集計開始
-            var tmp1 = new Dictionary<int, Load>(); // clone
+            var tmp1 = new Dictionary<int, Load>(this.loads); // clone
             while (true)
             {
                 // 1ページに納まる分のデータをコピー

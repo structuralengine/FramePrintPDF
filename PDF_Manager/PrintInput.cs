@@ -76,19 +76,19 @@ public class PrintInput
 
         //入力データ
         //  格点
-        ((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
+        //((InputNode)data.printDatas[InputNode.KEY]).printPDF(mc, data);
         // 部材
-        ((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
+        //((InputMember)data.printDatas[InputMember.KEY]).printPDF(mc, data);
         // 材料
-        ((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
+        //((InputElement)data.printDatas[InputElement.KEY]).printPDF(mc, data);
         // 支点
-        ((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
+        //((InputFixNode)data.printDatas[InputFixNode.KEY]).printPDF(mc, data);
         // 結合
 //        ((InputJoint)data.printDatas[InputJoint.KEY]).printPDF(mc, data);
         // 着目点
         //((InputNoticePoints)data.printDatas[InputNoticePoints.KEY]).printPDF(mc, data);
         // バネ
-        ((InputFixMember)data.printDatas[InputFixMember.KEY]).printPDF(mc, data);
+        //((InputFixMember)data.printDatas[InputFixMember.KEY]).printPDF(mc, data);
         // シェル
         //        ((InputShell)data.printDatas[InputShell.KEY]).printPDF(mc, data);
         // 荷重名称
